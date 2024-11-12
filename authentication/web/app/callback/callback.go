@@ -1,50 +1,56 @@
 package callback
 
 import (
+	"encoding/json"
+	"html/template"
 	"net/http"
 
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
-
 	"01-Login/platform/authenticator"
+
+	"github.com/gin-gonic/gin"
 )
 
-// Handler for our callback.
 func Handler(auth *authenticator.Authenticator) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
-		if ctx.Query("state") != session.Get("state") {
-			ctx.String(http.StatusBadRequest, "Invalid state parameter.")
+		code := ctx.Query("code")
+		if code == "" {
+			ctx.Redirect(http.StatusTemporaryRedirect, "/")
 			return
 		}
 
-		// Exchange an authorization code for a token.
-		token, err := auth.Exchange(ctx.Request.Context(), ctx.Query("code"))
+		// Exchange code for token
+		token, err := auth.Exchange(ctx.Request.Context(), code)
 		if err != nil {
-			ctx.String(http.StatusUnauthorized, "Failed to convert an authorization code into a token.")
+			ctx.Redirect(http.StatusTemporaryRedirect, "/")
 			return
 		}
 
+		// Verify token
 		idToken, err := auth.VerifyIDToken(ctx.Request.Context(), token)
 		if err != nil {
-			ctx.String(http.StatusInternalServerError, "Failed to verify ID Token.")
+			ctx.Redirect(http.StatusTemporaryRedirect, "/")
 			return
 		}
 
+		// Get user profile
 		var profile map[string]interface{}
 		if err := idToken.Claims(&profile); err != nil {
-			ctx.String(http.StatusInternalServerError, err.Error())
+			ctx.Redirect(http.StatusTemporaryRedirect, "/")
 			return
 		}
 
-		session.Set("access_token", token.AccessToken)
-		session.Set("profile", profile)
-		if err := session.Save(); err != nil {
-			ctx.String(http.StatusInternalServerError, err.Error())
+		// Convert profile to JSON string
+		profileJSON, err := json.Marshal(profile)
+		if err != nil {
+			ctx.Redirect(http.StatusTemporaryRedirect, "/")
 			return
 		}
 
-		// Redirect to logged in page.
-		ctx.Redirect(http.StatusTemporaryRedirect, "/user")
+		// Pass the data to template using template.JS for safe JavaScript execution
+		ctx.HTML(http.StatusOK, "callback.html", gin.H{
+			"access_token": template.JS(template.JSEscapeString(token.AccessToken)),
+			"id_token":     template.JS(template.JSEscapeString(token.Extra("id_token").(string))),
+			"profile":      string(profileJSON),
+		})
 	}
 }
