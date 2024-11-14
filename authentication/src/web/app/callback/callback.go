@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"01-Login/platform/authenticator"
+	"authentication/src/platform/authenticator"
 
 	"github.com/gin-gonic/gin"
 )

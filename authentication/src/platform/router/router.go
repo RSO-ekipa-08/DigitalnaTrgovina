@@ -1,12 +1,12 @@
 package router
 
 import (
-	"01-Login/platform/authenticator"
-	"01-Login/web/app/callback"
-	"01-Login/web/app/home"
-	"01-Login/web/app/login"
-	"01-Login/web/app/logout"
-	"01-Login/web/app/user"
+	"authentication/src/platform/authenticator"
+	"authentication/src/web/app/callback"
+	"authentication/src/web/app/home"
+	"authentication/src/web/app/login"
+	"authentication/src/web/app/logout"
+	"authentication/src/web/app/user"
 
 	"github.com/gin-gonic/gin"
 )

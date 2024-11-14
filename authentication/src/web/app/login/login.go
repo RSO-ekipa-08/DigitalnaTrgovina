@@ -1,7 +1,7 @@
 package login
 
 import (
-	"01-Login/platform/authenticator"
+	"authentication/src/platform/authenticator"
 	"crypto/rand"
 	"encoding/base64"
 	"net/http"
