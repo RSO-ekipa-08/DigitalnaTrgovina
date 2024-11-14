@@ -1,0 +1,80 @@
+syntax = "proto3";
+package reviews;
+
+option go_package = "reviews/proto";
+
+// Glavni service za ocene in komentarje
+service ReviewService {
+  // Dodajanje nove ocene in komentarja
+  rpc AddReview (AddReviewRequest) returns (AddReviewResponse);
+
+  // Pridobivanje ocen in komentarjev za aplikacijo
+  rpc GetReviews (GetReviewsRequest) returns (GetReviewsResponse);
+
+  // Moderiranje komentarjev
+  rpc ModerateComment (ModerateCommentRequest) returns (ModerateCommentResponse);
+}
+
+// Model za oceno in komentar
+message Review {
+  string id = 1;
+  string app_id = 2;
+  string user_id = 3;
+  uint32 score = 4; // ocena od 1-5
+  string comment = 5;
+  string created_at = 6;
+  bool is_moderated = 7;
+  ModerationType moderation_status = 8;
+}
+
+// Enum za status moderacije
+enum ModerationType {
+  PENDING = 0;
+  APPROVED = 1;
+  REJECTED = 2;
+}
+
+// Request za dodajanje ocene
+message AddReviewRequest {
+  string app_id = 1;
+  string user_id = 2;
+  uint32 score = 3;
+  string comment = 4;
+}
+
+// Response za dodajanje ocene
+message AddReviewResponse {
+  Review review = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+// Request za pridobivanje ocen
+message GetReviewsRequest {
+  string app_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  bool include_moderated_only = 4;
+}
+
+// Response za pridobivanje ocen
+message GetReviewsResponse {
+  repeated Review reviews = 1;
+  int32 total_count = 2;
+  double average_score = 3;
+}
+
+// Request za moderiranje komentarja
+message ModerateCommentRequest {
+  string review_id = 1;
+  ModerationType moderation_status = 2;
+  string moderator_id = 3;
+  string moderation_note = 4;
+}
+
+// Response za moderiranje komentarja
+message ModerateCommentResponse {
+  bool success = 1;
+  string message = 2;
+  Review updated_review = 3;
+}

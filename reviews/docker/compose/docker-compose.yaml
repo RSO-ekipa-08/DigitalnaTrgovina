@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: reviews_db
+    environment:
+      POSTGRES_DB: reviews_db
+      POSTGRES_USER: reviews_user
+      POSTGRES_PASSWORD: reviews_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+volumes:
+  postgres_data:
