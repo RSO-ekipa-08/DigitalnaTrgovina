@@ -21,7 +21,6 @@ func NewServer(auth *authenticator.Authenticator) *Server {
 	return &Server{auth: auth}
 }
 
-// Add this function
 func generateRandomState() (string, error) {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)
