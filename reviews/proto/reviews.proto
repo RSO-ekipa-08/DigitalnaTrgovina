@@ -34,7 +34,7 @@ enum ModerationType {
   REJECTED = 2;
 }
 
-// Request za dodajanje ocene
+// Request za dodajanje ocen
 message AddReviewRequest {
   string app_id = 1;
   string user_id = 2;
@@ -42,7 +42,7 @@ message AddReviewRequest {
   string comment = 4;
 }
 
-// Response za dodajanje ocene
+// Response ob dodatku ocene
 message AddReviewResponse {
   Review review = 1;
   bool success = 2;
@@ -57,7 +57,7 @@ message GetReviewsRequest {
   bool include_moderated_only = 4;
 }
 
-// Response za pridobivanje ocen
+// Response ob pridobitvi ocen
 message GetReviewsResponse {
   repeated Review reviews = 1;
   int32 total_count = 2;
@@ -72,7 +72,7 @@ message ModerateCommentRequest {
   string moderation_note = 4;
 }
 
-// Response za moderiranje komentarja
+// Response ob moderiranju komentarja
 message ModerateCommentResponse {
   bool success = 1;
   string message = 2;
