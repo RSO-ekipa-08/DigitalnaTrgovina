@@ -1,5 +1,4 @@
 use sqlx::PgPool;
-use sqlx::{types::time::OffsetDateTime, Postgres};
 use tonic::{Request, Response, Status};
 use uuid::Uuid;
 
@@ -53,7 +52,7 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
         let req = request.into_inner();
         let offset = (req.page * req.page_size) as i64;
 
-        let reviews = sqlx::query_as::<Postgres, Review>(
+        let reviews = sqlx::query_as::<_, Review>(
             r#"
             SELECT id, app_id, user_id, score, comment,
                    created_at, is_moderated, moderation_status, tenant_id
@@ -115,7 +114,7 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
         let review_id = Uuid::parse_str(&req.review_id)
             .map_err(|e| Status::invalid_argument(format!("Invalid UUID: {}", e)))?;
 
-        let review = sqlx::query_as::<Postgres, Review>(
+        let review = sqlx::query_as::<_, Review>(
             r#"
             UPDATE reviews
             SET is_moderated = true,
