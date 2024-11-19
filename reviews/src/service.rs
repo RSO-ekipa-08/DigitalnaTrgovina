@@ -1,5 +1,5 @@
-use sqlx::types::time::OffsetDateTime;
 use sqlx::PgPool;
+use sqlx::{types::time::OffsetDateTime, Postgres};
 use tonic::{Request, Response, Status};
 use uuid::Uuid;
 
@@ -23,40 +23,24 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
     ) -> Result<Response<AddReviewResponse>, Status> {
         let req = request.into_inner();
 
-        let review = sqlx::query!(
+        let review = sqlx::query_as::<_, Review>(
             r#"
             INSERT INTO reviews (app_id, user_id, score, comment, tenant_id)
             VALUES ($1, $2, $3, $4, $5)
             RETURNING id, app_id, user_id, score, comment,
                       created_at, is_moderated, moderation_status, tenant_id
-            "#,
-            req.app_id,
-            req.user_id,
-            req.score as i32,
-            req.comment,
-            req.tenant_id,
-        )
+            "#)
+            .bind(req.app_id)
+            .bind(req.user_id)
+        .bind(req.score as i32)
+        .bind(req.comment)
+        .bind(req.tenant_id)
         .fetch_one(&self.pool)
         .await
         .map_err(|e| Status::internal(format!("Failed to add review: {}", e)))?;
 
-        let created_at = review
-            .created_at
-            .unwrap_or_else(|| OffsetDateTime::now_utc());
-        let moderation_status = review.moderation_status.unwrap_or(0);
-
         Ok(Response::new(AddReviewResponse {
-            review: Some(Review {
-                id: review.id.to_string(),
-                app_id: review.app_id,
-                tenant_id: review.tenant_id,
-                user_id: review.user_id,
-                score: review.score as u32,
-                comment: review.comment.unwrap_or_default(),
-                created_at: created_at.to_string(),
-                is_moderated: review.is_moderated.unwrap_or_default(),
-                moderation_status,
-            }),
+            review: Some(review),
             success: true,
             message: "Review added successfully".to_string(),
         }))
@@ -69,7 +53,7 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
         let req = request.into_inner();
         let offset = (req.page * req.page_size) as i64;
 
-        let reviews = sqlx::query!(
+        let reviews = sqlx::query_as::<Postgres, Review>(
             r#"
             SELECT id, app_id, user_id, score, comment,
                    created_at, is_moderated, moderation_status, tenant_id
@@ -79,33 +63,15 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
             ORDER BY created_at DESC
             LIMIT $4 OFFSET $5
             "#,
-            req.app_id,
-            req.tenant_id,
-            req.include_moderated_only,
-            req.page_size as i64,
-            offset,
         )
+        .bind(&req.app_id)
+        .bind(&req.tenant_id)
+        .bind(&req.include_moderated_only)
+        .bind(req.page_size as i64)
+        .bind(offset)
         .fetch_all(&self.pool)
         .await
         .map_err(|e| Status::internal(format!("Failed to fetch reviews: {}", e)))?;
-
-        let reviews = reviews
-            .into_iter()
-            .map(|r| Review {
-                id: r.id.to_string(),
-                app_id: r.app_id,
-                tenant_id: r.tenant_id,
-                user_id: r.user_id,
-                score: r.score as u32,
-                comment: r.comment.unwrap_or_default(),
-                created_at: r
-                    .created_at
-                    .unwrap_or_else(|| OffsetDateTime::now_utc())
-                    .to_string(),
-                is_moderated: r.is_moderated.unwrap_or_default(),
-                moderation_status: r.moderation_status.unwrap_or(0),
-            })
-            .collect();
 
         let stats = sqlx::query!(
             r#"
@@ -125,8 +91,13 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
         .await
         .map_err(|e| Status::internal(format!("Failed to fetch review stats: {}", e)))?;
 
-        let total_count = stats.total_count.ok_or(Status::internal("Failed to get total review count."))?;
-        let average_score = stats.average_score.ok_or(Status::internal("Failed to get average score for reviews."))?;
+        let total_count = stats
+            .total_count
+            .ok_or(Status::internal("Failed to get total review count."))?;
+
+        let average_score = stats
+            .average_score
+            .ok_or(Status::internal("Failed to get average score for reviews."))?;
 
         Ok(Response::new(GetReviewsResponse {
             reviews,
@@ -144,7 +115,7 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
         let review_id = Uuid::parse_str(&req.review_id)
             .map_err(|e| Status::invalid_argument(format!("Invalid UUID: {}", e)))?;
 
-        let review = sqlx::query!(
+        let review = sqlx::query_as::<Postgres, Review>(
             r#"
             UPDATE reviews
             SET is_moderated = true,
@@ -155,12 +126,12 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
             RETURNING id, app_id, user_id, score, comment,
                       created_at, is_moderated, moderation_status
             "#,
-            req.moderation_status as i32,
-            req.moderator_id,
-            req.moderation_note,
-            review_id,
-            req.tenant_id,
         )
+        .bind(req.moderation_status)
+        .bind(req.moderator_id)
+        .bind(req.moderation_note)
+        .bind(review_id)
+        .bind(req.tenant_id)
         .fetch_one(&self.pool)
         .await
         .map_err(|e| Status::internal(format!("Failed to moderate review: {}", e)))?;
@@ -168,20 +139,7 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
         Ok(Response::new(ModerateCommentResponse {
             success: true,
             message: "Comment moderated successfully".to_string(),
-            updated_review: Some(Review {
-                id: review.id.to_string(),
-                app_id: review.app_id,
-                tenant_id: req.tenant_id,
-                user_id: review.user_id,
-                score: review.score as u32,
-                comment: review.comment.unwrap_or_default(),
-                created_at: review
-                    .created_at
-                    .unwrap_or_else(|| OffsetDateTime::now_utc())
-                    .to_string(),
-                is_moderated: review.is_moderated.unwrap_or_default(),
-                moderation_status: review.moderation_status.unwrap_or(0),
-            }),
+            updated_review: Some(review),
         }))
     }
 }

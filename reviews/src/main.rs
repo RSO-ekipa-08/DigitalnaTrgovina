@@ -1,7 +1,9 @@
 use std::env;
 use tonic::transport::Server;
 
+mod extension;
 mod service;
+
 mod reviews_proto {
     tonic::include_proto!("reviews");
 }
