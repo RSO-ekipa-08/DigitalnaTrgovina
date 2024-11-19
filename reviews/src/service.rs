@@ -130,7 +130,7 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
 
         Ok(Response::new(GetReviewsResponse {
             reviews,
-            total_count: total_count as i32,
+            total_count: total_count as u32,
             average_score,
         }))
     }
