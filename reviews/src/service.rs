@@ -25,15 +25,16 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
 
         let review = sqlx::query!(
             r#"
-            INSERT INTO reviews (app_id, user_id, score, comment)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO reviews (app_id, user_id, score, comment, tenant_id)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING id, app_id, user_id, score, comment,
-                      created_at, is_moderated, moderation_status
+                      created_at, is_moderated, moderation_status, tenant_id
             "#,
             req.app_id,
             req.user_id,
             req.score as i32,
             req.comment,
+            req.tenant_id,
         )
         .fetch_one(&self.pool)
         .await
@@ -48,12 +49,13 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
             review: Some(Review {
                 id: review.id.to_string(),
                 app_id: review.app_id,
+                tenant_id: review.tenant_id,
                 user_id: review.user_id,
                 score: review.score as u32,
                 comment: review.comment.unwrap_or_default(),
                 created_at: created_at.to_string(),
                 is_moderated: review.is_moderated.unwrap_or_default(),
-                moderation_status: moderation_status,
+                moderation_status,
             }),
             success: true,
             message: "Review added successfully".to_string(),
@@ -70,14 +72,15 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
         let reviews = sqlx::query!(
             r#"
             SELECT id, app_id, user_id, score, comment,
-                   created_at, is_moderated, moderation_status
+                   created_at, is_moderated, moderation_status, tenant_id
             FROM reviews
-            WHERE app_id = $1
-            AND ($2 = false OR is_moderated = true)
+            WHERE app_id = $1 AND tenant_id = $2
+            AND ($3 = false OR is_moderated = true)
             ORDER BY created_at DESC
-            LIMIT $3 OFFSET $4
+            LIMIT $4 OFFSET $5
             "#,
             req.app_id,
+            req.tenant_id,
             req.include_moderated_only,
             req.page_size as i64,
             offset,
@@ -91,6 +94,7 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
             .map(|r| Review {
                 id: r.id.to_string(),
                 app_id: r.app_id,
+                tenant_id: r.tenant_id,
                 user_id: r.user_id,
                 score: r.score as u32,
                 comment: r.comment.unwrap_or_default(),
@@ -103,10 +107,31 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
             })
             .collect();
 
+        let stats = sqlx::query!(
+            r#"
+            SELECT
+                COUNT(*) as total_count,
+                COALESCE(AVG(score::float8), 0.0) as average_score
+            FROM reviews
+            WHERE app_id = $1
+            AND tenant_id = $2
+            AND ($3 = false OR is_moderated = true)
+            "#,
+            req.app_id,
+            req.tenant_id,
+            req.include_moderated_only,
+        )
+        .fetch_one(&self.pool)
+        .await
+        .map_err(|e| Status::internal(format!("Failed to fetch review stats: {}", e)))?;
+
+        let total_count = stats.total_count.ok_or(Status::internal("Failed to get total review count."))?;
+        let average_score = stats.average_score.ok_or(Status::internal("Failed to get average score for reviews."))?;
+
         Ok(Response::new(GetReviewsResponse {
             reviews,
-            total_count: 0,     // TODO: Implement count
-            average_score: 0.0, // TODO: Implement average
+            total_count: total_count as i32,
+            average_score,
         }))
     }
 
@@ -126,7 +151,7 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
                 moderation_status = $1,
                 moderator_id = $2,
                 moderation_note = $3
-            WHERE id = $4
+            WHERE id = $4 AND tenant_id = $5
             RETURNING id, app_id, user_id, score, comment,
                       created_at, is_moderated, moderation_status
             "#,
@@ -134,6 +159,7 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
             req.moderator_id,
             req.moderation_note,
             review_id,
+            req.tenant_id,
         )
         .fetch_one(&self.pool)
         .await
@@ -145,6 +171,7 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
             updated_review: Some(Review {
                 id: review.id.to_string(),
                 app_id: review.app_id,
+                tenant_id: req.tenant_id,
                 user_id: review.user_id,
                 score: review.score as u32,
                 comment: review.comment.unwrap_or_default(),

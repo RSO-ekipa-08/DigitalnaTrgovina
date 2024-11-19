@@ -25,6 +25,7 @@ message Review {
   string created_at = 6;
   bool is_moderated = 7;
   ModerationType moderation_status = 8;
+  string tenant_id = 9;
 }
 
 // Enum za status moderacije
@@ -40,6 +41,7 @@ message AddReviewRequest {
   string user_id = 2;
   uint32 score = 3;
   string comment = 4;
+  string tenant_id = 5;
 }
 
 // Response ob dodatku ocene
@@ -55,6 +57,7 @@ message GetReviewsRequest {
   int32 page = 2;
   int32 page_size = 3;
   bool include_moderated_only = 4;
+  string tenant_id = 5;
 }
 
 // Response ob pridobitvi ocen
@@ -70,6 +73,7 @@ message ModerateCommentRequest {
   ModerationType moderation_status = 2;
   string moderator_id = 3;
   string moderation_note = 4;
+  string tenant_id = 5;
 }
 
 // Response ob moderiranju komentarja
