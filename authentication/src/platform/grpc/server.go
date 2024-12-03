@@ -10,6 +10,10 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+
+	"github.com/coreos/go-oidc/v3/oidc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Server struct {
@@ -75,4 +79,40 @@ func (s *Server) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutR
 		os.Getenv("AUTH0_CLIENT_ID"))
 
 	return &pb.LogoutResponse{LogoutUrl: logoutURL}, nil
+}
+
+func (s *Server) VerifyToken(ctx context.Context, req *pb.VerifyTokenRequest) (*pb.VerifyTokenResponse, error) {
+	// Parse and verify the token
+	token, err := s.auth.Provider.Verifier(&oidc.Config{
+		ClientID: s.auth.ClientID,
+	}).Verify(ctx, req.Token)
+
+	if err != nil {
+		return &pb.VerifyTokenResponse{
+			IsValid: false,
+		}, nil
+	}
+
+	// Extract claims
+	var claims map[string]interface{}
+	if err := token.Claims(&claims); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to parse claims: %v", err)
+	}
+
+	// Convert claims to string map
+	stringClaims := make(map[string]string)
+	for k, v := range claims {
+		if str, ok := v.(string); ok {
+			stringClaims[k] = str
+		} else {
+			// Convert non-string values to string representation
+			stringClaims[k] = fmt.Sprintf("%v", v)
+		}
+	}
+
+	return &pb.VerifyTokenResponse{
+		IsValid: true,
+		UserId:  claims["sub"].(string),
+		Claims:  stringClaims,
+	}, nil
 }

@@ -3,4 +3,4 @@ proto:
 	mkdir -p src/gen/proto
 	protoc --go_out=./src/gen --go_opt=module=authentication/src/gen \
 		--go-grpc_out=./src/gen --go-grpc_opt=module=authentication/src/gen \
-		src/proto/auth.proto
+		proto/auth.proto

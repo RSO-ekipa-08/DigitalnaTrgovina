@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.21.12
-// source: src/proto/auth.proto
+// source: proto/auth.proto
 
 package proto
 
@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_Login_FullMethodName  = "/auth.AuthService/Login"
-	AuthService_Verify_FullMethodName = "/auth.AuthService/Verify"
-	AuthService_Logout_FullMethodName = "/auth.AuthService/Logout"
+	AuthService_Login_FullMethodName       = "/auth.AuthService/Login"
+	AuthService_Verify_FullMethodName      = "/auth.AuthService/Verify"
+	AuthService_Logout_FullMethodName      = "/auth.AuthService/Logout"
+	AuthService_VerifyToken_FullMethodName = "/auth.AuthService/VerifyToken"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -31,6 +32,9 @@ type AuthServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Verify(ctx context.Context, in *VerifyRequest, opts ...grpc.CallOption) (*VerifyResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
+	// Method for querying users
+	// rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+	VerifyToken(ctx context.Context, in *VerifyTokenRequest, opts ...grpc.CallOption) (*VerifyTokenResponse, error)
 }
 
 type authServiceClient struct {
@@ -71,6 +75,16 @@ func (c *authServiceClient) Logout(ctx context.Context, in *LogoutRequest, opts 
 	return out, nil
 }
 
+func (c *authServiceClient) VerifyToken(ctx context.Context, in *VerifyTokenRequest, opts ...grpc.CallOption) (*VerifyTokenResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(VerifyTokenResponse)
+	err := c.cc.Invoke(ctx, AuthService_VerifyToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -78,6 +92,9 @@ type AuthServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Verify(context.Context, *VerifyRequest) (*VerifyResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
+	// Method for querying users
+	// rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+	VerifyToken(context.Context, *VerifyTokenRequest) (*VerifyTokenResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -96,6 +113,9 @@ func (UnimplementedAuthServiceServer) Verify(context.Context, *VerifyRequest) (*
 }
 func (UnimplementedAuthServiceServer) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedAuthServiceServer) VerifyToken(context.Context, *VerifyTokenRequest) (*VerifyTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyToken not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -172,6 +192,24 @@ func _AuthService_Logout_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_VerifyToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).VerifyToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_VerifyToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).VerifyToken(ctx, req.(*VerifyTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -191,7 +229,11 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Logout",
 			Handler:    _AuthService_Logout_Handler,
 		},
+		{
+			MethodName: "VerifyToken",
+			Handler:    _AuthService_VerifyToken_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "src/proto/auth.proto",
+	Metadata: "proto/auth.proto",
 }

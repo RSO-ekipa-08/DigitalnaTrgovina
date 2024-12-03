@@ -7,7 +7,22 @@ service AuthService {
   rpc Login(LoginRequest) returns (LoginResponse) {}
   rpc Verify(VerifyRequest) returns (VerifyResponse) {}
   rpc Logout(LogoutRequest) returns (LogoutResponse) {}
+
+  // Method for querying users
+  // rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+  rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse) {}
 }
+
+message VerifyTokenRequest {
+  string token = 1;
+}
+
+message VerifyTokenResponse {
+  bool is_valid = 1;
+  string user_id = 2;
+  map<string, string> claims = 3;
+}
+
 
 message LoginRequest {
   string redirect_url = 1;
