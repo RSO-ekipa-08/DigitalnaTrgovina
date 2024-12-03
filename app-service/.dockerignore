@@ -1,0 +1,29 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# IDE
+.idea
+.vscode
+
+# Binaries and temp files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.log
+tmp/
+
+# Environment files
+.env
+.env.*
+
+# Generated files # TODO: Uncomment when sqlc is used
+# internal/database/generated/ 
