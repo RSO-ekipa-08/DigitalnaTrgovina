@@ -11,3 +11,8 @@ docker compose -f docker/docker-compose.yaml up -d
 ```bash
 SQLX_OFFLINE=true cargo run
 ```
+SQLX_OFFLINE omogoča gradnjo z offline preverjanjem s podatki iz mape `.sqlx`.
+Podatke v `json` obliki dobimo z ukazom
+```bash
+cargo sqlx prepare
+```
