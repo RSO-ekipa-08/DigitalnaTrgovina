@@ -5,7 +5,7 @@ mod extension;
 mod service;
 
 mod reviews_proto {
-    tonic::include_proto!("reviews");
+    include!("gen/proto/reviews.rs");
 }
 
 use reviews_proto::review_service_server::ReviewServiceServer;

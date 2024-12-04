@@ -5,9 +5,9 @@
 ## Poganjanje
 1. Poženi bazo podatkov (`docker/compose/docker-compose.yaml`):
 ```bash
-docker compose -f docker/compose/docker-compose.yaml up -d
+docker compose -f docker/docker-compose.yaml up -d
 ```
 2. Poženi mikrostoritev (`reviews`):
 ```bash
-cargo run
+SQLX_OFFLINE=true cargo run
 ```

@@ -28,9 +28,10 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
             VALUES ($1, $2, $3, $4, $5)
             RETURNING id, app_id, user_id, score, comment,
                       created_at, is_moderated, moderation_status, tenant_id
-            "#)
-            .bind(req.app_id)
-            .bind(req.user_id)
+            "#,
+        )
+        .bind(req.app_id)
+        .bind(req.user_id)
         .bind(req.score as i32)
         .bind(req.comment)
         .bind(req.tenant_id)
