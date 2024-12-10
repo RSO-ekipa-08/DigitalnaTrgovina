@@ -7,6 +7,10 @@
 ```bash
 docker compose -f docker/docker-compose.yaml up -d
 ```
+2. Migracije baze podatkov (`cargo install sqlx-cli`):
+```bash
+sqlx migrate run --source db/migrations
+```
 2. Poženi mikrostoritev (`reviews`):
 ```bash
 SQLX_OFFLINE=true cargo run

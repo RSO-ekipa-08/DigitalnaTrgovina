@@ -46,6 +46,37 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
         }))
     }
 
+    async fn get_review(
+        &self,
+        request: Request<GetReviewRequest>,
+    ) -> Result<Response<GetReviewResponse>, Status> {
+        let req = request.into_inner();
+
+        let review_id = Uuid::parse_str(&req.review_id)
+            .map_err(|e| Status::invalid_argument(format!("Invalid UUID: {}", e)))?;
+
+        let review = sqlx::query_as::<_, Review>(
+            r#"
+            SELECT id, app_id, user_id, score, comment,
+                   created_at, is_moderated, moderation_status, tenant_id
+            FROM reviews
+            WHERE id = $1 AND tenant_id = $2
+            "#,
+        )
+        .bind(review_id)
+        .bind(&req.tenant_id)
+        .fetch_one(&self.pool)
+        .await
+        .map_err(|e| match e {
+            sqlx::Error::RowNotFound => Status::not_found("Review not found"),
+            _ => Status::internal(format!("Failed to fetch review: {}", e)),
+        })?;
+
+        Ok(Response::new(GetReviewResponse {
+            review: Some(review),
+        }))
+    }
+
     async fn get_reviews(
         &self,
         request: Request<GetReviewsRequest>,
@@ -103,6 +134,77 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
             reviews,
             total_count: total_count as u32,
             average_score,
+        }))
+    }
+
+    async fn update_review(
+        &self,
+        request: Request<UpdateReviewRequest>,
+    ) -> Result<Response<UpdateReviewResponse>, Status> {
+        let req = request.into_inner();
+
+        let review_id = Uuid::parse_str(&req.review_id)
+            .map_err(|e| Status::invalid_argument(format!("Invalid UUID: {}", e)))?;
+
+        let review = sqlx::query_as::<_, Review>(
+            r#"
+            UPDATE reviews
+            SET score = $1,
+                comment = $2
+            WHERE id = $3 AND tenant_id = $4
+            RETURNING id, app_id, user_id, score, comment,
+                      created_at, is_moderated, moderation_status, tenant_id
+            "#,
+        )
+        .bind(req.score as i32)
+        .bind(&req.comment)
+        .bind(review_id)
+        .bind(&req.tenant_id)
+        .fetch_one(&self.pool)
+        .await
+        .map_err(|e| match e {
+            sqlx::Error::RowNotFound => Status::not_found("Review not found"),
+            _ => Status::internal(format!("Failed to update review: {}", e)),
+        })?;
+
+        Ok(Response::new(UpdateReviewResponse {
+            review: Some(review),
+            success: true,
+            message: "Review updated successfully".to_string(),
+        }))
+    }
+
+    async fn delete_review(
+        &self,
+        request: Request<DeleteReviewRequest>,
+    ) -> Result<Response<DeleteReviewResponse>, Status> {
+        let req = request.into_inner();
+
+        let review_id = Uuid::parse_str(&req.review_id)
+            .map_err(|e| Status::invalid_argument(format!("Invalid UUID: {}", e)))?;
+
+        let result = sqlx::query!(
+            r#"
+            DELETE FROM reviews
+            WHERE id = $1 AND tenant_id = $2
+            "#,
+            review_id,
+            req.tenant_id
+        )
+        .execute(&self.pool)
+        .await
+        .map_err(|e| Status::internal(format!("Failed to delete review: {}", e)))?;
+
+        if result.rows_affected() == 0 {
+            return Ok(Response::new(DeleteReviewResponse {
+                success: false,
+                message: "Review not found".to_string(),
+            }));
+        }
+
+        Ok(Response::new(DeleteReviewResponse {
+            success: true,
+            message: "Review deleted successfully".to_string(),
         }))
     }
 

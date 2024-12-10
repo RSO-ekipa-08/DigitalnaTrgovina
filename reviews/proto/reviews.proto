@@ -3,16 +3,55 @@ package reviews;
 
 option go_package = "reviews/proto";
 
-// Glavni service za ocene in komentarje
 service ReviewService {
-  // Dodajanje nove ocene in komentarja
+  // Create
   rpc AddReview (AddReviewRequest) returns (AddReviewResponse);
 
-  // Pridobivanje ocen in komentarjev za aplikacijo
+  // Read
+  rpc GetReview (GetReviewRequest) returns (GetReviewResponse);
   rpc GetReviews (GetReviewsRequest) returns (GetReviewsResponse);
 
-  // Moderiranje komentarjev
+  // Update
+  rpc UpdateReview (UpdateReviewRequest) returns (UpdateReviewResponse);
+
+  // Delete
+  rpc DeleteReview (DeleteReviewRequest) returns (DeleteReviewResponse);
+
+  // Existing moderation endpoint
   rpc ModerateComment (ModerateCommentRequest) returns (ModerateCommentResponse);
+}
+
+// Add new messages for CRUD operations
+message GetReviewRequest {
+  string review_id = 1;
+  string tenant_id = 2;
+}
+
+message GetReviewResponse {
+  Review review = 1;
+}
+
+message UpdateReviewRequest {
+  string review_id = 1;
+  string tenant_id = 2;
+  uint32 score = 3;
+  string comment = 4;
+}
+
+message UpdateReviewResponse {
+  Review review = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message DeleteReviewRequest {
+  string review_id = 1;
+  string tenant_id = 2;
+}
+
+message DeleteReviewResponse {
+  bool success = 1;
+  string message = 2;
 }
 
 // Model za oceno in komentar
