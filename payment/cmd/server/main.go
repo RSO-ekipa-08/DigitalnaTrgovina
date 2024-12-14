@@ -111,7 +111,7 @@ func handleWebhook(w http.ResponseWriter, req *http.Request) {
 			return
 	  }
 	  log.Printf("Successful payment for %d.", paymentIntent.Amount)
-	  metadata := paymentIntent.Metadata
+	  _ = paymentIntent.Metadata
 	case "checkout.session.completed":
 		var session stripe.CheckoutSession
 		err := json.Unmarshal(event.Data.Raw, &session)
