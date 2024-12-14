@@ -115,7 +115,7 @@ jobs:
         with:
           context: ./app-service
           push: true
-          tags: ghcr.io/rso-ekipa-08/digitalnatrgovina/app-service:latest
+          tags: ghcr.io/rso-ekipa-08/app-service:latest
 
       - name: Set up Kubectl
         uses: azure/setup-kubectl@v3
@@ -154,7 +154,7 @@ jobs:
         uses: azure/k8s-deploy@v5
         with:
           # action: deploy
-          images: ghcr.io/rso-ekipa-08/digitalnatrgovina/app-service:latest
+          images: ghcr.io/rso-ekipa-08/app-service:latest
           imagepullsecrets: registry-creds
           manifests: |
               app-service/k8s
