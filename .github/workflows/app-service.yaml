@@ -110,12 +110,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Downcase the repository name
+        run: echo "${GITHUB_REPOSITORY@L}" >> "${REPO}"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: ./app-service
           push: true
-          tags: ghcr.io/${{ github.repository }}/app-service:latest
+          tags: ghcr.io/${{ env.REPO }}/app-service:latest
 
       - name: Set up Kubectl
         uses: azure/setup-kubectl@v3
@@ -154,7 +157,7 @@ jobs:
         uses: azure/k8s-deploy@v5
         with:
           # action: deploy
-          images: ghcr.io/${{ github.repository }}/app-service:latest
+          images: ghcr.io/${{ env.REPO }}/app-service:latest
           imagepullsecrets: registry-creds
           manifests: |
               app-service/k8s
