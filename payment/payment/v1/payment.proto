@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package payment.v1;
+
+option go_package = "github.com/RSO-ekipa-08/DigitalnaTrgovina/gen/payment/v1;paymentv1";
+
+message PayRequest {
+  string user_id = 1;
+  string app_id = 2;
+}
+
+message PayResponse {
+  string stripe_link = 1;
+}
+
+service PaymentService {
+  rpc Pay(PayRequest) returns (PayResponse) {}
+}
