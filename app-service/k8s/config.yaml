@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-service-config
+data:
+  storage-endpoint: "storage.azure.com"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-service-secrets
+type: Opaque
+stringData:
+  database-url: "postgres://user:pass@host:5432/db?sslmode=verify-full"
+  storage-access-key: "your-access-key"
+  storage-secret-key: "your-secret-key" 

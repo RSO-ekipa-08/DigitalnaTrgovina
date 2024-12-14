@@ -1,0 +1,171 @@
+syntax = "proto3";
+
+package app.v1;
+
+option go_package = "github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/gen/app/v1;appv1";
+
+import "google/protobuf/timestamp.proto";
+
+// Common models
+message Error {
+  string code = 1;
+  string message = 2;
+  map<string, string> details = 3;
+}
+
+message PaginationRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message PaginationResponse {
+  int32 total_items = 1;
+  int32 total_pages = 2;
+  int32 current_page = 3;
+  int32 page_size = 4;
+}
+
+message SortOrder {
+  string field = 1;
+  bool ascending = 2;
+}
+
+// Application related models
+message Application {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string developer_id = 4;
+  string category = 5;
+  double price = 6;
+  int64 size = 7;
+  string min_android_version = 8;
+  string current_version = 9;
+  repeated string tags = 10;
+  repeated string screenshots = 11;
+  double rating = 12;
+  int32 downloads = 13;
+  google.protobuf.Timestamp created_at = 14;
+  google.protobuf.Timestamp updated_at = 15;
+  string storage_url = 16;
+}
+
+message Category {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
+
+message Download {
+  string id = 1;
+  string user_id = 2;
+  string application_id = 3;
+  google.protobuf.Timestamp timestamp = 4;
+  string ip_address = 5;
+  bool success = 6;
+  string error_message = 7;
+}
+
+// Request/Response messages
+message CreateApplicationRequest {
+  string name = 1;
+  string description = 2;
+  string developer_id = 3;
+  string category = 4;
+  double price = 5;
+  int64 size = 6;
+  string min_android_version = 7;
+  string current_version = 8;
+  repeated string tags = 9;
+  repeated string screenshots = 10;
+  bytes apk_file = 11;
+}
+
+message CreateApplicationResponse {
+  Application application = 1;
+}
+
+message UpdateApplicationRequest {
+  string id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  optional string category = 4;
+  optional double price = 5;
+  optional string min_android_version = 6;
+  optional string current_version = 7;
+  repeated string tags = 8;
+  repeated string screenshots = 9;
+  optional bytes apk_file = 10;
+}
+
+message UpdateApplicationResponse {
+  Application application = 1;
+}
+
+message GetApplicationRequest {
+  string id = 1;
+}
+
+message GetApplicationResponse {
+  Application application = 1;
+}
+
+message DeleteApplicationRequest {
+  string id = 1;
+}
+
+message DeleteApplicationResponse {
+  Application application = 1;
+}
+
+message SearchApplicationsRequest {
+  string query = 1;
+  optional string category = 2;
+  optional double min_price = 3;
+  optional double max_price = 4;
+  optional string min_android_version = 5;
+  repeated string tags = 6;
+  PaginationRequest pagination = 7;
+  repeated SortOrder sort = 8;
+}
+
+message SearchApplicationsResponse {
+  repeated Application applications = 1;
+  PaginationResponse pagination = 2;
+}
+
+message DownloadApplicationRequest {
+  string application_id = 1;
+  string user_id = 2;
+}
+
+message DownloadApplicationResponse {
+  string download_url = 1;
+  google.protobuf.Timestamp expires_at = 2;
+}
+
+message ListCategoriesRequest {
+  PaginationRequest pagination = 1;
+}
+
+message ListCategoriesResponse {
+  repeated Category categories = 1;
+  PaginationResponse pagination = 2;
+}
+
+// Application service definition
+service ApplicationService {
+  // Application management
+  rpc CreateApplication(CreateApplicationRequest) returns (CreateApplicationResponse) {}
+  rpc GetApplication(GetApplicationRequest) returns (GetApplicationResponse) {}
+  rpc UpdateApplication(UpdateApplicationRequest) returns (UpdateApplicationResponse) {}
+  rpc DeleteApplication(DeleteApplicationRequest) returns (DeleteApplicationResponse) {}
+  
+  // Search and discovery
+  rpc SearchApplications(SearchApplicationsRequest) returns (SearchApplicationsResponse) {}
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse) {}
+  
+  // Download management
+  rpc DownloadApplication(DownloadApplicationRequest) returns (DownloadApplicationResponse) {}
+} 
