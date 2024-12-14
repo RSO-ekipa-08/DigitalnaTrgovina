@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            DELETE FROM reviews\n            WHERE id = $1 AND tenant_id = $2\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "79a211510d0190f6fdb37c92c22bbba48e4b88e124f75acbe5fc3d13a1e29eaa"
+}
