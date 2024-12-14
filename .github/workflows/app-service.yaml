@@ -87,7 +87,10 @@
 name: Build and Deploy App Service to Azure Kubernetes Service
 
 permissions:
+  attestations: write
   id-token: write
+  contents: read
+  packages: write
 
 on:
   workflow_dispatch:
@@ -115,10 +118,18 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
+        id: push
         with:
           context: ./app-service
           push: true
           tags: ghcr.io/rso-ekipa-08/app-service:latest
+      
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ghcr.io/rso-ekipa-08/app-service
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
 
       - name: Set up Kubectl
         uses: azure/setup-kubectl@v3
