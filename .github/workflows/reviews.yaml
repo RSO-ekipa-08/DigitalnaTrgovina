@@ -34,7 +34,7 @@ jobs:
         id: push
         with:
           context: ./reviews
-          file: ./docker/Dockerfile
+          file: reviews/docker/Dockerfile
           push: true
           tags: ghcr.io/rso-ekipa-08/reviews:latest
       
