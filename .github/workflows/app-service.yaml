@@ -86,6 +86,9 @@
 
 name: Build and Deploy App Service to Azure Kubernetes Service
 
+permissions:
+  id-token: write
+
 on:
   workflow_dispatch:
   push:
@@ -131,6 +134,13 @@ jobs:
 
     #   - name: Get Kubeconfig
     #     run: az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }}
+
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
 
       - name: Gets K8s context
         uses: azure/aks-set-context@v4
