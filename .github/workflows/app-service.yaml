@@ -110,15 +110,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Downcase the repository name
-        run: echo "${GITHUB_REPOSITORY@L}" >> "${REPO}"
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: ./app-service
           push: true
-          tags: ghcr.io/${{ env.REPO }}/app-service:latest
+          tags: app-service:latest
 
       - name: Set up Kubectl
         uses: azure/setup-kubectl@v3
