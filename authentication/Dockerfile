@@ -1,5 +1,7 @@
 FROM golang:1.23-alpine
 
+RUN apk add --no-cache make protoc protobuf-dev
+
 # Define current working directory
 WORKDIR /authentication
 
