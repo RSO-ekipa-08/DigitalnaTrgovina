@@ -1,10 +1,8 @@
 # Namespace
 resource "kubernetes_namespace" "rso" {
   metadata {
-    name = var.project_name
+    name = "rso"
   }
-
-  depends_on = [azurerm_kubernetes_cluster.aks]
 }
 
 # ConfigMap
@@ -15,18 +13,16 @@ resource "kubernetes_config_map" "rso_config" {
   }
 
   data = {
-    ENVIRONMENT         = var.environment
-    DB_HOST            = azurerm_postgresql_flexible_server.postgresql.fqdn
+    ENVIRONMENT         = "prod"
+    DB_HOST            = data.terraform_remote_state.aks.outputs.postgresql_server_fqdn
     DB_PORT            = "5432"
-    DB_USER            = azurerm_postgresql_flexible_server.postgresql.administrator_login
-    DB_NAME            = var.project_name
+    DB_USER            = "psqladmin"
+    DB_NAME            = "rso"
     AUTH_SERVICE_URL   = "http://auth-service:8080"
     PAYMENT_SERVICE_URL = "http://payment-service:8080"
     REVIEWS_SERVICE_URL = "http://reviews-service:8080"
     APP_SERVICE_URL    = "http://app-service:8080"
   }
-
-  depends_on = [kubernetes_namespace.rso]
 }
 
 # Secret
@@ -37,11 +33,9 @@ resource "kubernetes_secret" "rso_secrets" {
   }
 
   data = {
-    DB_PASSWORD = azurerm_postgresql_flexible_server.postgresql.administrator_password
+    DB_PASSWORD = var.postgresql_password
     JWT_SECRET  = var.jwt_secret
   }
-
-  depends_on = [kubernetes_namespace.rso]
 }
 
 # Auth Service
@@ -111,8 +105,6 @@ resource "kubernetes_deployment" "auth" {
       }
     }
   }
-
-  depends_on = [kubernetes_config_map.rso_config, kubernetes_secret.rso_secrets]
 }
 
 resource "kubernetes_service" "auth" {
@@ -202,8 +194,6 @@ resource "kubernetes_deployment" "payment" {
       }
     }
   }
-
-  depends_on = [kubernetes_config_map.rso_config, kubernetes_secret.rso_secrets]
 }
 
 resource "kubernetes_service" "payment" {
@@ -293,8 +283,6 @@ resource "kubernetes_deployment" "reviews" {
       }
     }
   }
-
-  depends_on = [kubernetes_config_map.rso_config, kubernetes_secret.rso_secrets]
 }
 
 resource "kubernetes_service" "reviews" {
@@ -384,8 +372,6 @@ resource "kubernetes_deployment" "app" {
       }
     }
   }
-
-  depends_on = [kubernetes_config_map.rso_config, kubernetes_secret.rso_secrets]
 }
 
 resource "kubernetes_service" "app" {
