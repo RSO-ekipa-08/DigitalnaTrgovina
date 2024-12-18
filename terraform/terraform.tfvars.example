@@ -1,0 +1,16 @@
+# Osnovne nastavitve
+project_name = "rso"
+environment  = "prod"
+location     = "germanywestcentral"
+
+# AKS nastavitve
+kubernetes_version = "1.31"
+node_count        = 1
+node_size         = "Standard_B2s"
+
+# PostgreSQL nastavitve
+postgresql_sku     = "B_Standard_B1ms"
+postgresql_storage = 32768  # 32GB
+
+# Občutljivi podatki - TO-DO: Spremenite te vrednosti!
+jwt_secret = "change-me-in-production" 
