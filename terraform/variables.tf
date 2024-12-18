@@ -56,4 +56,10 @@ variable "postgresql_password" {
   description = "Geslo za PostgreSQL administratorja"
   type        = string
   sensitive   = true
-} 
+}
+
+variable "subscription_id" {
+  description = "Azure subscription ID"
+  type        = string
+  sensitive   = true
+}

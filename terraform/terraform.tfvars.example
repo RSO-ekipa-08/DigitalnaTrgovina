@@ -14,3 +14,7 @@ postgresql_storage = 32768  # 32GB
 
 # Občutljivi podatki - TO-DO: Spremenite te vrednosti!
 jwt_secret = "change-me-in-production" 
+postgresql_password = "change-me-in-production"
+
+# Azure subscription ID
+subscription_id = "change-me-in-production"
