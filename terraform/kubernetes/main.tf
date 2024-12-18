@@ -93,14 +93,14 @@ resource "kubernetes_deployment" "auth" {
             }
           }
 
-          readiness_probe {
-            http_get {
-              path = "/health"
-              port = 8080
-            }
-            initial_delay_seconds = 5
-            period_seconds       = 10
-          }
+        #   readiness_probe {
+        #     http_get {
+        #       path = "/health"
+        #       port = 8080
+        #     }
+        #     initial_delay_seconds = 5
+        #     period_seconds       = 10
+        #   }
         }
       }
     }
@@ -182,14 +182,14 @@ resource "kubernetes_deployment" "payment" {
             }
           }
 
-          readiness_probe {
-            http_get {
-              path = "/health"
-              port = 8080
-            }
-            initial_delay_seconds = 5
-            period_seconds       = 10
-          }
+        #   readiness_probe {
+        #     http_get {
+        #       path = "/health"
+        #       port = 8080
+        #     }
+        #     initial_delay_seconds = 5
+        #     period_seconds       = 10
+        #   }
         }
       }
     }
@@ -271,14 +271,14 @@ resource "kubernetes_deployment" "reviews" {
             }
           }
 
-          readiness_probe {
-            http_get {
-              path = "/health"
-              port = 8080
-            }
-            initial_delay_seconds = 5
-            period_seconds       = 10
-          }
+        #   readiness_probe {
+        #     http_get {
+        #       path = "/health"
+        #       port = 8080
+        #     }
+        #     initial_delay_seconds = 5
+        #     period_seconds       = 10
+        #   }
         }
       }
     }
@@ -360,14 +360,14 @@ resource "kubernetes_deployment" "app" {
             }
           }
 
-          readiness_probe {
-            http_get {
-              path = "/health"
-              port = 8080
-            }
-            initial_delay_seconds = 5
-            period_seconds       = 10
-          }
+        #   readiness_probe {
+        #     http_get {
+        #       path = "/health"
+        #       port = 8080
+        #     }
+        #     initial_delay_seconds = 5
+        #     period_seconds       = 10
+        #   }
         }
       }
     }
