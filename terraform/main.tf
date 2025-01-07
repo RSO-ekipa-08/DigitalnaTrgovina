@@ -67,7 +67,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgresql" {
 
 # PostgreSQL Flexible Server
 resource "azurerm_postgresql_flexible_server" "postgresql" {
-  name                   = "${var.project_name}-${var.environment}-psql"
+  name                   = "${var.project_name}-${var.environment}-psql-${random_string.suffix.result}"
   resource_group_name    = azurerm_resource_group.rg.name
   location               = azurerm_resource_group.rg.location
   version                = "14"
@@ -134,4 +134,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
     service_cidr      = "172.16.0.0/16"
     dns_service_ip    = "172.16.0.10"
   }
+}
+
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+  upper   = false
 }
