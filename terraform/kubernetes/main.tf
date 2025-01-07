@@ -14,14 +14,14 @@ resource "kubernetes_config_map" "rso_config" {
 
   data = {
     ENVIRONMENT         = "prod"
-    DB_HOST            = data.terraform_remote_state.aks.outputs.postgresql_server_fqdn
-    DB_PORT            = "5432"
-    DB_USER            = "psqladmin"
-    DB_NAME            = "rso"
-    AUTH_SERVICE_URL   = "http://auth-service:8080"
+    DB_HOST             = ""
+    DB_PORT             = "5432"
+    DB_USER             = "psqladmin"
+    DB_NAME             = "rso"
+    AUTH_SERVICE_URL    = "http://auth-service:8080"
     PAYMENT_SERVICE_URL = "http://payment-service:8080"
     REVIEWS_SERVICE_URL = "http://reviews-service:8080"
-    APP_SERVICE_URL    = "http://app-service:8080"
+    APP_SERVICE_URL     = "http://app-service:8080"
   }
 }
 
@@ -35,95 +35,6 @@ resource "kubernetes_secret" "rso_secrets" {
   data = {
     DB_PASSWORD = var.postgresql_password
     JWT_SECRET  = var.jwt_secret
-  }
-}
-
-# Auth Service
-resource "kubernetes_deployment" "auth" {
-  metadata {
-    name      = "auth-service"
-    namespace = kubernetes_namespace.rso.metadata[0].name
-  }
-
-  spec {
-    replicas = 1
-
-    selector {
-      match_labels = {
-        app = "auth-service"
-      }
-    }
-
-    template {
-      metadata {
-        labels = {
-          app = "auth-service"
-        }
-      }
-
-      spec {
-        container {
-          name  = "auth-service"
-          image = "ghcr.io/rso-ekipa-08/authentication:latest"
-
-          port {
-            container_port = 8080
-          }
-
-          env_from {
-            config_map_ref {
-              name = kubernetes_config_map.rso_config.metadata[0].name
-            }
-          }
-
-          env_from {
-            secret_ref {
-              name = kubernetes_secret.rso_secrets.metadata[0].name
-            }
-          }
-
-          resources {
-            requests = {
-              cpu    = "100m"
-              memory = "128Mi"
-            }
-            limits = {
-              cpu    = "200m"
-              memory = "256Mi"
-            }
-          }
-
-        #   readiness_probe {
-        #     http_get {
-        #       path = "/health"
-        #       port = 8080
-        #     }
-        #     initial_delay_seconds = 5
-        #     period_seconds       = 10
-        #   }
-        }
-      }
-    }
-  }
-}
-
-resource "kubernetes_service" "auth" {
-  metadata {
-    name      = "auth-service"
-    namespace = kubernetes_namespace.rso.metadata[0].name
-  }
-
-  spec {
-    selector = {
-      app = kubernetes_deployment.auth.spec[0].template[0].metadata[0].labels.app
-    }
-
-    port {
-      port        = 8080
-      target_port = 8080
-    }
-
-    type = "ClusterIP"
   }
 }
 
@@ -216,10 +127,10 @@ resource "kubernetes_service" "payment" {
   }
 }
 
-# Reviews Service
-resource "kubernetes_deployment" "reviews" {
+# Info Server
+resource "kubernetes_deployment" "info" {
   metadata {
-    name      = "reviews-service"
+    name      = "info-server"
     namespace = kubernetes_namespace.rso.metadata[0].name
   }
 
@@ -228,36 +139,24 @@ resource "kubernetes_deployment" "reviews" {
 
     selector {
       match_labels = {
-        app = "reviews-service"
+        app = "info-server"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "reviews-service"
+          app = "info-server"
         }
       }
 
       spec {
         container {
-          name  = "reviews-service"
-          image = "ghcr.io/rso-ekipa-08/reviews:latest"
+          name  = "info-server"
+          image = "nginxdemos/hello:latest"
 
           port {
-            container_port = 8080
-          }
-
-          env_from {
-            config_map_ref {
-              name = kubernetes_config_map.rso_config.metadata[0].name
-            }
-          }
-
-          env_from {
-            secret_ref {
-              name = kubernetes_secret.rso_secrets.metadata[0].name
-            }
+            container_port = 80
           }
 
           resources {
@@ -270,126 +169,28 @@ resource "kubernetes_deployment" "reviews" {
               memory = "256Mi"
             }
           }
-
-        #   readiness_probe {
-        #     http_get {
-        #       path = "/health"
-        #       port = 8080
-        #     }
-        #     initial_delay_seconds = 5
-        #     period_seconds       = 10
-        #   }
         }
       }
     }
   }
 }
 
-resource "kubernetes_service" "reviews" {
+resource "kubernetes_service" "info" {
   metadata {
-    name      = "reviews-service"
+    name      = "info-server"
     namespace = kubernetes_namespace.rso.metadata[0].name
   }
 
   spec {
     selector = {
-      app = kubernetes_deployment.reviews.spec[0].template[0].metadata[0].labels.app
+      app = kubernetes_deployment.info.spec[0].template[0].metadata[0].labels.app
     }
 
     port {
-      port        = 8080
-      target_port = 8080
-    }
-
-    type = "ClusterIP"
-  }
-}
-
-# App Service
-resource "kubernetes_deployment" "app" {
-  metadata {
-    name      = "app-service"
-    namespace = kubernetes_namespace.rso.metadata[0].name
-  }
-
-  spec {
-    replicas = 1
-
-    selector {
-      match_labels = {
-        app = "app-service"
-      }
-    }
-
-    template {
-      metadata {
-        labels = {
-          app = "app-service"
-        }
-      }
-
-      spec {
-        container {
-          name  = "app-service"
-          image = "ghcr.io/rso-ekipa-08/app-service:latest"
-
-          port {
-            container_port = 8080
-          }
-
-          env_from {
-            config_map_ref {
-              name = kubernetes_config_map.rso_config.metadata[0].name
-            }
-          }
-
-          env_from {
-            secret_ref {
-              name = kubernetes_secret.rso_secrets.metadata[0].name
-            }
-          }
-
-          resources {
-            requests = {
-              cpu    = "100m"
-              memory = "128Mi"
-            }
-            limits = {
-              cpu    = "200m"
-              memory = "256Mi"
-            }
-          }
-
-        #   readiness_probe {
-        #     http_get {
-        #       path = "/health"
-        #       port = 8080
-        #     }
-        #     initial_delay_seconds = 5
-        #     period_seconds       = 10
-        #   }
-        }
-      }
-    }
-  }
-}
-
-resource "kubernetes_service" "app" {
-  metadata {
-    name      = "app-service"
-    namespace = kubernetes_namespace.rso.metadata[0].name
-  }
-
-  spec {
-    selector = {
-      app = kubernetes_deployment.app.spec[0].template[0].metadata[0].labels.app
-    }
-
-    port {
-      port        = 8080
-      target_port = 8080
+      port        = 80  # Zunanji port nastavimo na 80 za HTTP
+      target_port = 80  # Notranji port kontejnerja
     }
 
     type = "LoadBalancer"
   }
-} 
+}
