@@ -1,3 +1,19 @@
 # Občutljivi podatki - TO-DO: Spremenite te vrednosti!
-jwt_secret = "change-me-in-production"
-postgresql_password = "change-me-in-production" 
+jwt_secret                = "change-me-in-production"
+postgresql_password       = "change-me-in-production"
+
+reviews_DATABASE_URL      = "change-me-in-production"
+reviews_POSTGRES_HOST     = "change-me-in-production"
+reviews_POSTGRES_PORT     = "change-me-in-production"
+reviews_POSTGRES_DB       = "change-me-in-production"
+reviews_POSTGRES_USER     = "change-me-in-production"
+reviews_POSTGRES_PASSWORD = "change-me-in-production"
+
+auth_AUTH0_CLIENT_ID      = "change-me-in-production"
+auth_AUTH0_DOMAIN         = "change-me-in-production"
+auth_AUTH0_CLIENT_SECRET  = "change-me-in-production"
+auth_AUTH0_CALLBACK_URL   = "change-me-in-production"
+
+app_DATABASE_URL          = "change-me-in-production"
+app_STORAGE_ENDPOINT      = "change-me-in-production"
+app_STORAGE_SECRET_KEY    = "change-me-in-production"
