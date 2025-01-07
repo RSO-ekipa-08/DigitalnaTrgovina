@@ -136,6 +136,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
+# Dodaj role assignment za AKS managed identity
+resource "azurerm_role_assignment" "aks_network" {
+  scope                = azurerm_virtual_network.vnet.id
+  role_definition_name = "Network Contributor"
+  principal_id         = azurerm_kubernetes_cluster.aks.identity[0].principal_id
+}
+
 resource "random_string" "suffix" {
   length  = 8
   special = false
