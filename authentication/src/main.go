@@ -15,9 +15,7 @@ import (
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Failed to load the env vars: %v", err)
-	}
+	godotenv.Load()
 
 	auth, err := authenticator.New()
 	if err != nil {
