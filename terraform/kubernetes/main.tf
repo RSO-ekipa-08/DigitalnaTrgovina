@@ -340,27 +340,6 @@ resource "kubernetes_deployment" "reviews" {
           #     period_seconds       = 10
           #   }
         }
-
-        # Add init container to wait for database
-        init_container {
-          name  = "wait-for-db"
-          image = "postgres:16"
-
-          command = ["/bin/sh", "-c"]
-          args = [
-            "until pg_isready -h ${data.terraform_remote_state.aks.outputs.postgresql_server_fqdn} -p 5432 -U psqladmin; do echo waiting for database; sleep 2; done;"
-          ]
-
-          env {
-            name = "PGPASSWORD"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.rso_secrets.metadata[0].name
-                key  = "POSTGRES_PASSWORD"
-              }
-            }
-          }
-        }
       }
     }
   }
