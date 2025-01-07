@@ -14,8 +14,8 @@ import (
 func New(auth *authenticator.Authenticator) *gin.Engine {
 	router := gin.Default()
 
-	router.Static("/public", "web/static")
-	router.LoadHTMLGlob("web/template/*")
+	router.Static("/public", "src/web/static")
+	router.LoadHTMLGlob("src/web/template/*")
 
 	// Public routes
 	router.GET("/", home.Handler)
