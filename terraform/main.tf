@@ -34,7 +34,7 @@ resource "azurerm_subnet" "postgresql" {
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.4.0/24"]
   service_endpoints    = ["Microsoft.Storage"]
-  
+
   delegation {
     name = "fs"
     service_delegation {
@@ -69,21 +69,44 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgresql" {
 resource "azurerm_postgresql_flexible_server" "postgresql" {
   name                   = "${var.project_name}-${var.environment}-psql"
   resource_group_name    = azurerm_resource_group.rg.name
-  location              = azurerm_resource_group.rg.location
-  version               = "14"
-  delegated_subnet_id   = azurerm_subnet.postgresql.id
-  private_dns_zone_id   = azurerm_private_dns_zone.postgresql.id
+  location               = azurerm_resource_group.rg.location
+  version                = "14"
+  delegated_subnet_id    = azurerm_subnet.postgresql.id
+  private_dns_zone_id    = azurerm_private_dns_zone.postgresql.id
   administrator_login    = "psqladmin"
   administrator_password = var.postgresql_password
-  zone                  = "1"
-  storage_mb            = var.postgresql_storage
-  sku_name              = var.postgresql_sku
+  zone                   = "1"
+  storage_mb             = var.postgresql_storage
+  sku_name               = var.postgresql_sku
 
   public_network_access_enabled = false
 
   depends_on = [
     azurerm_private_dns_zone_virtual_network_link.postgresql
   ]
+}
+
+# Create the database
+resource "azurerm_postgresql_flexible_server_database" "reviews" {
+  name      = "reviews_db"
+  server_id = azurerm_postgresql_flexible_server.postgresql.id
+  charset   = "UTF8"
+  collation = "en_US.utf8"
+}
+
+# Configure server parameters
+resource "azurerm_postgresql_flexible_server_configuration" "postgres_config" {
+  server_id = azurerm_postgresql_flexible_server.postgresql.id
+  name      = "require_secure_transport"
+  value     = "off"
+}
+
+# Add firewall rule to allow Azure services
+resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure_services" {
+  name             = "allow-azure-services"
+  server_id        = azurerm_postgresql_flexible_server.postgresql.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
 }
 
 # AKS Cluster
@@ -106,9 +129,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   network_profile {
-    network_plugin     = "kubenet"
-    load_balancer_sku  = "basic"
-    service_cidr       = "172.16.0.0/16"
-    dns_service_ip     = "172.16.0.10"
+    network_plugin    = "kubenet"
+    load_balancer_sku = "basic"
+    service_cidr      = "172.16.0.0/16"
+    dns_service_ip    = "172.16.0.10"
   }
-} 
+}

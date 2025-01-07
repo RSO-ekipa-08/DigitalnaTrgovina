@@ -14,14 +14,16 @@ resource "kubernetes_config_map" "rso_config" {
 
   data = {
     ENVIRONMENT         = "prod"
-    DB_HOST            = data.terraform_remote_state.aks.outputs.postgresql_server_fqdn
-    DB_PORT            = "5432"
-    DB_USER            = "psqladmin"
-    DB_NAME            = "rso"
-    AUTH_SERVICE_URL   = "http://auth-service:8080"
+    DB_HOST             = data.terraform_remote_state.aks.outputs.postgresql_server_fqdn
+    DB_PORT             = "5432"
+    DB_USER             = "psqladmin"
+    DB_NAME             = "rso"
+    POSTGRES_USER       = "psqladmin"
+    POSTGRES_DB         = "rso"
+    AUTH_SERVICE_URL    = "http://auth-service:8080"
     PAYMENT_SERVICE_URL = "http://payment-service:8080"
     REVIEWS_SERVICE_URL = "http://reviews-service:8080"
-    APP_SERVICE_URL    = "http://app-service:8080"
+    APP_SERVICE_URL     = "http://app-service:8080"
   }
 }
 
@@ -33,8 +35,9 @@ resource "kubernetes_secret" "rso_secrets" {
   }
 
   data = {
-    DB_PASSWORD = var.postgresql_password
-    JWT_SECRET  = var.jwt_secret
+    DB_PASSWORD       = var.postgresql_password
+    POSTGRES_PASSWORD = var.postgresql_password
+    JWT_SECRET        = var.jwt_secret
   }
 }
 
@@ -93,14 +96,14 @@ resource "kubernetes_deployment" "auth" {
             }
           }
 
-        #   readiness_probe {
-        #     http_get {
-        #       path = "/health"
-        #       port = 8080
-        #     }
-        #     initial_delay_seconds = 5
-        #     period_seconds       = 10
-        #   }
+          #   readiness_probe {
+          #     http_get {
+          #       path = "/health"
+          #       port = 8080
+          #     }
+          #     initial_delay_seconds = 5
+          #     period_seconds       = 10
+          #   }
         }
       }
     }
@@ -182,14 +185,14 @@ resource "kubernetes_deployment" "payment" {
             }
           }
 
-        #   readiness_probe {
-        #     http_get {
-        #       path = "/health"
-        #       port = 8080
-        #     }
-        #     initial_delay_seconds = 5
-        #     period_seconds       = 10
-        #   }
+          #   readiness_probe {
+          #     http_get {
+          #       path = "/health"
+          #       port = 8080
+          #     }
+          #     initial_delay_seconds = 5
+          #     period_seconds       = 10
+          #   }
         }
       }
     }
@@ -244,10 +247,6 @@ resource "kubernetes_deployment" "reviews" {
           name  = "reviews-service"
           image = "ghcr.io/rso-ekipa-08/reviews:latest"
 
-          port {
-            container_port = 8080
-          }
-
           env_from {
             config_map_ref {
               name = kubernetes_config_map.rso_config.metadata[0].name
@@ -258,6 +257,35 @@ resource "kubernetes_deployment" "reviews" {
             secret_ref {
               name = kubernetes_secret.rso_secrets.metadata[0].name
             }
+          }
+
+          env {
+            name  = "POSTGRES_HOST"
+            value = data.terraform_remote_state.aks.outputs.postgresql_server_fqdn
+          }
+
+          env {
+            name  = "POSTGRES_USER"
+            value = "psqladmin"
+          }
+
+          env {
+            name  = "POSTGRES_DB"
+            value = "reviews_db" # Match the database name we created
+          }
+
+          env {
+            name = "POSTGRES_PASSWORD"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.rso_secrets.metadata[0].name
+                key  = "POSTGRES_PASSWORD"
+              }
+            }
+          }
+
+          port {
+            container_port = 50051 # This matches your Rust service port
           }
 
           resources {
@@ -271,14 +299,14 @@ resource "kubernetes_deployment" "reviews" {
             }
           }
 
-        #   readiness_probe {
-        #     http_get {
-        #       path = "/health"
-        #       port = 8080
-        #     }
-        #     initial_delay_seconds = 5
-        #     period_seconds       = 10
-        #   }
+          #   readiness_probe {
+          #     http_get {
+          #       path = "/health"
+          #       port = 8080
+          #     }
+          #     initial_delay_seconds = 5
+          #     period_seconds       = 10
+          #   }
         }
       }
     }
@@ -297,8 +325,8 @@ resource "kubernetes_service" "reviews" {
     }
 
     port {
-      port        = 8080
-      target_port = 8080
+      port        = 50051
+      target_port = 50051
     }
 
     type = "ClusterIP"
@@ -360,14 +388,14 @@ resource "kubernetes_deployment" "app" {
             }
           }
 
-        #   readiness_probe {
-        #     http_get {
-        #       path = "/health"
-        #       port = 8080
-        #     }
-        #     initial_delay_seconds = 5
-        #     period_seconds       = 10
-        #   }
+          #   readiness_probe {
+          #     http_get {
+          #       path = "/health"
+          #       port = 8080
+          #     }
+          #     initial_delay_seconds = 5
+          #     period_seconds       = 10
+          #   }
         }
       }
     }
@@ -392,4 +420,4 @@ resource "kubernetes_service" "app" {
 
     type = "LoadBalancer"
   }
-} 
+}
