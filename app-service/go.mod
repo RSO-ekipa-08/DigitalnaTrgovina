@@ -14,6 +14,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.63
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.8.4
+	github.com/supabase-community/storage-go v0.7.0
 	golang.org/x/net v0.31.0
 	golang.org/x/sync v0.9.0
 	google.golang.org/protobuf v1.34.2

@@ -20,10 +20,11 @@ type Config struct {
 
 	// Object storage configuration
 	StorageEndpoint string `envconfig:"STORAGE_ENDPOINT" required:"true"`
-	StorageAccessKey string `envconfig:"STORAGE_ACCESS_KEY" required:"true"`
+	StorageAccessKey string `envconfig:"STORAGE_ACCESS_KEY"`
 	StorageSecretKey string `envconfig:"STORAGE_SECRET_KEY" required:"true"`
 	StorageBucketName string `envconfig:"STORAGE_BUCKET_NAME" default:"applications"`
 	StorageUseSSL bool `envconfig:"STORAGE_USE_SSL" default:"true"`
+	StorageRegion string `envconfig:"STORAGE_REGION" default:"eu-central-1"`
 
 	// Application configuration
 	DownloadURLExpiration time.Duration `envconfig:"DOWNLOAD_URL_EXPIRATION" default:"15m"`

@@ -86,6 +86,7 @@ variable "app_STORAGE_ACCESS_KEY" {
   description = "Dostopni ključ za object storage"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "app_STORAGE_SECRET_KEY" {
