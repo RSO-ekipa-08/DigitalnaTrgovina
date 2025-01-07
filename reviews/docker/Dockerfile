@@ -14,9 +14,7 @@ COPY . .
 ENV SQLX_OFFLINE=true
 RUN cargo build --release
 
-
-
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 # Install OpenSSL and PostgreSQL client libraries
 RUN apt-get update && \
     apt-get install -y \
