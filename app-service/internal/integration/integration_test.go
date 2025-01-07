@@ -15,7 +15,7 @@ import (
 	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/handler"
 	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/repository"
 	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/service"
-	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/storage"
+	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/storage/s3"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

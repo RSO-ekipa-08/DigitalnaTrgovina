@@ -17,7 +17,7 @@ import (
 	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/logging"
 	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/repository"
 	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/service"
-	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/storage"
+	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/storage/s3"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/net/http2"
