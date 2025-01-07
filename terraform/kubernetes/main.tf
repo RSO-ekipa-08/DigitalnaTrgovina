@@ -24,6 +24,8 @@ resource "kubernetes_config_map" "rso_config" {
     PAYMENT_SERVICE_URL = "http://payment-service:8080"
     REVIEWS_SERVICE_URL = "http://reviews-service:8080"
     APP_SERVICE_URL     = "http://app-service:8080"
+    AUTH0_DOMAIN        = var.auth_AUTH0_DOMAIN
+    AUTH0_CALLBACK_URL  = var.auth_AUTH0_CALLBACK_URL
   }
 }
 
@@ -35,9 +37,11 @@ resource "kubernetes_secret" "rso_secrets" {
   }
 
   data = {
-    DB_PASSWORD       = var.postgresql_password
-    POSTGRES_PASSWORD = var.postgresql_password
-    JWT_SECRET        = var.jwt_secret
+    DB_PASSWORD         = var.postgresql_password
+    POSTGRES_PASSWORD   = var.postgresql_password
+    JWT_SECRET          = var.jwt_secret
+    AUTH0_CLIENT_ID     = var.auth_AUTH0_CLIENT_ID
+    AUTH0_CLIENT_SECRET = var.auth_AUTH0_CLIENT_SECRET
   }
 }
 
@@ -70,20 +74,43 @@ resource "kubernetes_deployment" "auth" {
           image = "ghcr.io/rso-ekipa-08/authentication:latest"
 
           port {
-            container_port = 8080
+            container_port = 3000
           }
 
-          env_from {
-            config_map_ref {
-              name = kubernetes_config_map.rso_config.metadata[0].name
+          port {
+            container_port = 50051
+          }
+
+          env {
+            name = "AUTH0_CLIENT_ID"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.rso_secrets.metadata[0].name
+                key  = "AUTH0_CLIENT_ID"
+              }
             }
           }
 
-          env_from {
-            secret_ref {
-              name = kubernetes_secret.rso_secrets.metadata[0].name
+          env {
+            name  = "AUTH0_DOMAIN"
+            value = var.auth_AUTH0_DOMAIN
+          }
+
+          env {
+            name = "AUTH0_CLIENT_SECRET"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.rso_secrets.metadata[0].name
+                key  = "AUTH0_CLIENT_SECRET"
+              }
             }
           }
+
+          env {
+            name  = "AUTH0_CALLBACK_URL"
+            value = var.auth_AUTH0_CALLBACK_URL
+          }
+
 
           resources {
             requests = {
@@ -122,11 +149,18 @@ resource "kubernetes_service" "auth" {
     }
 
     port {
-      port        = 8080
-      target_port = 8080
+      name        = "grpc"
+      port        = 50051
+      target_port = 50051
     }
 
-    type = "ClusterIP"
+    port {
+      name        = "http"
+      port        = 80
+      target_port = 3000
+    }
+
+    type = "LoadBalancer"
   }
 }
 
@@ -247,21 +281,23 @@ resource "kubernetes_deployment" "reviews" {
           name  = "reviews-service"
           image = "ghcr.io/rso-ekipa-08/reviews:latest"
 
-          env_from {
-            config_map_ref {
-              name = kubernetes_config_map.rso_config.metadata[0].name
-            }
-          }
-
-          env_from {
-            secret_ref {
-              name = kubernetes_secret.rso_secrets.metadata[0].name
-            }
+          port {
+            container_port = 50051
           }
 
           env {
             name  = "POSTGRES_HOST"
             value = data.terraform_remote_state.aks.outputs.postgresql_server_fqdn
+          }
+
+          env {
+            name  = "DATABASE_URL"
+            value = "postgres://psqladmin:${var.postgresql_password}@${data.terraform_remote_state.aks.outputs.postgresql_server_fqdn}:5432/reviews_db"
+          }
+
+          env {
+            name  = "POSTGRES_PORT"
+            value = "5432"
           }
 
           env {
@@ -271,7 +307,7 @@ resource "kubernetes_deployment" "reviews" {
 
           env {
             name  = "POSTGRES_DB"
-            value = "reviews_db" # Match the database name we created
+            value = "reviews_db"
           }
 
           env {
@@ -282,10 +318,6 @@ resource "kubernetes_deployment" "reviews" {
                 key  = "POSTGRES_PASSWORD"
               }
             }
-          }
-
-          port {
-            container_port = 50051 # This matches your Rust service port
           }
 
           resources {
@@ -307,6 +339,27 @@ resource "kubernetes_deployment" "reviews" {
           #     initial_delay_seconds = 5
           #     period_seconds       = 10
           #   }
+        }
+
+        # Add init container to wait for database
+        init_container {
+          name  = "wait-for-db"
+          image = "postgres:16"
+
+          command = ["/bin/sh", "-c"]
+          args = [
+            "until pg_isready -h ${data.terraform_remote_state.aks.outputs.postgresql_server_fqdn} -p 5432 -U psqladmin; do echo waiting for database; sleep 2; done;"
+          ]
+
+          env {
+            name = "PGPASSWORD"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.rso_secrets.metadata[0].name
+                key  = "POSTGRES_PASSWORD"
+              }
+            }
+          }
         }
       }
     }

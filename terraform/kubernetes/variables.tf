@@ -45,3 +45,27 @@ variable "reviews_POSTGRES_DB" {
   type        = string
   sensitive   = true
 }
+
+variable "auth_AUTH0_CLIENT_ID" {
+  description = "Auth0 client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "auth_AUTH0_DOMAIN" {
+  description = "Auth0 domain"
+  type        = string
+  sensitive   = true
+}
+
+variable "auth_AUTH0_CLIENT_SECRET" {
+  description = "Auth0 client secret"
+  type        = string
+  sensitive   = true
+}
+
+variable "auth_AUTH0_CALLBACK_URL" {
+  description = "Auth0 callback URL"
+  type        = string
+  sensitive   = true
+}
