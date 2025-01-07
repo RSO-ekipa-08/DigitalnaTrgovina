@@ -69,3 +69,27 @@ variable "auth_AUTH0_CALLBACK_URL" {
   type        = string
   sensitive   = true
 }
+
+variable "app_DATABASE_URL" {
+  description = "URL za podatkovno bazo app-service"
+  type        = string
+  sensitive   = true
+}
+
+variable "app_STORAGE_ENDPOINT" {
+  description = "Končna točka za object storage"
+  type        = string
+  sensitive   = true
+}
+
+variable "app_STORAGE_ACCESS_KEY" {
+  description = "Dostopni ključ za object storage"
+  type        = string
+  sensitive   = true
+}
+
+variable "app_STORAGE_SECRET_KEY" {
+  description = "Skrivni ključ za object storage"
+  type        = string
+  sensitive   = true
+}

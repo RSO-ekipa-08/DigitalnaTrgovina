@@ -430,6 +430,26 @@ resource "kubernetes_deployment" "app" {
             }
           }
 
+          env {
+            name  = "DATABASE_URL"
+            value = var.app_DATABASE_URL
+          }
+
+          env {
+            name  = "STORAGE_ENDPOINT"
+            value = var.app_STORAGE_ENDPOINT
+          }
+
+          env {
+            name  = "STORAGE_ACCESS_KEY"
+            value = var.app_STORAGE_ACCESS_KEY
+          }
+
+          env {
+            name  = "STORAGE_SECRET_KEY"
+            value = var.app_STORAGE_SECRET_KEY
+          }
+
           resources {
             requests = {
               cpu    = "100m"
