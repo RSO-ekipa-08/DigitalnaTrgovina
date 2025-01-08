@@ -286,38 +286,8 @@ resource "kubernetes_deployment" "reviews" {
           }
 
           env {
-            name  = "POSTGRES_HOST"
-            value = data.terraform_remote_state.aks.outputs.postgresql_server_fqdn
-          }
-
-          env {
             name  = "DATABASE_URL"
-            value = "postgres://psqladmin:${var.postgresql_password}@${data.terraform_remote_state.aks.outputs.postgresql_server_fqdn}:5432/reviews_db"
-          }
-
-          env {
-            name  = "POSTGRES_PORT"
-            value = "5432"
-          }
-
-          env {
-            name  = "POSTGRES_USER"
-            value = "psqladmin"
-          }
-
-          env {
-            name  = "POSTGRES_DB"
-            value = "reviews_db"
-          }
-
-          env {
-            name = "POSTGRES_PASSWORD"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.rso_secrets.metadata[0].name
-                key  = "POSTGRES_PASSWORD"
-              }
-            }
+            value = var.reviews_DATABASE_URL
           }
 
           resources {
