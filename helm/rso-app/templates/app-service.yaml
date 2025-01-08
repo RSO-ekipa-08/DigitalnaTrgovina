@@ -1,0 +1,5 @@
+{{- $values := (dict "Values" (merge (dict "name" .Values.services.app.name "port" .Values.services.app.port "replicas" .Values.services.app.replicas "resources" .Values.services.app.resources) (dict "global" .Values.global))) -}}
+
+{{- template "rso.deployment" $values -}}
+---
+{{- template "rso.service" $values -}} 

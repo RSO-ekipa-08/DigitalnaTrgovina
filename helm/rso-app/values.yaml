@@ -1,0 +1,40 @@
+global:
+  namespace: rso
+  image:
+    registry: ghcr.io
+    organization: rso-ekipa-08
+    tag: latest
+    pullPolicy: Always
+
+services:
+  app:
+    name: app-service
+    port: 8080
+    replicas: 1
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "200m"
+        memory: "256Mi"
+  auth:
+    name: auth-service
+    port: 8080
+    replicas: 1
+  reviews:
+    name: reviews-service
+    port: 8080
+    replicas: 1
+  payment:
+    name: payment-service
+    port: 8080
+    replicas: 1
+
+config:
+  database:
+    url: ""  # To be provided via secrets
+  storage:
+    endpoint: ""
+    accessKey: ""
+    secretKey: ""  # To be provided via secrets 

@@ -1,0 +1,8 @@
+apiVersion: v2
+name: rso-app
+description: A Helm chart for RSO application
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: "RSO Team 08" 
