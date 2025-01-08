@@ -6,3 +6,5 @@ plugins:
   - local: protoc-gen-connect-go
     out: gen
     opt: paths=source_relative
+  - local: protoc-gen-connect-openapi
+    out: gen
