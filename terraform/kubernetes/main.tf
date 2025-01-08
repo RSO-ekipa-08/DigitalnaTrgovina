@@ -274,7 +274,13 @@ resource "kubernetes_deployment" "reviews" {
           image = "ghcr.io/rso-ekipa-08/reviews:latest"
 
           port {
+            name           = "grpc"
             container_port = 50051
+          }
+
+          port {
+            name           = "graphql"
+            container_port = 8080
           }
 
           env {
@@ -293,14 +299,14 @@ resource "kubernetes_deployment" "reviews" {
             }
           }
 
-          #   readiness_probe {
-          #     http_get {
-          #       path = "/health"
-          #       port = 8080
-          #     }
-          #     initial_delay_seconds = 5
-          #     period_seconds       = 10
-          #   }
+          readiness_probe {
+            http_get {
+              path = "/graphiql"
+              port = 8080
+            }
+            initial_delay_seconds = 10
+            period_seconds        = 30
+          }
         }
       }
     }
@@ -319,11 +325,18 @@ resource "kubernetes_service" "reviews" {
     }
 
     port {
+      name        = "grpc"
       port        = 50051
       target_port = 50051
     }
 
-    type = "ClusterIP"
+    port {
+      name        = "graphql"
+      port        = 8080
+      target_port = 8060
+    }
+
+    type = "LoadBalancer"
   }
 }
 
