@@ -31,7 +31,7 @@ variable "node_count" {
 variable "node_size" {
   description = "Velikost node-ov v AKS cluster-ju"
   type        = string
-  default     = "Standard_B2ms"
+  default     = "Standard_B4ms"
 }
 
 variable "postgresql_sku" {
