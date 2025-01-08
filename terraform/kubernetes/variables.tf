@@ -4,11 +4,11 @@ variable "jwt_secret" {
   sensitive   = true
 }
 
-variable "postgresql_password" {
-  description = "Geslo za PostgreSQL administratorja"
-  type        = string
-  sensitive   = true
-}
+# variable "postgresql_password" {
+#   description = "Geslo za PostgreSQL administratorja"
+#   type        = string
+#   sensitive   = true
+# }
 
 variable "reviews_DATABASE_URL" {
   description = "URL za PostgreSQL bazo za reviews."

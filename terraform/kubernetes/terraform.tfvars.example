@@ -1,6 +1,6 @@
 # Občutljivi podatki - TO-DO: Spremenite te vrednosti!
 jwt_secret                = "change-me-in-production"
-postgresql_password       = "change-me-in-production"
+# postgresql_password       = "change-me-in-production"
 
 reviews_DATABASE_URL      = "change-me-in-production"
 

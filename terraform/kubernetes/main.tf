@@ -14,12 +14,6 @@ resource "kubernetes_config_map" "rso_config" {
 
   data = {
     ENVIRONMENT         = "prod"
-    DB_HOST             = data.terraform_remote_state.aks.outputs.postgresql_server_fqdn
-    DB_PORT             = "5432"
-    DB_USER             = "psqladmin"
-    DB_NAME             = "rso"
-    POSTGRES_USER       = "psqladmin"
-    POSTGRES_DB         = "rso"
     AUTH_SERVICE_URL    = "http://auth-service:8080"
     PAYMENT_SERVICE_URL = "http://payment-service:8080"
     REVIEWS_SERVICE_URL = "http://reviews-service:8080"
@@ -37,8 +31,6 @@ resource "kubernetes_secret" "rso_secrets" {
   }
 
   data = {
-    DB_PASSWORD         = var.postgresql_password
-    POSTGRES_PASSWORD   = var.postgresql_password
     JWT_SECRET          = var.jwt_secret
     AUTH0_CLIENT_ID     = var.auth_AUTH0_CLIENT_ID
     AUTH0_CLIENT_SECRET = var.auth_AUTH0_CLIENT_SECRET

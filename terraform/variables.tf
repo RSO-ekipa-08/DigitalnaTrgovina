@@ -34,17 +34,17 @@ variable "node_size" {
   default     = "Standard_B4ms"
 }
 
-variable "postgresql_sku" {
-  description = "SKU za PostgreSQL"
-  type        = string
-  default     = "B_Standard_B1ms"
-}
+# variable "postgresql_sku" {
+#   description = "SKU za PostgreSQL"
+#   type        = string
+#   default     = "B_Standard_B1ms"
+# }
 
-variable "postgresql_storage" {
-  description = "Velikost storage-a za PostgreSQL v MB"
-  type        = number
-  default     = 32768  # 32GB
-}
+# variable "postgresql_storage" {
+#   description = "Velikost storage-a za PostgreSQL v MB"
+#   type        = number
+#   default     = 32768  # 32GB
+# }
 
 variable "jwt_secret" {
   description = "Secret za JWT tokene"
@@ -52,11 +52,11 @@ variable "jwt_secret" {
   sensitive   = true
 }
 
-variable "postgresql_password" {
-  description = "Geslo za PostgreSQL administratorja"
-  type        = string
-  sensitive   = true
-}
+# variable "postgresql_password" {
+#   description = "Geslo za PostgreSQL administratorja"
+#   type        = string
+#   sensitive   = true
+# }
 
 variable "subscription_id" {
   description = "Azure subscription ID"
