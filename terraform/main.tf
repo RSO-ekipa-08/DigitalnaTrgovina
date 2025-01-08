@@ -134,6 +134,35 @@ resource "azurerm_kubernetes_cluster" "aks" {
     service_cidr      = "172.16.0.0/16"
     dns_service_ip    = "172.16.0.10"
   }
+
+  monitor_metrics {}
+
+  oms_agent {
+    log_analytics_workspace_id = azurerm_log_analytics_workspace.aks.id
+  }
+}
+
+# Log Analytics Workspace za AKS monitoring
+resource "azurerm_log_analytics_workspace" "aks" {
+  name                = "${var.project_name}-${var.environment}-aks-logs"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                = "PerGB2018"
+  retention_in_days   = 30
+}
+
+# Dodaj Monitoring Metrics Publisher vlogo za AKS
+resource "azurerm_role_assignment" "aks_monitoring" {
+  scope                = azurerm_resource_group.rg.id
+  role_definition_name = "Monitoring Metrics Publisher"
+  principal_id         = azurerm_kubernetes_cluster.aks.identity[0].principal_id
+}
+
+# Dodaj Data Reader vlogo za Grafano na Log Analytics
+resource "azurerm_role_assignment" "grafana_logs_reader" {
+  scope                = azurerm_log_analytics_workspace.aks.id
+  role_definition_name = "Log Analytics Reader"
+  principal_id         = azurerm_dashboard_grafana.grafana.identity[0].principal_id
 }
 
 # Dodaj role assignment za AKS managed identity

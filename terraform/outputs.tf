@@ -13,4 +13,14 @@ output "postgresql_server_fqdn" {
 output "kube_config" {
   value     = azurerm_kubernetes_cluster.aks.kube_config
   sensitive = true
+}
+
+output "grafana_endpoint" {
+  description = "URL naslov Grafane"
+  value       = azurerm_dashboard_grafana.grafana.endpoint
+}
+
+output "log_analytics_workspace_id" {
+  description = "ID Log Analytics workspace-a"
+  value       = azurerm_log_analytics_workspace.aks.id
 } 
