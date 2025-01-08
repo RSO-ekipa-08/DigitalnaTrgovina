@@ -118,10 +118,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
   kubernetes_version  = var.kubernetes_version
 
   default_node_pool {
-    name           = "default"
-    node_count     = var.node_count
-    vm_size        = var.node_size
-    vnet_subnet_id = azurerm_subnet.aks.id
+    name                 = "default"
+    vm_size              = var.node_size
+    vnet_subnet_id       = azurerm_subnet.aks.id
+    auto_scaling_enabled = true
+    min_count            = var.min_node_count
+    max_count            = var.max_node_count
   }
 
   identity {
@@ -147,7 +149,7 @@ resource "azurerm_log_analytics_workspace" "aks" {
   name                = "${var.project_name}-${var.environment}-aks-logs"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  sku                = "PerGB2018"
+  sku                 = "PerGB2018"
   retention_in_days   = 30
 }
 

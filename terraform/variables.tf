@@ -22,8 +22,14 @@ variable "kubernetes_version" {
   default     = "1.31"
 }
 
-variable "node_count" {
-  description = "Število node-ov v AKS cluster-ju"
+variable "max_node_count" {
+  description = "Maksimalno število node-ov v AKS cluster-ju"
+  type        = number
+  default     = 3
+}
+
+variable "min_node_count" {
+  description = "Minimalno število node-ov v AKS cluster-ju"
   type        = number
   default     = 1
 }
@@ -31,7 +37,7 @@ variable "node_count" {
 variable "node_size" {
   description = "Velikost node-ov v AKS cluster-ju"
   type        = string
-  default     = "Standard_B4ms"
+  default     = "Standard_B2ms"
 }
 
 # variable "postgresql_sku" {
