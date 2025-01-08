@@ -162,3 +162,47 @@ resource "random_string" "suffix" {
   special = false
   upper   = false
 }
+
+# Azure Managed Grafana
+resource "azurerm_dashboard_grafana" "grafana" {
+  name                              = "${var.project_name}-${var.environment}-grafana"
+  resource_group_name               = azurerm_resource_group.rg.name
+  location                          = azurerm_resource_group.rg.location
+  sku                               = "Standard"
+  api_key_enabled                   = true
+  deterministic_outbound_ip_enabled = true
+  public_network_access_enabled     = true
+  grafana_major_version             = "10"
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  azure_monitor_workspace_integrations {
+    resource_id = azurerm_monitor_workspace.workspace.id
+  }
+}
+
+# Azure Monitor Workspace
+resource "azurerm_monitor_workspace" "workspace" {
+  name                = "${var.project_name}-${var.environment}-workspace"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+}
+
+# Dodeli vlogo Grafana Admin trenutnemu uporabniku
+resource "azurerm_role_assignment" "grafana_admin" {
+  scope                = azurerm_dashboard_grafana.grafana.id
+  role_definition_name = "Grafana Admin"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
+# Dodeli vlogo Monitoring Data Reader Grafani
+resource "azurerm_role_assignment" "grafana_monitoring_reader" {
+  scope                = azurerm_resource_group.rg.id
+  role_definition_name = "Monitoring Data Reader"
+  principal_id         = azurerm_dashboard_grafana.grafana.identity[0].principal_id
+}
+
+# Get current Azure client configuration
+data "azurerm_client_config" "current" {}
