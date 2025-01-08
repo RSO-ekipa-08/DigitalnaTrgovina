@@ -9,7 +9,7 @@ service ReviewService {
 
   // Read
   rpc GetReview (GetReviewRequest) returns (GetReviewResponse);
-  //
+
   // Read
   rpc GetReviews (GetReviewsRequest) returns (GetReviewsResponse);
 
