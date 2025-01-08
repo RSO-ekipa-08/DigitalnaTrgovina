@@ -1,6 +1,7 @@
 use actix_cors::Cors;
 use actix_web::{web, App, HttpResponse, HttpServer};
 use env_logger::Env;
+use health::{health_check, ready_check};
 use juniper::http::{graphiql::graphiql_source, GraphQLRequest};
 use log::debug;
 use std::env;
@@ -9,6 +10,7 @@ use tonic::transport::Server;
 
 mod extension;
 mod graphql;
+mod health;
 mod models;
 mod service;
 
@@ -84,6 +86,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     HttpServer::new(move || {
         debug!("Configuring HTTP server");
         App::new()
+            .service(health_check) // Health check endpoint
+            .service(ready_check) // Readiness probe endpoint
             .app_data(schema.clone())
             .app_data(context.clone())
             .wrap(
