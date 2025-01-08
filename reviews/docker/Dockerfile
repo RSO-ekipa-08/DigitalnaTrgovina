@@ -24,6 +24,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /usr/src/app/target/release/reviews /usr/local/bin/
-EXPOSE 50051
+EXPOSE 50051 8080
 
 CMD ["reviews"]
