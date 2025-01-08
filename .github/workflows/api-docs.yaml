@@ -9,6 +9,7 @@ on:
       - '.github/workflows/api-docs.yaml'
       - 'app-service/gen/app/v1/**'
       - 'payment/gen/payment/v1/**'
+      - 'authentication/docs/**'
 
 permissions:
   contents: read
@@ -40,6 +41,7 @@ jobs:
         run: |
           bunx @redocly/cli build-docs app-service/gen/app/v1/app.openapi.yaml -o out/app.html
           bunx @redocly/cli build-docs payment/gen/payment/v1/payment.openapi.yaml -o out/payment.html
+          cp authentication/docs/index.html out/auth.html
 
       - name: Generate Index
         run: |
@@ -91,10 +93,11 @@ jobs:
           </head>
           <body>
               <div class="container">
-                  <h1>RSO API Dokumentacija</h1>
+                  <h1>DigitalnaTrgovina (RSO) API Dokumentacija</h1>
                   <div class="links">
-                      <a href="app.html">Aplikacijski servis</a>
-                      <a href="payment.html">Plačilni servis</a>
+                      <a href="app.html">Aplikacijska storitev</a>
+                      <a href="payment.html">Plačilna storitev</a>
+                      <a href="auth.html">Avtentikacijska storitev</a>
                   </div>
               </div>
           </body>
