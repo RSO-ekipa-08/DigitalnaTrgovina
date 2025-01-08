@@ -333,7 +333,7 @@ resource "kubernetes_service" "reviews" {
     port {
       name        = "graphql"
       port        = 8080
-      target_port = 8060
+      target_port = 8080
     }
 
     type = "LoadBalancer"
