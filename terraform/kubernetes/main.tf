@@ -211,14 +211,13 @@ resource "kubernetes_deployment" "payment" {
             }
           }
 
-          #   readiness_probe {
-          #     http_get {
-          #       path = "/health"
-          #       port = 8080
-          #     }
-          #     initial_delay_seconds = 5
-          #     period_seconds       = 10
-          #   }
+          readiness_probe {
+            http_get {
+              path = "/health"
+              port = 8080
+            }
+            initial_delay_seconds = 10
+          }
         }
       }
     }
@@ -437,7 +436,6 @@ resource "kubernetes_deployment" "app" {
               port = 8080
             }
             initial_delay_seconds = 5
-            period_seconds       = 10
           }
         }
       }
