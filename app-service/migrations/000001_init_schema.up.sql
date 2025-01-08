@@ -96,5 +96,8 @@ INSERT INTO categories (name, description) VALUES
     ('Business', 'Business and professional apps'),
     ('Tools', 'Utility and tool apps'),
     ('Travel', 'Travel and navigation apps'),
-    ('Shopping', 'Shopping and e-commerce apps')
+    ('Shopping', 'Shopping and e-commerce apps'),
+    ('Food & Drink', 'Apps for recipes, food delivery and drinks'),
+    ('Finance', 'Financial management and banking apps'),
+    ('Music', 'Music streaming and audio apps')
 ON CONFLICT (name) DO NOTHING; 

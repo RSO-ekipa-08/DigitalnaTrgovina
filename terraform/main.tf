@@ -143,6 +143,20 @@ resource "azurerm_role_assignment" "aks_network" {
   principal_id         = azurerm_kubernetes_cluster.aks.identity[0].principal_id
 }
 
+# Dodaj role assignment za AKS managed identity za subnet
+resource "azurerm_role_assignment" "aks_subnet" {
+  scope                = azurerm_subnet.aks.id
+  role_definition_name = "Network Contributor"
+  principal_id         = azurerm_kubernetes_cluster.aks.identity[0].principal_id
+}
+
+# Dodaj role assignment za AKS managed identity za celotno resource group
+resource "azurerm_role_assignment" "aks_rg" {
+  scope                = azurerm_resource_group.rg.id
+  role_definition_name = "Network Contributor"
+  principal_id         = azurerm_kubernetes_cluster.aks.identity[0].principal_id
+}
+
 resource "random_string" "suffix" {
   length  = 8
   special = false
