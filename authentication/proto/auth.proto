@@ -3,49 +3,74 @@ package auth;
 
 option go_package = "authentication/src/gen/proto";
 
+// Authentication service for managing user sessions and verification
 service AuthService {
+  // Handle the login process for the user
   rpc Login(LoginRequest) returns (LoginResponse) {}
+  // Verify the validity of an authentication request
   rpc Verify(VerifyRequest) returns (VerifyResponse) {}
+  // Handle the logout process for the user
   rpc Logout(LogoutRequest) returns (LogoutResponse) {}
-
-  // Method for querying users
-  // rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+  // Verify the validity of an authentication token
   rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse) {}
 }
 
+// Request to verify the validity of an authentication token
 message VerifyTokenRequest {
+  // JWT token to be verified
   string token = 1;
 }
 
+// Response containing token verification results
 message VerifyTokenResponse {
+  // Indicates if the token is valid and not expired
   bool is_valid = 1;
+
+  // Identifier of the user associated with the token
   string user_id = 2;
+
+  // Additional token claims containing user information and permissions
   map<string, string> claims = 3;
 }
 
-
+// Request to initiate the login process
 message LoginRequest {
+  // URL where the user should be redirected after successful authentication
   string redirect_url = 1;
 }
 
+// Response containing the authentication URL
 message LoginResponse {
+  // URL where the user should be directed to perform authentication
   string auth_url = 1;
 }
 
+// Request to verify the authentication code
 message VerifyRequest {
+  // Authentication code received from the identity provider
   string code = 1;
 }
 
+// Response containing authentication tokens and user information
 message VerifyResponse {
+  // Token used for accessing protected resources
   string access_token = 1;
+
+  // Token containing user identity information
   string id_token = 2;
+
+  // JSON string containing user profile information
   string profile = 3;
 }
 
+// Request to initiate the logout process
 message LogoutRequest {
+  // URL where the user should be redirected after successful logout
   string return_url = 1;
 }
 
+// Response containing the logout URL
 message LogoutResponse {
+  // URL where the user should be directed to complete the logout process
   string logout_url = 1;
 }

@@ -9,6 +9,8 @@ service ReviewService {
 
   // Read
   rpc GetReview (GetReviewRequest) returns (GetReviewResponse);
+  //
+  // Read
   rpc GetReviews (GetReviewsRequest) returns (GetReviewsResponse);
 
   // Update
@@ -20,104 +22,194 @@ service ReviewService {
   // Existing moderation endpoint
   rpc ModerateComment (ModerateCommentRequest) returns (ModerateCommentResponse);
 }
-
-// Add new messages for CRUD operations
-message GetReviewRequest {
-  string review_id = 1;
-  string tenant_id = 2;
-}
-
-message GetReviewResponse {
-  Review review = 1;
-}
-
-message UpdateReviewRequest {
-  string review_id = 1;
-  string tenant_id = 2;
-  uint32 score = 3;
-  string comment = 4;
-}
-
-message UpdateReviewResponse {
-  Review review = 1;
-  bool success = 2;
-  string message = 3;
-}
-
-message DeleteReviewRequest {
-  string review_id = 1;
-  string tenant_id = 2;
-}
-
-message DeleteReviewResponse {
-  bool success = 1;
-  string message = 2;
-}
-
-// Model za oceno in komentar
+// Review represents a user's rating and comment for an application
 message Review {
+  // Unique identifier for the review
   string id = 1;
+
+  // Identifier of the application being reviewed
   string app_id = 2;
+
+  // Identifier of the user who wrote the review
   string user_id = 3;
-  uint32 score = 4; // ocena od 1-5
+
+  // Rating score given by the user (1-5 stars)
+  uint32 score = 4;
+
+  // Text feedback provided by the user
   string comment = 5;
+
+  // Timestamp when the review was submitted
   string created_at = 6;
+
+  // Indicates if the review has gone through moderation
   bool is_moderated = 7;
+
+  // Current moderation status of the review (PENDING/APPROVED/REJECTED)
   ModerationType moderation_status = 8;
+
+  // Identifier for multi-tenant isolation
   string tenant_id = 9;
 }
 
-// Enum za status moderacije
+// Moderation statuses for review management
 enum ModerationType {
+  // Review awaiting moderation check
   PENDING = 0;
+
+  // Review has passed moderation and is publicly visible
   APPROVED = 1;
+
+  // Review has failed moderation and is hidden from public view
   REJECTED = 2;
 }
 
-// Request za dodajanje ocen
+// Request parameters for submitting a new review
 message AddReviewRequest {
+  // Identifier of the application being reviewed
   string app_id = 1;
+
+  // Identifier of the user submitting the review
   string user_id = 2;
+
+  // Rating score (1-5 stars)
   uint32 score = 3;
+
+  // Text feedback for the application
   string comment = 4;
+
+  // Identifier for multi-tenant isolation
   string tenant_id = 5;
 }
 
-// Response ob dodatku ocene
+// Response data after submitting a review
 message AddReviewResponse {
+  // The newly created review object
   Review review = 1;
+
+  // Indicates if the review was successfully created
   bool success = 2;
+
+  // Additional information about the operation result
   string message = 3;
 }
 
-// Request za pridobivanje ocen
+// Request parameters for fetching reviews
 message GetReviewsRequest {
+  // Identifier of the application to get reviews for
   string app_id = 1;
+
+  // Page number for pagination
   uint32 page = 2;
+
+  // Number of reviews per page
   uint32 page_size = 3;
+
+  // Filter to show only moderated reviews
   bool include_moderated_only = 4;
+
+  // Identifier for multi-tenant isolation
   string tenant_id = 5;
 }
 
-// Response ob pridobitvi ocen
+// Response data for review retrieval
 message GetReviewsResponse {
+  // List of reviews matching the request criteria
   repeated Review reviews = 1;
+
+  // Total number of reviews available
   uint32 total_count = 2;
+
+  // Average rating score across all reviews
   double average_score = 3;
 }
 
-// Request za moderiranje komentarja
+// Request parameters for moderating a review
 message ModerateCommentRequest {
+  // Identifier of the review to moderate
   string review_id = 1;
+
+  // New moderation status to apply
   ModerationType moderation_status = 2;
+
+  // Identifier of the staff member performing moderation
   string moderator_id = 3;
+
+  // Internal notes about the moderation decision
   string moderation_note = 4;
+
+  // Identifier for multi-tenant isolation
   string tenant_id = 5;
 }
 
-// Response ob moderiranju komentarja
+// Response data after moderating a review
 message ModerateCommentResponse {
+  // Indicates if the moderation was successful
   bool success = 1;
+
+  // Additional information about the operation result
   string message = 2;
+
+  // The review object after moderation changes
   Review updated_review = 3;
+}
+
+// Request parameters for fetching a specific review
+message GetReviewRequest {
+  // Identifier of the review to retrieve
+  string review_id = 1;
+
+  // Identifier for multi-tenant isolation
+  string tenant_id = 2;
+}
+
+// Response data for single review retrieval
+message GetReviewResponse {
+  // The requested review object
+  Review review = 1;
+}
+
+// Request parameters for updating a review
+message UpdateReviewRequest {
+  // Identifier of the review to update
+  string review_id = 1;
+
+  // Identifier for multi-tenant isolation
+  string tenant_id = 2;
+
+  // Updated rating score
+  uint32 score = 3;
+
+  // Updated review comment
+  string comment = 4;
+}
+
+// Response data after updating a review
+message UpdateReviewResponse {
+  // The updated review object
+  Review review = 1;
+
+  // Indicates if the update was successful
+  bool success = 2;
+
+  // Additional information about the operation result
+  string message = 3;
+}
+
+// Request parameters for deleting a review
+message DeleteReviewRequest {
+  // Identifier of the review to delete
+  string review_id = 1;
+
+  // Identifier for multi-tenant isolation
+  string tenant_id = 2;
+}
+
+// Response data after deleting a review
+message DeleteReviewResponse {
+  // Indicates if the deletion was successful
+  bool success = 1;
+
+  // Additional information about the operation result
+  string message = 2;
 }
