@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - 'app-service/gen/app/v1/**'
+      - 'payment/gen/payment/v1/**'
 
 permissions:
   contents: read
@@ -32,13 +33,14 @@ jobs:
           bun-version: latest
 
       - name: Generate Documentation
-        working-directory: app-service/gen/app/v1
-        run: bunx @redocly/cli build-docs app.openapi.yaml -o out/index.html
+        run: |
+          bunx @redocly/cli build-docs app-service/gen/app/v1/app.openapi.yaml -o out/app.html
+          bunx @redocly/cli build-docs payment/gen/payment/v1/payment.openapi.yaml -o out/payment.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'app-service/gen/app/v1/out/'
+          path: 'out/'
 
       - name: Deploy to GitHub Pages
         id: deployment
