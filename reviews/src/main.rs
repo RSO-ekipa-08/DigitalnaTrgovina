@@ -1,6 +1,8 @@
 use actix_cors::Cors;
 use actix_web::{web, App, HttpResponse, HttpServer};
+use env_logger::Env;
 use juniper::http::{graphiql::graphiql_source, GraphQLRequest};
+use log::debug;
 use std::env;
 use std::sync::Arc;
 use tonic::transport::Server;
@@ -19,7 +21,7 @@ use reviews_proto::review_service_server::ReviewServiceServer;
 use service::ReviewServiceImpl;
 
 async fn graphql(
-    schema: web::Data<Schema>,
+    schema: web::Data<Arc<Schema>>,
     context: web::Data<Context>,
     request: web::Json<GraphQLRequest>,
 ) -> HttpResponse {
@@ -35,6 +37,10 @@ async fn graphiql() -> HttpResponse {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Initialize logger with debug level
+    std::env::set_var("RUST_LOG", "debug");
+    env_logger::init();
+
     dotenvy::dotenv().ok();
 
     let database_url = get_database_url().await;
@@ -52,9 +58,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // GraphQL setup
     let schema = Arc::new(create_schema());
-    let context = Context {
+    let context = web::Data::new(Context {
         service: service.clone(),
-    };
+    });
+    let schema = web::Data::new(schema);
 
     // Start servers
     let grpc_addr = "0.0.0.0:50051".parse()?;
@@ -62,6 +69,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("gRPC server listening on {}", grpc_addr);
     println!("GraphQL endpoint: http://{}/graphql", http_addr);
+    println!("GraphQL interface: http://{}/graphiql", http_addr);
 
     // Run both servers concurrently
     tokio::spawn(async move {
@@ -72,10 +80,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .expect("Failed to start gRPC server");
     });
 
+    debug!("Starting HTTP server");
     HttpServer::new(move || {
+        debug!("Configuring HTTP server");
         App::new()
-            .app_data(web::Data::new(schema.clone()))
-            .app_data(web::Data::new(context.clone()))
+            .app_data(schema.clone())
+            .app_data(context.clone())
             .wrap(
                 Cors::default()
                     .allow_any_origin()
