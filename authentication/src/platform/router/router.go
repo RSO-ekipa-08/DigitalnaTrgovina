@@ -24,5 +24,12 @@ func New(auth *authenticator.Authenticator) *gin.Engine {
 	router.GET("/user", user.Handler) // Move this out of API group
 	router.GET("/logout", logout.Handler)
 
+	// Health check endpoint
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status": "healthy",
+		})
+	})
+
 	return router
 }

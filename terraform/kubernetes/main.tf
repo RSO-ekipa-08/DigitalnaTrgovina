@@ -115,14 +115,13 @@ resource "kubernetes_deployment" "auth" {
             }
           }
 
-          #   readiness_probe {
-          #     http_get {
-          #       path = "/health"
-          #       port = 8080
-          #     }
-          #     initial_delay_seconds = 5
-          #     period_seconds       = 10
-          #   }
+          liveness_probe {
+            http_get {
+              path = "/health"
+              port = 3000
+            }
+            initial_delay_seconds = 15
+          }
         }
       }
     }
