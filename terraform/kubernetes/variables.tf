@@ -16,36 +16,6 @@ variable "reviews_DATABASE_URL" {
   sensitive   = true
 }
 
-variable "reviews_POSTGRES_HOST" {
-  description = "Host za PostgreSQL bazo za reviews."
-  type        = string
-  sensitive   = true
-}
-
-variable "reviews_POSTGRES_PORT" {
-  description = "Port za PostgreSQL bazo za reviews."
-  type        = string
-  sensitive   = true
-}
-
-variable "reviews_POSTGRES_USER" {
-  description = "Uporabniško ime za PostgreSQL bazo za reviews."
-  type        = string
-  sensitive   = true
-}
-
-variable "reviews_POSTGRES_PASSWORD" {
-  description = "Geslo za PostgreSQL bazo za reviews."
-  type        = string
-  sensitive   = true
-}
-
-variable "reviews_POSTGRES_DB" {
-  description = "Naziv baze za PostgreSQL bazo za reviews."
-  type        = string
-  sensitive   = true
-}
-
 variable "auth_AUTH0_CLIENT_ID" {
   description = "Auth0 client ID"
   type        = string

@@ -45,11 +45,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 async fn get_database_url() -> String {
-    // In Kubernetes, we'll use environment variables
-    let user = env::var("POSTGRES_USER").expect("POSTGRES_USER must be set");
-    let password = env::var("POSTGRES_PASSWORD").expect("POSTGRES_PASSWORD must be set");
-    let host = env::var("POSTGRES_HOST").unwrap_or_else(|_| "localhost".to_string());
-    let db = env::var("POSTGRES_DB").unwrap_or_else(|_| "reviews_db".to_string());
-
-    format!("postgres://{}:{}@{}/{}", user, password, host, db)
+    env::var("DATABASE_URL").expect("DATABASE_URL must be set")
 }
