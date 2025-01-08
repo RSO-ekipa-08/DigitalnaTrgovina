@@ -4,14 +4,16 @@ metadata:
   name: rso-config
   namespace: rso
 data:
-  ENVIRONMENT: "production"
-  # Postgres connection (internal DNS v Azure)
-  DB_HOST: "rso-prod-psql.postgres.database.azure.com"
+  ENVIRONMENT: "prod"
+  DB_HOST: "${postgresql_server_fqdn}"
   DB_PORT: "5432"
   DB_USER: "psqladmin"
   DB_NAME: "rso"
-  # Service endpoints
+  POSTGRES_USER: "psqladmin"
+  POSTGRES_DB: "rso"
   AUTH_SERVICE_URL: "http://auth-service:8080"
   PAYMENT_SERVICE_URL: "http://payment-service:8080"
   REVIEWS_SERVICE_URL: "http://reviews-service:8080"
-  APP_SERVICE_URL: "http://app-service:8080" 
+  APP_SERVICE_URL: "http://app-service:8080"
+  AUTH0_DOMAIN: "${AUTH0_DOMAIN}"
+  AUTH0_CALLBACK_URL: "${AUTH0_CALLBACK_URL}" 

@@ -15,9 +15,10 @@ spec:
     spec:
       containers:
       - name: auth-service
-        image: ghcr.io/rso-projekt-skupina-10/authentication:latest
+        image: ghcr.io/rso-ekipa-08/authentication:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 3000
+        - containerPort: 50051
         envFrom:
         - configMapRef:
             name: rso-config
@@ -36,6 +37,27 @@ spec:
             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 10
+        env:
+          - name: AUTH0_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: rso-secrets
+                key: AUTH0_CLIENT_ID
+          - name: AUTH0_DOMAIN
+            valueFrom:
+              configMapKeyRef:
+                name: rso-config
+                key: AUTH0_DOMAIN
+          - name: AUTH0_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: rso-secrets
+                key: AUTH0_CLIENT_SECRET
+          - name: AUTH0_CALLBACK_URL
+            valueFrom:
+              configMapKeyRef:
+                name: rso-config
+                key: AUTH0_CALLBACK_URL
 ---
 apiVersion: v1
 kind: Service
@@ -46,6 +68,10 @@ spec:
   selector:
     app: auth-service
   ports:
-  - port: 8080
-    targetPort: 8080
-  type: ClusterIP 
+  - name: grpc
+    port: 50051
+    targetPort: 50051
+  - name: http
+    port: 80
+    targetPort: 3000
+  type: LoadBalancer 
