@@ -4,6 +4,7 @@ use uuid::Uuid;
 
 use crate::reviews_proto::*;
 
+#[derive(Clone)]
 pub struct ReviewServiceImpl {
     pool: PgPool,
 }

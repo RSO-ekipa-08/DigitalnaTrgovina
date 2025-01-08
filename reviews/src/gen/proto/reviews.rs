@@ -254,7 +254,6 @@ pub mod review_service_server {
             tonic::Response<super::GetReviewResponse>,
             tonic::Status,
         >;
-        ///
         /// Read
         async fn get_reviews(
             &self,
