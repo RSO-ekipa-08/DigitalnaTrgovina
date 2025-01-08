@@ -33,12 +33,12 @@ jobs:
 
       - name: Generate Documentation
         working-directory: app-service/gen/app/v1
-        run: bunx @redocly/cli build-docs app.openapi.yaml
+        run: bunx @redocly/cli build-docs app.openapi.yaml -o out/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'app-service/gen/app/v1/redoc-static.html'
+          path: 'app-service/gen/app/v1/out/'
 
       - name: Deploy to GitHub Pages
         id: deployment
