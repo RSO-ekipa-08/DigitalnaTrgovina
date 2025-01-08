@@ -431,14 +431,14 @@ resource "kubernetes_deployment" "app" {
             }
           }
 
-          #   readiness_probe {
-          #     http_get {
-          #       path = "/health"
-          #       port = 8080
-          #     }
-          #     initial_delay_seconds = 5
-          #     period_seconds       = 10
-          #   }
+          readiness_probe {
+            http_get {
+              path = "/health"
+              port = 8080
+            }
+            initial_delay_seconds = 5
+            period_seconds       = 10
+          }
         }
       }
     }
