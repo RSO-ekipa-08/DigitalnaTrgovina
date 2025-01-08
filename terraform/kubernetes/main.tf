@@ -301,12 +301,28 @@ resource "kubernetes_deployment" "reviews" {
 
           readiness_probe {
             http_get {
-              path = "/graphiql"
+              path = "/health"
               port = 8080
             }
             initial_delay_seconds = 10
             period_seconds        = 30
+            timeout_seconds       = 5
+            success_threshold     = 1
+            failure_threshold     = 3
           }
+
+          liveness_probe {
+            http_get {
+              path = "/ready"
+              port = 8080
+            }
+            initial_delay_seconds = 15
+            period_seconds        = 30
+            timeout_seconds       = 5
+            success_threshold     = 1
+            failure_threshold     = 3
+          }
+
         }
       }
     }
