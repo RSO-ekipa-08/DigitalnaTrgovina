@@ -124,6 +124,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
     auto_scaling_enabled = true
     min_count            = var.min_node_count
     max_count            = var.max_node_count
+
+    upgrade_settings {
+      drain_timeout_in_minutes      = 0
+      max_surge                     = "10%"
+      node_soak_duration_in_minutes = 0
+    }
   }
 
   identity {
@@ -140,7 +146,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   monitor_metrics {}
 
   oms_agent {
-    log_analytics_workspace_id = azurerm_log_analytics_workspace.aks.id
+    log_analytics_workspace_id      = azurerm_log_analytics_workspace.aks.id
+    msi_auth_for_monitoring_enabled = true
   }
 }
 
