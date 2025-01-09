@@ -72,21 +72,36 @@
 
         async function loadLatestApps() {
             try {
+                const requestBody = {
+                    query: "",
+                    category: "",
+                    minPrice: 0,
+                    maxPrice: 100,
+                    minAndroidVersion: "",
+                    pagination: {
+                        page: 1,
+                        pageSize: 4,
+                    },
+                    sort: [
+                        {
+                            field: "created_at",
+                            ascending: false,
+                        },
+                    ],
+                };
+
                 const response = await fetch(
                     `${window.APP_SERVICE_URL}/app.v1.ApplicationService/SearchApplications`,
                     {
                         method: "POST",
                         headers: {
+                            Accept: "application/json",
                             "Content-Type": "application/json",
                             "Connect-Protocol-Version": "1",
                         },
-                        body: JSON.stringify({
-                            pagination: {
-                                page: 1,
-                                page_size: 4,
-                            },
-                            include_moderated_only: true,
-                        }),
+                        body: JSON.stringify(requestBody),
+                        mode: "cors",
+                        signal: AbortSignal.timeout(5000),
                     },
                 );
 
@@ -110,20 +125,20 @@
                 appsGrid.innerHTML = data.applications
                     .map(
                         (app) => `
-                            <div class="app-card" onclick="location.href='/app/${app.id}'">
-                                <img src="${app.screenshots?.[0] || "/public/images/default-app-icon.png"}"
-                                     alt="${app.name}"
-                                     onerror="this.src='/public/images/default-app-icon.png'">
-                                <div class="app-card-content">
-                                    <h3>${app.name || "Unnamed App"}</h3>
-                                    <div class="app-meta">
-                                        <div>${app.category || "Uncategorized"}</div>
-                                        <div>${app.price > 0 ? app.price + " €" : "Brezplačno"}</div>
-                                        <div>⭐ ${(app.rating || 0).toFixed(1)}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        `,
+                <div class="app-card" onclick="location.href='/app/${app.id}'">
+                  <img src="${app.screenshots?.[0] || "https://developer.android.com/static/images/logos/android.svg"}"
+                       alt="${app.name}"
+                       onerror="this.src='https://developer.android.com/static/images/logos/android.svg'">
+                  <div class="app-card-content">
+                    <h3>${app.name || "Unnamed App"}</h3>
+                    <div class="app-meta">
+                      <div>${app.category || "Uncategorized"}</div>
+                      <div>${app.price > 0 ? app.price + " €" : "Brezplačno"}</div>
+                      <div>⭐ ${(app.rating || 0).toFixed(1)}</div>
+                    </div>
+                  </div>
+                </div>
+              `,
                     )
                     .join("");
             } catch (error) {

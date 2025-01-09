@@ -14,8 +14,8 @@ async function loadAppDetails() {
       {
         method: "POST",
         headers: {
+          Accept: "application/json",
           "Content-Type": "application/json",
-          "Connect-Protocol-Version": "1",
         },
         body: JSON.stringify({
           id: appId,

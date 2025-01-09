@@ -11,118 +11,88 @@ function updateAuthUI() {
 
 async function loadApps() {
   try {
+    console.log("Starting loadApps request");
+    console.log("APP_SERVICE_URL:", window.APP_SERVICE_URL);
+
+    const requestBody = {
+      query: "",
+      category: "",
+      minPrice: 0,
+      maxPrice: 100,
+      minAndroidVersion: "",
+      pagination: {
+        page: 1,
+        pageSize: 20,
+      },
+      sort: [
+        {
+          field: "name",
+          ascending: true,
+        },
+      ],
+    };
+
+    console.log("Request body:", JSON.stringify(requestBody, null, 2));
+
     const response = await fetch(
       `${window.APP_SERVICE_URL}/app.v1.ApplicationService/SearchApplications`,
       {
         method: "POST",
         headers: {
+          Accept: "application/json",
           "Content-Type": "application/json",
           "Connect-Protocol-Version": "1",
         },
-        body: JSON.stringify({
-          pagination: {
-            page: 1,
-            page_size: 20,
-          },
-          include_moderated_only: true,
-        }),
+        body: JSON.stringify(requestBody),
+        mode: "cors",
+        signal: AbortSignal.timeout(5000), // 5 second timeout
       },
     );
 
+    console.log("Response received:", {
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries()),
+    });
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(
+        `HTTP error! status: ${response.status} statusText: ${response.statusText}`,
+      );
     }
 
     const data = await response.json();
+    console.log("Response data:", data);
 
     if (!data || !data.applications) {
-      throw new Error("Invalid data format received from server");
-    }
-
-    const appsGrid = document.getElementById("apps-grid");
-    if (data.applications.length === 0) {
-      appsGrid.innerHTML = "<p>No applications found.</p>";
+      document.getElementById("apps-grid").innerHTML =
+        '<p class="error-message">No applications available.</p>';
       return;
     }
 
+    const appsGrid = document.getElementById("apps-grid");
     appsGrid.innerHTML = data.applications
       .map(
         (app) => `
-            <div class="app-card" onclick="location.href='/app/${app.id}'">
-                <img src="${app.screenshots?.[0] || "/public/images/default-app-icon.png"}"
-                     alt="${app.name}"
-                     onerror="this.src='/public/images/default-app-icon.png'">
-                <div class="app-card-content">
-                    <h3>${app.name || "Unnamed App"}</h3>
-                    <div class="app-meta">
-                        <div>${app.category || "Uncategorized"}</div>
-                        <div>${app.price > 0 ? app.price + " €" : "Brezplačno"}</div>
-                        <div>⭐ ${(app.rating || 0).toFixed(1)}</div>
-                    </div>
-                </div>
+        <div class="app-card" onclick="location.href='/app/${app.id}'">
+          <img src="${app.screenshots?.[0] || "/public/images/default-app-icon.png"}"
+               alt="${app.name}">
+          <div class="app-card-content">
+            <h3>${app.name || "Unnamed App"}</h3>
+            <div class="app-meta">
+              <div>${app.category || "Uncategorized"}</div>
+              <div>${app.price > 0 ? app.price + " €" : "Brezplačno"}</div>
+              <div>⭐ ${(app.rating || 0).toFixed(1)}</div>
             </div>
-        `,
+          </div>
+        </div>
+      `,
       )
       .join("");
   } catch (error) {
     console.error("Error loading apps:", error);
     document.getElementById("apps-grid").innerHTML =
       '<p class="error-message">Failed to load applications. Please try again later.</p>';
-  }
-}
-
-// Update loadAppDetails in app-details.js
-async function loadAppDetails() {
-  try {
-    const response = await fetch(
-      `${window.APP_SERVICE_URL}/app.v1.ApplicationService/GetApplication`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Connect-Protocol-Version": "1",
-        },
-        body: JSON.stringify({
-          id: appId,
-        }),
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const app = data.application;
-
-    if (!app) {
-      throw new Error("No app data received");
-    }
-
-    document.getElementById("app-icon").src =
-      app.screenshots?.[0] || "/public/images/default-app-icon.png";
-    document.getElementById("app-name").textContent = app.name || "Unknown App";
-    document.getElementById("app-developer").textContent =
-      app.developerId || "Unknown Developer";
-    document.getElementById("app-category").textContent =
-      app.category || "Uncategorized";
-    document.getElementById("app-price").textContent =
-      app.price > 0 ? `${app.price} €` : "Brezplačno";
-    document.getElementById("app-description").textContent =
-      app.description || "No description available";
-
-    // Handle screenshots
-    const screenshots = app.screenshots || [];
-    document.getElementById("app-screenshots").innerHTML =
-      screenshots.length > 0
-        ? screenshots
-            .map((url) => `<img src="${url}" alt="Screenshot">`)
-            .join("")
-        : "<p>No screenshots available</p>";
-  } catch (error) {
-    console.error("Error loading app details:", error);
-    document.getElementById("app-content").innerHTML =
-      '<p class="error-message">Failed to load app details. Please try again later.</p>';
   }
 }
 
@@ -133,23 +103,36 @@ async function applyFilters() {
   const maxPrice = document.getElementById("max-price").value;
 
   try {
+    const requestBody = {
+      query: "",
+      category: category || "",
+      minPrice: minPrice ? parseFloat(minPrice) : 0,
+      maxPrice: maxPrice ? parseFloat(maxPrice) : 100,
+      minAndroidVersion: "",
+      pagination: {
+        page: 1,
+        pageSize: 20,
+      },
+      sort: [
+        {
+          field: "name",
+          ascending: true,
+        },
+      ],
+    };
+
     const response = await fetch(
       `${window.APP_SERVICE_URL}/app.v1.ApplicationService/SearchApplications`,
       {
         method: "POST",
         headers: {
+          Accept: "application/json",
           "Content-Type": "application/json",
           "Connect-Protocol-Version": "1",
         },
-        body: JSON.stringify({
-          category: category || undefined,
-          minPrice: minPrice ? parseFloat(minPrice) : undefined,
-          maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
-          pagination: {
-            page: 1,
-            page_size: 20,
-          },
-        }),
+        body: JSON.stringify(requestBody),
+        mode: "cors",
+        signal: AbortSignal.timeout(5000),
       },
     );
 
@@ -158,25 +141,31 @@ async function applyFilters() {
     }
 
     const data = await response.json();
-    // Update the UI with filtered results
-    let appsGrid = document.getElementById("apps-grid");
+    const appsGrid = document.getElementById("apps-grid");
+
+    if (!data || !data.applications || data.applications.length === 0) {
+      appsGrid.innerHTML =
+        '<p class="error-message">No applications found matching your criteria.</p>';
+      return;
+    }
+
     appsGrid.innerHTML = data.applications
       .map(
         (app) => `
-            <div class="app-card" onclick="location.href='/app/${app.id}'">
-                <img src="${app.screenshots?.[0] || "/public/images/default-app-icon.png"}"
-                     alt="${app.name}"
-                     onerror="this.src='/public/images/default-app-icon.png'">
-                <div class="app-card-content">
-                    <h3>${app.name || "Unnamed App"}</h3>
-                    <div class="app-meta">
-                        <div>${app.category || "Uncategorized"}</div>
-                        <div>${app.price > 0 ? app.price + " €" : "Brezplačno"}</div>
-                        <div>⭐ ${(app.rating || 0).toFixed(1)}</div>
-                    </div>
-                </div>
+        <div class="app-card" onclick="location.href='/app/${app.id}'">
+          <img src="${app.screenshots?.[0] || "https://developer.android.com/static/images/logos/android.svg"}"
+               alt="${app.name}"
+               onerror="this.src='https://developer.android.com/static/images/logos/android.svg'">
+          <div class="app-card-content">
+            <h3>${app.name || "Unnamed App"}</h3>
+            <div class="app-meta">
+              <div>${app.category || "Uncategorized"}</div>
+              <div>${app.price > 0 ? app.price + " €" : "Brezplačno"}</div>
+              <div>⭐ ${(app.rating || 0).toFixed(1)}</div>
             </div>
-        `,
+          </div>
+        </div>
+      `,
       )
       .join("");
   } catch (error) {
@@ -186,8 +175,70 @@ async function applyFilters() {
   }
 }
 
+// Load categories
+async function loadCategories() {
+  try {
+    const response = await fetch(
+      `${window.APP_SERVICE_URL}/app.v1.ApplicationService/ListCategories`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          pagination: {
+            page: 1,
+            page_size: 40,
+          },
+        }),
+      },
+    );
+
+    // Log the full response for debugging
+    console.log("Response status:", response.status);
+    console.log(
+      "Response headers:",
+      Object.fromEntries(response.headers.entries()),
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data || !data.categories) {
+      console.warn("No categories available");
+      return;
+    }
+
+    // Populate category dropdown
+    const categorySelect = document.getElementById("category-filter");
+    const options = data.categories.map(
+      (category) => `<option value="${category.id}">${category.name}</option>`,
+    );
+
+    // Keep the default "All categories" option and add new ones
+    categorySelect.innerHTML = `
+      <option value="">Vse kategorije</option>
+      ${options.join("")}
+    `;
+
+    console.log("Categories loaded successfully");
+  } catch (error) {
+    console.error("Error loading categories:", error);
+  }
+}
+
 // Initialize
-document.addEventListener("DOMContentLoaded", () => {
-  updateAuthUI();
-  loadApps();
+document.addEventListener("DOMContentLoaded", async () => {
+  if (window.APP_SERVICE_URL && window.REVIEWS_SERVICE_URL) {
+    updateAuthUI();
+    await loadCategories(); // Load categories first
+    await loadApps(); // Then load apps
+  } else {
+    console.error("Service URLs not configured");
+    document.body.innerHTML =
+      '<p class="error-message">Application configuration error. Please contact support.</p>';
+  }
 });
