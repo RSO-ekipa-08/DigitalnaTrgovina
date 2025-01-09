@@ -165,6 +165,96 @@ resource "kubernetes_service" "auth" {
   }
 }
 
+# Api Gateway
+resource "kubernetes_deployment" "apigateway" {
+  metadata {
+    name      = "apigateway-service"
+    namespace = kubernetes_namespace.rso.metadata[0].name
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "apigateway-service"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "apigateway-service"
+        }
+      }
+
+      spec {
+        container {
+          name  = "apigateway-service"
+          image = "ghcr.io/rso-ekipa-08/api-gateway:latest"
+
+          port {
+            container_port = 3000
+          }
+
+          env {
+            name  = "MINIAUTH_ADDRESS"
+            value = "auth-service:50051" # Points to the gRPC auth service
+          }
+
+          env {
+            name  = "APP_SERVICE_URL"
+            value = "http://${kubernetes_service.app.status.0.load_balancer.0.ingress.0.ip}:8080"
+          }
+
+          env {
+            name  = "REVIEWS_SERVICE_URL"
+            value = "http://${kubernetes_service.reviews.status.0.load_balancer.0.ingress.0.ip}:8080"
+          }
+
+          resources {
+            requests = {
+              cpu    = "100m"
+              memory = "128Mi"
+            }
+            limits = {
+              cpu    = "200m"
+              memory = "256Mi"
+            }
+          }
+
+          liveness_probe {
+            http_get {
+              path = "/health"
+              port = 3000
+            }
+            initial_delay_seconds = 15
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_service" "apigateway" {
+  metadata {
+    name      = "apigateway-service"
+    namespace = kubernetes_namespace.rso.metadata[0].name
+  }
+
+  spec {
+    selector = {
+      app = kubernetes_deployment.apigateway.spec[0].template[0].metadata[0].labels.app
+    }
+
+    port {
+      port        = 80
+      target_port = 3000
+    }
+
+    type = "LoadBalancer"
+  }
+}
 # RabbitMQ
 resource "kubernetes_deployment" "rabbitmq" {
   metadata {
