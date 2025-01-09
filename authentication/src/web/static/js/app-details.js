@@ -228,3 +228,83 @@ function updateAuthUI() {
     document.getElementById("user-info").style.display = "none";
   }
 }
+
+async function submitReview() {
+  const score = parseInt(document.getElementById("rating-input").value);
+  const comment = document.getElementById("review-comment").value.trim();
+
+  const profile = auth.getProfile();
+  console.log(profile);
+  if (!profile) {
+    alert("Prosim, prijavite se za oddajo ocene");
+    return;
+  }
+
+  if (!comment) {
+    alert("Prosim, vnesite komentar");
+    return;
+  }
+
+  const mutation = `
+        mutation {
+            createReview(
+                appId: "${appId}",
+                userId: "${profile.nickname}",
+                score: ${score},
+                comment: "${comment}",
+                tenantId: "default"
+            ) {
+                id
+                appId
+                userId
+                score
+                comment
+                createdAt
+                isModerated
+                moderationStatus
+                tenantId
+            }
+        }
+    `;
+
+  try {
+    const response = await fetch(`${window.REVIEWS_SERVICE_URL}/graphql`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${auth.getToken()}`,
+      },
+      body: JSON.stringify({
+        query: mutation,
+        // Remove variables since we're using inline values
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (result.errors) {
+      throw new Error(result.errors[0].message);
+    }
+
+    if (!result.data?.createReview) {
+      throw new Error("Napaka pri oddaji ocene");
+    }
+
+    // Clear the form
+    document.getElementById("rating-input").value = "5";
+    document.getElementById("review-comment").value = "";
+
+    // Reload reviews to show the new one
+    await loadReviews();
+
+    alert("Ocena je bila uspešno oddana");
+  } catch (error) {
+    console.error("Error submitting review:", error);
+    alert("Napaka pri oddaji ocene: " + error.message);
+  }
+}
