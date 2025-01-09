@@ -3,7 +3,7 @@ FROM golang:1.23-alpine
 RUN apk add --no-cache make protoc protobuf-dev
 
 # Define current working directory
-WORKDIR /authentication
+WORKDIR /apigateway
 
 # Install protoc-gen-go and protoc-gen-go-grpc
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
@@ -20,7 +20,7 @@ COPY . .
 # Generate proto files
 RUN make proto
 
-RUN go build -o out/auth-service ./src
+RUN go build -o out/gate-service ./src
 
 
 # Expose port 50051 for grpc
@@ -29,4 +29,4 @@ EXPOSE 50051
 # Expose 3000 for http
 EXPOSE 3000
 
-CMD ["/authentication/out/auth-service"]
+CMD ["/apigateway/out/gate-service"]

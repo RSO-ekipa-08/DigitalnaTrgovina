@@ -2,32 +2,34 @@ package main
 
 import (
 	"log"
-	"net/http"
-	"os"
+	"net"
 
 	"github.com/joho/godotenv"
+	"google.golang.org/grpc"
 
-	"authentication/src/platform/auth"
-	"authentication/src/platform/router"
+	pb "authentication/src/gen/proto"
+	"authentication/src/platform/authenticator"
+	grpcServer "authentication/src/platform/grpc"
 )
 
 func main() {
 	godotenv.Load()
 
-	miniAuthAddr := os.Getenv("MINIAUTH_ADDRESS")
-	if miniAuthAddr == "" {
-		miniAuthAddr = "localhost:50051"
-	}
-
-	authClient, err := auth.NewAuthClient(miniAuthAddr)
+	auth, err := authenticator.New()
 	if err != nil {
-		log.Fatalf("Failed to create auth client: %v", err)
+		log.Fatalf("Failed to initialize the authenticator: %v", err)
 	}
 
-	rtr := router.New(authClient)
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
 
-	log.Print("HTTP server listening on http://localhost:3000/")
-	if err := http.ListenAndServe("0.0.0.0:3000", rtr); err != nil {
-		log.Fatalf("There was an error with the http server: %v", err)
+	s := grpc.NewServer()
+	pb.RegisterAuthServiceServer(s, grpcServer.NewServer(auth))
+
+	log.Printf("gRPC server listening on :50051")
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve gRPC: %v", err)
 	}
 }

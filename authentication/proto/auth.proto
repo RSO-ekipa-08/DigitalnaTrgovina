@@ -1,7 +1,7 @@
 syntax = "proto3";
 package auth;
 
-option go_package = "authentication/src/gen/proto";
+option go_package = "miniauth/src/gen/proto";
 
 // Authentication service for managing user sessions and verification
 service AuthService {

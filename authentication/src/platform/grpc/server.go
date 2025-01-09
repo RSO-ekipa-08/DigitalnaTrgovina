@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/url"
 	"os"
 
@@ -39,6 +40,8 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResp
 	if err != nil {
 		return nil, err
 	}
+	// Log user trying to login
+	log.Printf("URL: %s is trying to login with state %s", req.GetRedirectUrl(), state)
 
 	authURL := s.auth.AuthCodeURL(state)
 	return &pb.LoginResponse{AuthUrl: authURL}, nil
