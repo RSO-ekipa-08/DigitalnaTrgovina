@@ -10,6 +10,7 @@ on:
       - 'app-service/gen/app/v1/**'
       - 'payment/gen/payment/v1/**'
       - 'authentication/docs/**'
+      - 'reviews/docs/**'
 
 permissions:
   contents: read
@@ -42,6 +43,7 @@ jobs:
           bunx @redocly/cli build-docs app-service/gen/app/v1/app.openapi.yaml -o out/app.html
           bunx @redocly/cli build-docs payment/gen/payment/v1/payment.openapi.yaml -o out/payment.html
           cp authentication/docs/index.html out/auth.html
+          cp reviews/docs/index.html out/reviews.html
 
       - name: Generate Index
         run: |
@@ -98,6 +100,7 @@ jobs:
                       <a href="app.html">Aplikacijska storitev</a>
                       <a href="payment.html">Plačilna storitev</a>
                       <a href="auth.html">Avtentikacijska storitev</a>
+                      <a href="reviews.html">Storitev za ocene</a>
                   </div>
               </div>
           </body>
