@@ -199,17 +199,17 @@ resource "kubernetes_deployment" "api-gateway" {
 
           env {
             name  = "MINIAUTH_ADDRESS"
-            value = "auth-service:50051" # Points to the gRPC auth service
+            value = "${kubernetes_deployment.auth.metadata[0].name}:50051" # Points to the gRPC auth service
           }
 
           env {
             name  = "APP_SERVICE_URL"
-            value = "http://${kubernetes_service.app.status.0.load_balancer.0.ingress.0.ip}:8080"
+            value = "http://${kubernetes_deployment.app.metadata[0].name}:8080"
           }
 
           env {
             name  = "REVIEWS_SERVICE_URL"
-            value = "http://${kubernetes_service.reviews.status.0.load_balancer.0.ingress.0.ip}:8080"
+            value = "http://${kubernetes_deployment.reviews.metadata[0].name}:8080"
           }
 
           resources {
