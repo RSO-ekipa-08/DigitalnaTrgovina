@@ -32,6 +32,8 @@ RUN apk add --no-cache ca-certificates tzdata
 WORKDIR /app
 
 COPY --from=builder /apigateway/out/api-gateway /app/api-gateway
+COPY --from=builder /apigateway/src/web/static /app/src/web/static
+COPY --from=builder /apigateway/src/web/template /app/src/web/template
 
 USER appuser
 
