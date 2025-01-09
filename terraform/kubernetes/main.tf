@@ -103,6 +103,16 @@ resource "kubernetes_deployment" "auth" {
             value = var.auth_AUTH0_CALLBACK_URL
           }
 
+          env {
+            name  = "APP_SERVICE_URL"
+            value = "http://${kubernetes_service.app.status.0.load_balancer.0.ingress.0.ip}:8080"
+          }
+
+          env {
+            name  = "REVIEWS_SERVICE_URL"
+            value = "http://${kubernetes_service.reviews.status.0.load_balancer.0.ingress.0.ip}:8080"
+          }
+
 
           resources {
             requests = {
@@ -209,7 +219,7 @@ resource "kubernetes_deployment" "rabbitmq" {
               port = 5672
             }
             initial_delay_seconds = 10
-            period_seconds       = 30
+            period_seconds        = 30
           }
 
           liveness_probe {
@@ -217,7 +227,7 @@ resource "kubernetes_deployment" "rabbitmq" {
               port = 5672
             }
             initial_delay_seconds = 30
-            period_seconds       = 30
+            period_seconds        = 30
           }
         }
       }
@@ -331,7 +341,7 @@ resource "kubernetes_deployment" "payment_v2" {
               command = ["pgrep", "-f", "bun run"]
             }
             initial_delay_seconds = 5
-            period_seconds       = 10
+            period_seconds        = 10
           }
 
           readiness_probe {
@@ -339,7 +349,7 @@ resource "kubernetes_deployment" "payment_v2" {
               command = ["pgrep", "-f", "bun run"]
             }
             initial_delay_seconds = 5
-            period_seconds       = 10
+            period_seconds        = 10
           }
         }
       }
@@ -356,8 +366,8 @@ resource "kubernetes_secret" "payment_v2_secrets" {
 
   data = {
     STRIPE_SECRET_KEY = var.stripe_secret_key
-    SUCCESS_URL      = var.payment_success_url
-    CANCEL_URL       = var.payment_cancel_url
+    SUCCESS_URL       = var.payment_success_url
+    CANCEL_URL        = var.payment_cancel_url
   }
 }
 
