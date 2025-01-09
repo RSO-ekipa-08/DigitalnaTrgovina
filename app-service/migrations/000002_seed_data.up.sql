@@ -266,7 +266,7 @@ INSERT INTO applications (
         '2.1.1',
         ARRAY['weather', 'forecast', 'tools'],
         ARRAY['weather1.jpg', 'weather2.jpg'],
-        'https://img.icons8.com/?size=100&id=E8cqWFiPDYUV&format=png&color=000005',
+        'https://img.icons8.com/?size=500&id=E8cqWFiPDYUV&format=png&color=000005',
         'https://storage.example.com/weather-forecast.apk',
         4.3,
         120000
