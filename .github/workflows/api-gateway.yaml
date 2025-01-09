@@ -34,7 +34,7 @@ jobs:
         uses: docker/build-push-action@v4
         id: push
         with:
-          context: ./apigateway
+          context: ./api-gateway
           push: true
           tags: ghcr.io/rso-ekipa-08/api-gateway:latest
       
