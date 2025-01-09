@@ -1,3 +1,7 @@
+use std::env;
+
+use env_logger::Logger;
+use log::debug;
 use sqlx::PgPool;
 use tonic::{Request, Response, Status};
 use uuid::Uuid;
@@ -82,6 +86,9 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
         &self,
         request: Request<GetReviewsRequest>,
     ) -> Result<Response<GetReviewsResponse>, Status> {
+        // Log the request
+        debug!("Get reviews request: {:?}", request);
+
         let req = request.into_inner();
         let offset = (req.page * req.page_size) as i64;
 
@@ -104,6 +111,8 @@ impl review_service_server::ReviewService for ReviewServiceImpl {
         .fetch_all(&self.pool)
         .await
         .map_err(|e| Status::internal(format!("Failed to fetch reviews: {}", e)))?;
+        // Debug log the reviews
+        debug!("Fetched reviews: {:?}", reviews);
 
         let stats = sqlx::query!(
             r#"

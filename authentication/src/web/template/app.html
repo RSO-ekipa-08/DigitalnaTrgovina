@@ -1,0 +1,92 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="/public/css/app.css" rel="stylesheet" />
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <a href="/">Digitalna trgovina</a>
+            </div>
+            <div class="nav-items">
+                <div id="user-section">
+                    <a href="/login" id="login-btn" class="btn">Sign In</a>
+                    <div id="user-info" style="display: none">
+                        <img
+                            id="user-avatar"
+                            class="avatar"
+                            alt="Profile picture"
+                        />
+                        <span id="user-name"></span>
+                        <button onclick="logout()" class="btn">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="app-details">
+            <div class="app-header">
+                <img id="app-icon" alt="App icon" />
+                <div class="app-info">
+                    <h1 id="app-name"></h1>
+                    <div class="app-meta">
+                        <span id="app-developer"></span>
+                        <span id="app-category"></span>
+                        <span id="app-price"></span>
+                    </div>
+                </div>
+                <button id="download-btn" class="btn btn-primary">
+                    Prenesi
+                </button>
+            </div>
+
+            <div class="app-content">
+                <div class="app-description">
+                    <h2>Opis</h2>
+                    <p id="app-description"></p>
+
+                    <div class="screenshots" id="app-screenshots">
+                        <!-- Screenshots will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="app-reviews">
+                    <h2>Ocene in komentarji</h2>
+                    <div class="review-stats">
+                        <div id="average-rating"></div>
+                        <div id="total-reviews"></div>
+                    </div>
+
+                    <div class="add-review" id="add-review-section">
+                        <h3>Dodaj komentar</h3>
+                        <select id="rating-input">
+                            <option value="5">5 zvezdic</option>
+                            <option value="4">4 zvezdice</option>
+                            <option value="3">3 zvezdice</option>
+                            <option value="2">2 zvezdici</option>
+                            <option value="1">1 zvezdica</option>
+                        </select>
+                        <textarea
+                            id="review-comment"
+                            placeholder="Vaš komentar..."
+                        ></textarea>
+                        <button onclick="submitReview()" class="btn">
+                            Objavi
+                        </button>
+                    </div>
+
+                    <div id="reviews-list">
+                        <!-- Reviews will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script>
+            // Add service URLs from environment
+            window.APP_SERVICE_URL = "{{.AppServiceURL}}";
+            window.REVIEWS_SERVICE_URL = "{{.ReviewsServiceURL}}";
+        </script>
+        <script src="/public/js/auth.js"></script>
+        <script src="/public/js/app-details.js"></script>
+    </body>
+</html>
