@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine
+FROM golang:1.23-alpine AS builder
 
 RUN apk add --no-cache make protoc protobuf-dev
 
@@ -20,8 +20,20 @@ COPY . .
 # Generate proto files
 RUN make proto
 
-RUN go build -o out/gate-service ./src
+RUN CGO_ENABLED=0 GOOS=linux go build -o out/api-gateway ./src
 
+# Final stage
+FROM alpine:latest
+
+RUN adduser -D -g '' appuser
+
+RUN apk add --no-cache ca-certificates tzdata
+
+WORKDIR /app
+
+COPY --from=builder /apigateway/out/api-gateway /app/api-gateway
+
+USER appuser
 
 # Expose port 50051 for grpc
 EXPOSE 50051
@@ -29,4 +41,4 @@ EXPOSE 50051
 # Expose 3000 for http
 EXPOSE 3000
 
-CMD ["/apigateway/out/gate-service"]
+CMD ["/app/api-gateway"]
