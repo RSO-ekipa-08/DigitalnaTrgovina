@@ -16,6 +16,13 @@ func New(authClient *auth.AuthClient) *gin.Engine {
 	router.Static("/public", "src/web/static")
 	router.LoadHTMLGlob("src/web/template/*")
 
+	// Health check endpoint
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status": "healthy",
+		})
+	})
+
 	// Public routes
 	router.GET("/login", func(c *gin.Context) {
 		authURL, err := authClient.Login(c, c.Query("redirect_url"))
