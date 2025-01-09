@@ -64,3 +64,19 @@ variable "app_STORAGE_SECRET_KEY" {
   type        = string
   sensitive   = true
 }
+
+variable "stripe_secret_key" {
+  description = "Stripe Secret Key"
+  type        = string
+  sensitive   = true
+}
+
+variable "payment_success_url" {
+  description = "URL for successful payments"
+  type        = string
+}
+
+variable "payment_cancel_url" {
+  description = "URL for cancelled payments"
+  type        = string
+}

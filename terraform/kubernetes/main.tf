@@ -155,10 +155,10 @@ resource "kubernetes_service" "auth" {
   }
 }
 
-# Payment Service
-resource "kubernetes_deployment" "payment" {
+# RabbitMQ
+resource "kubernetes_deployment" "rabbitmq" {
   metadata {
-    name      = "payment-service"
+    name      = "rabbitmq"
     namespace = kubernetes_namespace.rso.metadata[0].name
   }
 
@@ -167,36 +167,152 @@ resource "kubernetes_deployment" "payment" {
 
     selector {
       match_labels = {
-        app = "payment-service"
+        app = "rabbitmq"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "payment-service"
+          app = "rabbitmq"
         }
       }
 
       spec {
         container {
-          name  = "payment-service"
-          image = "ghcr.io/rso-ekipa-08/payment:latest"
+          name  = "rabbitmq"
+          image = "rabbitmq:3.12-management"
 
           port {
-            container_port = 8080
+            name           = "amqp"
+            container_port = 5672
           }
 
-          env_from {
-            config_map_ref {
-              name = kubernetes_config_map.rso_config.metadata[0].name
+          port {
+            name           = "management"
+            container_port = 15672
+          }
+
+          resources {
+            requests = {
+              cpu    = "100m"
+              memory = "256Mi"
+            }
+            limits = {
+              cpu    = "200m"
+              memory = "512Mi"
             }
           }
 
-          env_from {
-            secret_ref {
-              name = kubernetes_secret.rso_secrets.metadata[0].name
+          readiness_probe {
+            tcp_socket {
+              port = 5672
             }
+            initial_delay_seconds = 10
+            period_seconds       = 30
+          }
+
+          liveness_probe {
+            tcp_socket {
+              port = 5672
+            }
+            initial_delay_seconds = 30
+            period_seconds       = 30
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_service" "rabbitmq" {
+  metadata {
+    name      = "rabbitmq"
+    namespace = kubernetes_namespace.rso.metadata[0].name
+  }
+
+  spec {
+    selector = {
+      app = kubernetes_deployment.rabbitmq.spec[0].template[0].metadata[0].labels.app
+    }
+
+    port {
+      name        = "amqp"
+      port        = 5672
+      target_port = 5672
+    }
+
+    port {
+      name        = "management"
+      port        = 15672
+      target_port = 15672
+    }
+
+    type = "ClusterIP"
+  }
+}
+
+# Payment Service v2
+resource "kubernetes_deployment" "payment_v2" {
+  metadata {
+    name      = "payment-service-v2"
+    namespace = kubernetes_namespace.rso.metadata[0].name
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "payment-service-v2"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "payment-service-v2"
+        }
+      }
+
+      spec {
+        container {
+          name  = "payment-service-v2"
+          image = "ghcr.io/rso-ekipa-08/payment_v2:latest"
+
+          env {
+            name = "STRIPE_SECRET_KEY"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.payment_v2_secrets.metadata[0].name
+                key  = "STRIPE_SECRET_KEY"
+              }
+            }
+          }
+
+          env {
+            name = "SUCCESS_URL"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.payment_v2_secrets.metadata[0].name
+                key  = "SUCCESS_URL"
+              }
+            }
+          }
+
+          env {
+            name = "CANCEL_URL"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.payment_v2_secrets.metadata[0].name
+                key  = "CANCEL_URL"
+              }
+            }
+          }
+
+          env {
+            name  = "RABBITMQ_URL"
+            value = "amqp://rabbitmq:5672"
           }
 
           resources {
@@ -210,12 +326,20 @@ resource "kubernetes_deployment" "payment" {
             }
           }
 
-          readiness_probe {
-            http_get {
-              path = "/health"
-              port = 8080
+          liveness_probe {
+            exec {
+              command = ["pgrep", "-f", "bun run"]
             }
-            initial_delay_seconds = 10
+            initial_delay_seconds = 5
+            period_seconds       = 10
+          }
+
+          readiness_probe {
+            exec {
+              command = ["pgrep", "-f", "bun run"]
+            }
+            initial_delay_seconds = 5
+            period_seconds       = 10
           }
         }
       }
@@ -223,23 +347,17 @@ resource "kubernetes_deployment" "payment" {
   }
 }
 
-resource "kubernetes_service" "payment" {
+# Payment v2 Secrets
+resource "kubernetes_secret" "payment_v2_secrets" {
   metadata {
-    name      = "payment-service"
+    name      = "payment-v2-secrets"
     namespace = kubernetes_namespace.rso.metadata[0].name
   }
 
-  spec {
-    selector = {
-      app = kubernetes_deployment.payment.spec[0].template[0].metadata[0].labels.app
-    }
-
-    port {
-      port        = 8080
-      target_port = 8080
-    }
-
-    type = "ClusterIP"
+  data = {
+    STRIPE_SECRET_KEY = var.stripe_secret_key
+    SUCCESS_URL      = var.payment_success_url
+    CANCEL_URL       = var.payment_cancel_url
   }
 }
 
