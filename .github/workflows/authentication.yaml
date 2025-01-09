@@ -1,4 +1,4 @@
-name: "ApiGateway: Build and Push to GitHub Container Registry"
+name: 'Authentication: Build and Push to GitHub Container Registry'
 
 permissions:
   # attestations: write
@@ -8,9 +8,10 @@ permissions:
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [ main ]
     paths:
-      - "apigateway/**"
+      - '.github/workflows/authentication.yaml'
+      - 'authentication/**'
 
 jobs:
   build-and-push:
@@ -33,6 +34,13 @@ jobs:
         uses: docker/build-push-action@v4
         id: push
         with:
-          context: ./apigateway
+          context: ./authentication
           push: true
-          tags: ghcr.io/rso-ekipa-08/apigateway:latest
+          tags: ghcr.io/rso-ekipa-08/authentication:latest
+      
+      # - name: Generate artifact attestation
+      #   uses: actions/attest-build-provenance@v2
+      #   with:
+      #     subject-name: ghcr.io/rso-ekipa-08/authentication
+      #     subject-digest: ${{ steps.push.outputs.digest }}
+      #     push-to-registry: true

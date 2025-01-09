@@ -10,6 +10,7 @@ on:
   push:
     branches: [ main ]
     paths:
+      - '.github/workflows/payment_v2.yaml'
       - 'payment_v2/**'
 
 jobs:

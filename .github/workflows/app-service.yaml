@@ -11,6 +11,7 @@ on:
   push:
     branches: [ main ]
     paths:
+      - '.github/workflows/app-service.yaml'
       - 'app-service/**'
 
 jobs:

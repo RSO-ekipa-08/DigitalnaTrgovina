@@ -166,9 +166,9 @@ resource "kubernetes_service" "auth" {
 }
 
 # Api Gateway
-resource "kubernetes_deployment" "apigateway" {
+resource "kubernetes_deployment" "api-gateway" {
   metadata {
-    name      = "apigateway-service"
+    name      = "api-gateway-service"
     namespace = kubernetes_namespace.rso.metadata[0].name
   }
 
@@ -177,20 +177,20 @@ resource "kubernetes_deployment" "apigateway" {
 
     selector {
       match_labels = {
-        app = "apigateway-service"
+        app = "api-gateway-service"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "apigateway-service"
+          app = "api-gateway-service"
         }
       }
 
       spec {
         container {
-          name  = "apigateway-service"
+          name  = "api-gateway-service"
           image = "ghcr.io/rso-ekipa-08/api-gateway:latest"
 
           port {
@@ -236,15 +236,15 @@ resource "kubernetes_deployment" "apigateway" {
   }
 }
 
-resource "kubernetes_service" "apigateway" {
+resource "kubernetes_service" "api-gateway" {
   metadata {
-    name      = "apigateway-service"
+    name      = "api-gateway-service"
     namespace = kubernetes_namespace.rso.metadata[0].name
   }
 
   spec {
     selector = {
-      app = kubernetes_deployment.apigateway.spec[0].template[0].metadata[0].labels.app
+      app = kubernetes_deployment.api-gateway.spec[0].template[0].metadata[0].labels.app
     }
 
     port {
