@@ -72,7 +72,7 @@ func (s *PaymentService) ProcessPayment(ctx context.Context, req *types.PaymentR
 
 	// Start consuming from the response queue
 	responses, err := s.channel.Consume(
-		"payment_responses", // queue
+		responseQueue.Name, // queue name
 		"",                 // consumer
 		true,               // auto-ack
 		true,               // exclusive

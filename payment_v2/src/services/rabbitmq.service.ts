@@ -29,29 +29,32 @@ export class RabbitMQService {
     }
 
     async startListening(): Promise<void> {
-        if (!this.channel) {
-            throw new Error('RabbitMQ channel not initialized');
-        }
+        if (!this.channel) throw new Error('RabbitMQ channel not initialized');
 
         this.channel.consume(config.rabbitmq.paymentRequestQueue, async (msg) => {
-            if (msg) {
-                try {
-                    const paymentRequest: PaymentRequest = JSON.parse(msg.content.toString());
-                    const checkoutUrl = await this.stripeService.createCheckoutSession(paymentRequest);
+            if (!this.channel) throw new Error('RabbitMQ channel not initialized');
+            if (!msg) return;
+            try {
+                const paymentRequest: PaymentRequest = JSON.parse(msg.content.toString());
+                const checkoutUrl = await this.stripeService.createCheckoutSession(paymentRequest);
 
-                    // Send response back
-                    this.channel?.sendToQueue(
-                        config.rabbitmq.paymentResponseQueue,
-                        Buffer.from(JSON.stringify({ checkoutUrl }))
+                // Send response back to the specified reply-to queue
+                if (msg.properties.replyTo) {
+                    this.channel.sendToQueue(
+                        msg.properties.replyTo,
+                        Buffer.from(JSON.stringify({ checkoutUrl })),
+                        { correlationId: msg.properties.correlationId }
                     );
-
-                    // Acknowledge the message
-                    this.channel?.ack(msg);
-                } catch (error) {
-                    console.error('Error processing payment request:', error);
-                    // Negative acknowledge in case of error
-                    this.channel?.nack(msg);
+                } else {
+                    console.error('No reply-to queue specified in the request');
                 }
+
+                // Acknowledge the message
+                this.channel.ack(msg);
+            } catch (error) {
+                console.error('Error processing payment request:', error);
+                // Negative acknowledge in case of error
+                this.channel.nack(msg);
             }
         });
     }
