@@ -20,7 +20,5 @@
     "dotenv": "^16.4.7",
     "stripe": "^17.5.0"
   },
-  "trustedDependencies": [
-    "@biomejs/biome"
-  ]
+  "trustedDependencies": ["@biomejs/biome"]
 }
