@@ -8,6 +8,7 @@ import (
 	appv1 "github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/gen/app/v1"
 	database "github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/database/generated"
 	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/pgutil"
+	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/service"
 	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/types"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -18,13 +19,15 @@ type application = database.CreateApplicationRow
 
 // Handler represents the Connect-RPC handler
 type Handler struct {
-	svc types.ApplicationService
+	svc            types.ApplicationService
+	paymentService *service.PaymentService
 }
 
 // New creates a new handler instance
-func New(svc types.ApplicationService) *Handler {
+func New(svc types.ApplicationService, paymentService *service.PaymentService) *Handler {
 	return &Handler{
-		svc: svc,
+		svc:            svc,
+		paymentService: paymentService,
 	}
 }
 
@@ -311,9 +314,52 @@ func convertApplicationToProto(app *application) *appv1.Application {
 
 // BuyApplication handles the purchase of an application
 func (h *Handler) BuyApplication(ctx context.Context, req *connect.Request[appv1.BuyApplicationRequest]) (*connect.Response[appv1.BuyApplicationResponse], error) {
-	// Implement the logic for buying an application
-	// This is a placeholder implementation
+	// Preveri veljavnost ID-jev
+	appID, err := uuid.Parse(req.Msg.ApplicationId)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("invalid application ID"))
+	}
+
+	userID, err := uuid.Parse(req.Msg.UserId)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("invalid user ID"))
+	}
+
+	// Pridobi podatke o aplikaciji
+	app, err := h.svc.GetApplication(ctx, appID)
+	if err != nil {
+		log.Error().Err(err).
+			Str("appID", appID.String()).
+			Str("userID", userID.String()).
+			Msg("failed to get application")
+		return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("application not found"))
+	}
+
+	// Pripravi zahtevek za plačilo
+	priceValue := pgutil.FromFloat64(app.Price)
+	if priceValue <= 0 {
+		log.Error().Msg("invalid price value")
+		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("invalid price value"))
+	}
+
+	paymentReq := &types.PaymentRequest{
+		Amount:      int64(priceValue * 100), // Pretvori v cente
+		Currency:    "eur",
+		ProductName: app.Name,
+		Quantity:    1,
+	}
+
+	// Pošlji zahtevek za plačilo in počakaj na odgovor
+	paymentResp, err := h.paymentService.ProcessPayment(ctx, paymentReq)
+	if err != nil {
+		log.Error().Err(err).
+			Str("appID", appID.String()).
+			Str("userID", userID.String()).
+			Msg("failed to process payment")
+		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("failed to process payment"))
+	}
+
 	return connect.NewResponse(&appv1.BuyApplicationResponse{
-		CheckoutUrl: "https://example.com/checkout",
+		CheckoutUrl: paymentResp.CheckoutURL,
 	}), nil
 }

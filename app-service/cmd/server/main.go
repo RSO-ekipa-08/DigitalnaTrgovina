@@ -83,8 +83,15 @@ func main() {
 	// Initialize service
 	svc := service.New(repo, storage)
 
+	// Initialize payment service
+	paymentService, err := service.NewPaymentService(cfg.RabbitMQURL)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to create payment service")
+	}
+	defer paymentService.Close()
+
 	// Initialize handler
-	h := handler.New(svc)
+	h := handler.New(svc, paymentService)
 
 	// Initialize HTTP server with Connect-RPC handler
 	mux := http.NewServeMux()

@@ -533,6 +533,11 @@ resource "kubernetes_deployment" "app" {
             value = var.app_STORAGE_SECRET_KEY
           }
 
+          env {
+            name  = "RABBITMQ_URL"
+            value = "amqp://rabbitmq:5672"
+          }
+
           resources {
             requests = {
               cpu    = "100m"
