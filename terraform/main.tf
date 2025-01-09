@@ -203,7 +203,7 @@ resource "random_string" "suffix" {
 
 # Azure Managed Grafana
 resource "azurerm_dashboard_grafana" "grafana" {
-  name                              = "${var.project_name}-${var.environment}-grafana"
+  name                              = "${var.project_name}-${var.environment}-grafana-${random_string.suffix.result}"
   resource_group_name               = azurerm_resource_group.rg.name
   location                          = azurerm_resource_group.rg.location
   sku                               = "Standard"
