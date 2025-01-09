@@ -8,7 +8,8 @@ on:
     paths:
       - '.github/workflows/api-docs.yaml'
       - 'app-service/gen/app/v1/**'
-      - 'payment/gen/payment/v1/**'
+      # - 'payment/gen/payment/v1/**'
+      - 'payment_v2/docs/**'
       - 'authentication/docs/**'
       - 'reviews/docs/**'
 
@@ -41,10 +42,11 @@ jobs:
       - name: Generate Documentation
         run: |
           bunx @redocly/cli build-docs app-service/gen/app/v1/app.openapi.yaml -o out/app.html
-          bunx @redocly/cli build-docs payment/gen/payment/v1/payment.openapi.yaml -o out/payment.html
           cp authentication/docs/index.html out/auth.html
           cp reviews/docs/index.html out/reviews.html
-
+          cp payment_v2/docs/index.html out/payment.html
+        # bunx @redocly/cli build-docs payment/gen/payment/v1/payment.openapi.yaml -o out/payment.html
+          
       - name: Generate Index
         run: |
           cat > out/index.html << 'EOF'
