@@ -351,6 +351,9 @@ components:
         storageUrl:
           type: string
           title: storage_url
+        iconUrl:
+          type: string
+          title: icon_url
       title: Application
       additionalProperties: false
       description: Application related models
@@ -436,6 +439,9 @@ components:
           type: string
           title: apk_file
           format: byte
+        iconUrl:
+          type: string
+          title: icon_url
       title: CreateApplicationRequest
       additionalProperties: false
       description: Request/Response messages
@@ -741,6 +747,13 @@ components:
                       - description
         - anyOf:
             - required:
+                - iconUrl
+            - not:
+                anyOf:
+                  - required:
+                      - iconUrl
+        - anyOf:
+            - required:
                 - minAndroidVersion
             - not:
                 anyOf:
@@ -797,6 +810,9 @@ components:
           type: string
           title: apk_file
           format: byte
+        iconUrl:
+          type: string
+          title: icon_url
       title: UpdateApplicationRequest
       additionalProperties: false
     app.v1.UpdateApplicationResponse:

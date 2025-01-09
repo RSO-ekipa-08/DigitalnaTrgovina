@@ -21,6 +21,7 @@ type Application struct {
 	Tags              []string           `db:"tags" json:"tags"`
 	Screenshots       []string           `db:"screenshots" json:"screenshots"`
 	StorageUrl        string             `db:"storage_url" json:"storage_url"`
+	IconUrl           string             `db:"icon_url" json:"icon_url"`
 	Rating            pgtype.Numeric     `db:"rating" json:"rating"`
 	Downloads         int32              `db:"downloads" json:"downloads"`
 	CreatedAt         pgtype.Timestamptz `db:"created_at" json:"created_at"`

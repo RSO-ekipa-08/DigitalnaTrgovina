@@ -5,7 +5,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/database/generated"
+	database "github.com/RSO-ekipa-08/DigitalnaTrgovina/app-service/internal/database/generated"
 	"github.com/google/uuid"
 )
 
@@ -40,6 +40,7 @@ type CreateApplicationParams struct {
 	Tags              []string
 	Screenshots       []string
 	APKFile           []byte
+	IconURL           string
 }
 
 // UpdateApplicationParams represents the parameters for updating an application
@@ -54,6 +55,7 @@ type UpdateApplicationParams struct {
 	Tags              *[]string
 	Screenshots       *[]string
 	APKFile           []byte
+	IconURL           *string
 }
 
 // SearchApplicationsParams represents the parameters for searching applications

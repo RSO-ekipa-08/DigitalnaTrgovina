@@ -138,6 +138,7 @@ func TestCreateApplication(t *testing.T) {
 		Tags:              []string{"game", "arcade"},
 		Screenshots:       []string{"screen1.jpg", "screen2.jpg"},
 		APKFile:           []byte("test"),
+		IconURL:           "icon.png",
 	})
 
 	require.NoError(t, err)

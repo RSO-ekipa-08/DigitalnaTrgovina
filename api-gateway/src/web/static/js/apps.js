@@ -75,7 +75,7 @@ async function loadApps() {
       .map(
         (app) => `
         <div class="app-card" onclick="location.href='/app/${app.id}'">
-          <img src="${app.storage_url || "/public/images/default-app-icon.png"}"
+          <img src="${app.icon_url || "/public/images/default-app-icon.png"}"
                alt="${app.name}">
           <div class="app-card-content">
             <h3>${app.name || "Unnamed App"}</h3>
@@ -153,7 +153,7 @@ async function applyFilters() {
       .map(
         (app) => `
         <div class="app-card" onclick="location.href='/app/${app.id}'">
-          <img src="${app.storage_url || "https://developer.android.com/static/images/logos/android.svg"}"
+          <img src="${app.icon_url || "https://developer.android.com/static/images/logos/android.svg"}"
                alt="${app.name}"
                onerror="this.src='https://developer.android.com/static/images/logos/android.svg'">
           <div class="app-card-content">

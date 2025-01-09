@@ -56,6 +56,7 @@ func TestCreateAndGetApplication(t *testing.T) {
 		Tags:              []string{"game", "action"},
 		Screenshots:       []string{"screenshot1.jpg", "screenshot2.jpg"},
 		StorageUrl:        path.Join("apps", developerID.String(), "test.apk"),
+		IconUrl:           "icon.png",
 	})
 
 	require.NoError(t, err)
@@ -91,6 +92,7 @@ func TestUpdateApplication(t *testing.T) {
 		Tags:              []string{"game", "action"},
 		Screenshots:       []string{"screenshot1.jpg"},
 		StorageUrl:        path.Join("apps", developerID.String(), "test.apk"),
+		IconUrl:           "icon.png",
 	})
 	require.NoError(t, err)
 
@@ -127,6 +129,7 @@ func TestSearchApplications(t *testing.T) {
 		Tags:              []string{"game", "action"},
 		Screenshots:       []string{"screenshot1.jpg"},
 		StorageUrl:        path.Join("apps", developerID.String(), "game1.apk"),
+		IconUrl:           "icon.png",
 	})
 	require.NoError(t, err)
 
@@ -142,6 +145,7 @@ func TestSearchApplications(t *testing.T) {
 		Tags:              []string{"game", "puzzle"},
 		Screenshots:       []string{"screenshot1.jpg"},
 		StorageUrl:        path.Join("apps", developerID.String(), "game2.apk"),
+		IconUrl:           "icon.png",
 	})
 	require.NoError(t, err)
 
@@ -174,6 +178,7 @@ func TestDeleteApplication(t *testing.T) {
 		Tags:              []string{"game", "action"},
 		Screenshots:       []string{"screenshot1.jpg"},
 		StorageUrl:        path.Join("apps", developerID.String(), "test.apk"),
+		IconUrl:           "icon.png",
 	})
 	require.NoError(t, err)
 
@@ -203,6 +208,7 @@ func TestDownloads(t *testing.T) {
 		Tags:              []string{"game", "action"},
 		Screenshots:       []string{"screenshot1.jpg"},
 		StorageUrl:        path.Join("apps", developerID.String(), "test.apk"),
+		IconUrl:           "icon.png",
 	})
 	require.NoError(t, err)
 

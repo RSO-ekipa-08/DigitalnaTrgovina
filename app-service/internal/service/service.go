@@ -66,6 +66,7 @@ func (s *serviceImpl) CreateApplication(ctx context.Context, params types.Create
 		Tags:              params.Tags,
 		Screenshots:       params.Screenshots,
 		StorageUrl:        path.Join("apps", params.DeveloperID, objectName),
+		IconUrl:           params.IconURL,
 	}
 
 	app, err := s.repo.CreateApplication(ctx, dbParams)
@@ -126,6 +127,7 @@ func (s *serviceImpl) UpdateApplication(ctx context.Context, params types.Update
 		Tags:              *params.Tags,
 		Screenshots:       *params.Screenshots,
 		StorageUrl:        pgutil.StringPtr(storageURL),
+		IconUrl:           pgutil.StringPtr(params.IconURL),
 	}
 
 	app1, err := s.repo.UpdateApplication(ctx, dbParams)

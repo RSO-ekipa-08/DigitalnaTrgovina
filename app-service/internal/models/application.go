@@ -21,6 +21,7 @@ type Application struct {
 	CreatedAt      time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at" db:"updated_at"`
 	StorageURL     string    `json:"storage_url" db:"storage_url"`
+	IconURL        string    `json:"icon_url" db:"icon_url"`
 }
 
 type Download struct {

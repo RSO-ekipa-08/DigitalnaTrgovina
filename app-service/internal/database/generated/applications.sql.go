@@ -23,14 +23,15 @@ INSERT INTO applications (
     current_version,
     tags,
     screenshots,
-    storage_url
+    storage_url,
+    icon_url
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
 )
 RETURNING 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at
+    rating, downloads, created_at, updated_at, icon_url
 `
 
 type CreateApplicationParams struct {
@@ -45,6 +46,7 @@ type CreateApplicationParams struct {
 	Tags              []string       `db:"tags" json:"tags"`
 	Screenshots       []string       `db:"screenshots" json:"screenshots"`
 	StorageUrl        string         `db:"storage_url" json:"storage_url"`
+	IconUrl           string         `db:"icon_url" json:"icon_url"`
 }
 
 type CreateApplicationRow struct {
@@ -64,6 +66,7 @@ type CreateApplicationRow struct {
 	Downloads         int32              `db:"downloads" json:"downloads"`
 	CreatedAt         pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	UpdatedAt         pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	IconUrl           string             `db:"icon_url" json:"icon_url"`
 }
 
 func (q *Queries) CreateApplication(ctx context.Context, arg *CreateApplicationParams) (*CreateApplicationRow, error) {
@@ -79,6 +82,7 @@ func (q *Queries) CreateApplication(ctx context.Context, arg *CreateApplicationP
 		arg.Tags,
 		arg.Screenshots,
 		arg.StorageUrl,
+		arg.IconUrl,
 	)
 	var i CreateApplicationRow
 	err := row.Scan(
@@ -98,6 +102,7 @@ func (q *Queries) CreateApplication(ctx context.Context, arg *CreateApplicationP
 		&i.Downloads,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.IconUrl,
 	)
 	return &i, err
 }
@@ -116,7 +121,7 @@ const GetApplication = `-- name: GetApplication :one
 SELECT 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at
+    rating, downloads, created_at, updated_at, icon_url
 FROM applications
 WHERE id = $1 LIMIT 1
 `
@@ -138,6 +143,7 @@ type GetApplicationRow struct {
 	Downloads         int32              `db:"downloads" json:"downloads"`
 	CreatedAt         pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	UpdatedAt         pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	IconUrl           string             `db:"icon_url" json:"icon_url"`
 }
 
 func (q *Queries) GetApplication(ctx context.Context, id pgtype.UUID) (*GetApplicationRow, error) {
@@ -160,6 +166,7 @@ func (q *Queries) GetApplication(ctx context.Context, id pgtype.UUID) (*GetAppli
 		&i.Downloads,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.IconUrl,
 	)
 	return &i, err
 }
@@ -171,7 +178,7 @@ WHERE id = $1
 RETURNING 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at
+    rating, downloads, created_at, updated_at, icon_url
 `
 
 type IncrementDownloadsRow struct {
@@ -191,6 +198,7 @@ type IncrementDownloadsRow struct {
 	Downloads         int32              `db:"downloads" json:"downloads"`
 	CreatedAt         pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	UpdatedAt         pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	IconUrl           string             `db:"icon_url" json:"icon_url"`
 }
 
 func (q *Queries) IncrementDownloads(ctx context.Context, id pgtype.UUID) (*IncrementDownloadsRow, error) {
@@ -213,6 +221,7 @@ func (q *Queries) IncrementDownloads(ctx context.Context, id pgtype.UUID) (*Incr
 		&i.Downloads,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.IconUrl,
 	)
 	return &i, err
 }
@@ -221,7 +230,7 @@ const ListApplications = `-- name: ListApplications :many
 SELECT 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at
+    rating, downloads, created_at, updated_at, icon_url
 FROM applications
 ORDER BY created_at DESC
 LIMIT $1 OFFSET $2
@@ -249,6 +258,7 @@ type ListApplicationsRow struct {
 	Downloads         int32              `db:"downloads" json:"downloads"`
 	CreatedAt         pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	UpdatedAt         pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	IconUrl           string             `db:"icon_url" json:"icon_url"`
 }
 
 func (q *Queries) ListApplications(ctx context.Context, arg *ListApplicationsParams) ([]*ListApplicationsRow, error) {
@@ -277,6 +287,7 @@ func (q *Queries) ListApplications(ctx context.Context, arg *ListApplicationsPar
 			&i.Downloads,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.IconUrl,
 		); err != nil {
 			return nil, err
 		}
@@ -330,7 +341,7 @@ const SearchApplications = `-- name: SearchApplications :many
 SELECT 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at
+    rating, downloads, created_at, updated_at, icon_url
 FROM applications
 WHERE
     CASE
@@ -406,6 +417,7 @@ type SearchApplicationsRow struct {
 	Downloads         int32              `db:"downloads" json:"downloads"`
 	CreatedAt         pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	UpdatedAt         pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	IconUrl           string             `db:"icon_url" json:"icon_url"`
 }
 
 func (q *Queries) SearchApplications(ctx context.Context, arg *SearchApplicationsParams) ([]*SearchApplicationsRow, error) {
@@ -445,6 +457,7 @@ func (q *Queries) SearchApplications(ctx context.Context, arg *SearchApplication
 			&i.Downloads,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.IconUrl,
 		); err != nil {
 			return nil, err
 		}
@@ -468,12 +481,13 @@ SET
     tags = COALESCE($7, tags),
     screenshots = COALESCE($8, screenshots),
     storage_url = COALESCE($9, storage_url),
+    icon_url = COALESCE($10, icon_url),
     updated_at = CURRENT_TIMESTAMP
-WHERE id = $10
+WHERE id = $11
 RETURNING 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at
+    rating, downloads, created_at, updated_at, icon_url
 `
 
 type UpdateApplicationParams struct {
@@ -486,6 +500,7 @@ type UpdateApplicationParams struct {
 	Tags              []string       `db:"tags" json:"tags"`
 	Screenshots       []string       `db:"screenshots" json:"screenshots"`
 	StorageUrl        pgtype.Text    `db:"storage_url" json:"storage_url"`
+	IconUrl           pgtype.Text    `db:"icon_url" json:"icon_url"`
 	ID                pgtype.UUID    `db:"id" json:"id"`
 }
 
@@ -506,6 +521,7 @@ type UpdateApplicationRow struct {
 	Downloads         int32              `db:"downloads" json:"downloads"`
 	CreatedAt         pgtype.Timestamptz `db:"created_at" json:"created_at"`
 	UpdatedAt         pgtype.Timestamptz `db:"updated_at" json:"updated_at"`
+	IconUrl           string             `db:"icon_url" json:"icon_url"`
 }
 
 func (q *Queries) UpdateApplication(ctx context.Context, arg *UpdateApplicationParams) (*UpdateApplicationRow, error) {
@@ -519,6 +535,7 @@ func (q *Queries) UpdateApplication(ctx context.Context, arg *UpdateApplicationP
 		arg.Tags,
 		arg.Screenshots,
 		arg.StorageUrl,
+		arg.IconUrl,
 		arg.ID,
 	)
 	var i UpdateApplicationRow
@@ -539,6 +556,7 @@ func (q *Queries) UpdateApplication(ctx context.Context, arg *UpdateApplicationP
 		&i.Downloads,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.IconUrl,
 	)
 	return &i, err
 }

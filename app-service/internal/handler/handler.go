@@ -50,6 +50,7 @@ func (h *Handler) CreateApplication(ctx context.Context, req *connect.Request[ap
 		Tags:              req.Msg.Tags,
 		Screenshots:       req.Msg.Screenshots,
 		APKFile:           req.Msg.ApkFile,
+		IconURL:           req.Msg.IconUrl,
 	}
 
 	app, err := h.svc.CreateApplication(ctx, params)
@@ -89,35 +90,17 @@ func (h *Handler) UpdateApplication(ctx context.Context, req *connect.Request[ap
 	}
 
 	params := types.UpdateApplicationParams{
-		ID: id,
-	}
-
-	if req.Msg.Name != nil {
-		params.Name = req.Msg.Name
-	}
-	if req.Msg.Description != nil {
-		params.Description = req.Msg.Description
-	}
-	if req.Msg.Category != nil {
-		params.Category = req.Msg.Category
-	}
-	if req.Msg.Price != nil {
-		params.Price = req.Msg.Price
-	}
-	if req.Msg.MinAndroidVersion != nil {
-		params.MinAndroidVersion = req.Msg.MinAndroidVersion
-	}
-	if req.Msg.CurrentVersion != nil {
-		params.CurrentVersion = req.Msg.CurrentVersion
-	}
-	if req.Msg.Tags != nil {
-		params.Tags = &req.Msg.Tags
-	}
-	if req.Msg.Screenshots != nil {
-		params.Screenshots = &req.Msg.Screenshots
-	}
-	if req.Msg.ApkFile != nil {
-		params.APKFile = req.Msg.ApkFile
+		ID:                id,
+		Name:              req.Msg.Name,
+		Description:       req.Msg.Description,
+		Category:          req.Msg.Category,
+		Price:             req.Msg.Price,
+		MinAndroidVersion: req.Msg.MinAndroidVersion,
+		CurrentVersion:    req.Msg.CurrentVersion,
+		Tags:              &req.Msg.Tags,
+		Screenshots:       &req.Msg.Screenshots,
+		APKFile:           req.Msg.ApkFile,
+		IconURL:           req.Msg.IconUrl,
 	}
 
 	app, err := h.svc.UpdateApplication(ctx, params)
@@ -309,6 +292,7 @@ func convertApplicationToProto(app *application) *appv1.Application {
 		CreatedAt:         timestamppb.New(app.CreatedAt.Time),
 		UpdatedAt:         timestamppb.New(app.UpdatedAt.Time),
 		StorageUrl:        app.StorageUrl,
+		IconUrl:           app.IconUrl,
 	}
 }
 

@@ -91,6 +91,7 @@ func TestCreateApplication(t *testing.T) {
 		Tags:              []string{"game", "arcade"},
 		Screenshots:       []string{"screenshot1.jpg"},
 		ApkFile:           []byte("fake-apk-content"),
+		IconUrl:           "icon.png",
 	})
 
 	// Pripravimo pričakovan odgovor iz service layerja
@@ -107,6 +108,7 @@ func TestCreateApplication(t *testing.T) {
 		CurrentVersion:    "1.0.0",
 		Tags:              []string{"game", "arcade"},
 		Screenshots:       []string{"screenshot1.jpg"},
+		IconUrl:           "icon.png",
 		StorageUrl:        "apps/test/app.apk",
 		Rating:            pgutil.Float64(0),
 		Downloads:         0,
@@ -135,6 +137,7 @@ func TestCreateApplication(t *testing.T) {
 	assert.Equal(t, expectedApp.CurrentVersion, resp.Msg.Application.CurrentVersion)
 	assert.Equal(t, expectedApp.Tags, resp.Msg.Application.Tags)
 	assert.Equal(t, expectedApp.Screenshots, resp.Msg.Application.Screenshots)
+	assert.Equal(t, expectedApp.IconUrl, resp.Msg.Application.IconUrl)
 	assert.Equal(t, timestamppb.New(pgutil.FromTime(expectedApp.CreatedAt)), resp.Msg.Application.CreatedAt)
 	assert.Equal(t, timestamppb.New(pgutil.FromTime(expectedApp.UpdatedAt)), resp.Msg.Application.UpdatedAt)
 }
@@ -385,5 +388,6 @@ func createTestApplication(name, category string, price float64) *database.Appli
 		Downloads:         100,
 		CreatedAt:         pgutil.Time(now),
 		UpdatedAt:         pgutil.Time(now),
+		IconUrl:           "icon.png",
 	}
 }

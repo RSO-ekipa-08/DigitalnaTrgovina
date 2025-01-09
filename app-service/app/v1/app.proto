@@ -48,6 +48,7 @@ message Application {
   google.protobuf.Timestamp created_at = 14;
   google.protobuf.Timestamp updated_at = 15;
   string storage_url = 16;
+  string icon_url = 17;
 }
 
 message Category {
@@ -80,6 +81,7 @@ message CreateApplicationRequest {
   repeated string tags = 9;
   repeated string screenshots = 10;
   bytes apk_file = 11;
+  string icon_url = 12;
 }
 
 message CreateApplicationResponse {
@@ -97,6 +99,7 @@ message UpdateApplicationRequest {
   repeated string tags = 8;
   repeated string screenshots = 9;
   optional bytes apk_file = 10;
+  optional string icon_url = 11;
 }
 
 message UpdateApplicationResponse {

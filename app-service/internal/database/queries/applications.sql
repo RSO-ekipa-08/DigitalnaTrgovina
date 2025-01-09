@@ -2,7 +2,7 @@
 SELECT 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at
+    rating, downloads, created_at, updated_at, icon_url
 FROM applications
 WHERE id = $1 LIMIT 1;
 
@@ -10,7 +10,7 @@ WHERE id = $1 LIMIT 1;
 SELECT 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at
+    rating, downloads, created_at, updated_at, icon_url
 FROM applications
 ORDER BY created_at DESC
 LIMIT $1 OFFSET $2;
@@ -19,7 +19,7 @@ LIMIT $1 OFFSET $2;
 SELECT 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at
+    rating, downloads, created_at, updated_at, icon_url
 FROM applications
 WHERE
     CASE
@@ -76,14 +76,15 @@ INSERT INTO applications (
     current_version,
     tags,
     screenshots,
-    storage_url
+    storage_url,
+    icon_url
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
 )
 RETURNING 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at;
+    rating, downloads, created_at, updated_at, icon_url;
 
 -- name: UpdateApplication :one
 UPDATE applications
@@ -97,12 +98,13 @@ SET
     tags = COALESCE(sqlc.narg('tags'), tags),
     screenshots = COALESCE(sqlc.narg('screenshots'), screenshots),
     storage_url = COALESCE(sqlc.narg('storage_url'), storage_url),
+    icon_url = COALESCE(sqlc.narg('icon_url'), icon_url),
     updated_at = CURRENT_TIMESTAMP
 WHERE id = sqlc.arg('id')
 RETURNING 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at;
+    rating, downloads, created_at, updated_at, icon_url;
 
 -- name: DeleteApplication :exec
 DELETE FROM applications
@@ -115,7 +117,7 @@ WHERE id = $1
 RETURNING 
     id, name, description, developer_id, category, price, size,
     min_android_version, current_version, tags, screenshots, storage_url,
-    rating, downloads, created_at, updated_at;
+    rating, downloads, created_at, updated_at, icon_url;
 
 -- name: ListCategories :many
 SELECT id, name, description, created_at, updated_at

@@ -10,6 +10,7 @@ INSERT INTO applications (
     current_version,
     tags,
     screenshots,
+    icon_url,
     storage_url,
     rating,
     downloads
@@ -26,6 +27,7 @@ INSERT INTO applications (
         ARRAY['fitness', 'health', 'workout', 'diet'],
         ARRAY['ft_screen1.jpg', 'ft_screen2.jpg', 'ft_screen3.jpg'],
         'https://img.icons8.com/?size=500&id=1TYhSQlrSHKX&format=png&color=000000',
+        "https://storage.example.com/fitness-tracker-pro.apk"
         4.5,
         25000
     ),
@@ -41,6 +43,7 @@ INSERT INTO applications (
         ARRAY['puzzle', 'game', 'brain', 'casual'],
         ARRAY['puzzle1.jpg', 'puzzle2.jpg'],
         'https://img.icons8.com/?size=500&id=lrcr6RgJFygK&format=png&color=000000',
+        "https://storage.example.com/super-puzzle-quest.apk",
         4.8,
         100000
     ),
@@ -56,6 +59,7 @@ INSERT INTO applications (
         ARRAY['productivity', 'tasks', 'project-management'],
         ARRAY['task1.jpg', 'task2.jpg', 'task3.jpg'],
         'https://img.icons8.com/?size=500&id=1DoC8ZWabDoA&format=png&color=000000',
+        "https://storage.example.com/taskmaster.apk",
         4.2,
         15000
     ),
@@ -71,6 +75,7 @@ INSERT INTO applications (
         ARRAY['education', 'languages', 'learning'],
         ARRAY['lang1.jpg', 'lang2.jpg', 'lang3.jpg'],
         'https://img.icons8.com/?size=500&id=3ktafmETowPZ&format=png&color=000000',
+        "https://storage.example.com/language-master.apk",
         4.7,
         50000
     ),
@@ -86,6 +91,7 @@ INSERT INTO applications (
         ARRAY['social', 'chat', 'friends'],
         ARRAY['social1.jpg', 'social2.jpg'],
         'https://img.icons8.com/?size=500&id=5xQqhKiYkFYW&format=png&color=000000',
+        "https://storage.example.com/social-connect.apk",
         4.1,
         200000
     ),
@@ -101,6 +107,7 @@ INSERT INTO applications (
         ARRAY['movies', 'streaming', 'entertainment'],
         ARRAY['movie1.jpg', 'movie2.jpg'],
         'https://img.icons8.com/?size=500&id=Le0qUPuuDDP1&format=png&color=000000',
+        "https://storage.example.com/movie-stream.apk",
         4.4,
         75000
     ),
@@ -116,6 +123,7 @@ INSERT INTO applications (
         ARRAY['diet', 'health', 'nutrition'],
         ARRAY['diet1.jpg', 'diet2.jpg'],
         'https://img.icons8.com/?size=500&id=Ap0MKNQz4Iei&format=png&color=000000',
+        "https://storage.example.com/diet-planner.apk",
         4.3,
         30000
     ),
@@ -131,6 +139,7 @@ INSERT INTO applications (
         ARRAY['business', 'invoice', 'finance'],
         ARRAY['invoice1.jpg', 'invoice2.jpg'],
         'https://img.icons8.com/?size=500&id=7Lzyzew2TiXU&format=png&color=000000',
+        "https://storage.example.com/invoice-generator.apk",
         4.6,
         12000
     ),
@@ -146,6 +155,7 @@ INSERT INTO applications (
         ARRAY['files', 'utility', 'tools'],
         ARRAY['files1.jpg', 'files2.jpg'],
         'https://img.icons8.com/?size=500&id=YOxhEQdv8BdW&format=png&color=000000',
+        "https://storage.example.com/file-manager.apk",
         4.2,
         45000
     ),
@@ -161,6 +171,7 @@ INSERT INTO applications (
         ARRAY['travel', 'guide', 'maps'],
         ARRAY['travel1.jpg', 'travel2.jpg'],
         'https://img.icons8.com/?size=500&id=NF4m2BlHV7hx&format=png&color=000000',
+        "https://storage.example.com/travel-guide.apk",
         4.5,
         35000
     ),
@@ -176,6 +187,7 @@ INSERT INTO applications (
         ARRAY['shopping', 'lists', 'grocery'],
         ARRAY['shop1.jpg', 'shop2.jpg'],
         'https://img.icons8.com/?size=500&id=USKr9gHZFT60&format=png&color=000000',
+        "https://storage.example.com/shopping-list.apk",
         4.0,
         85000
     ),
@@ -191,6 +203,7 @@ INSERT INTO applications (
         ARRAY['education', 'math', 'learning'],
         ARRAY['math1.jpg', 'math2.jpg'],
         'https://img.icons8.com/?size=500&id=LeYo7kWA7lK5&format=png&color=000000',
+        "https://storage.example.com/math-genius.apk",
         4.7,
         28000
     ),
@@ -206,6 +219,7 @@ INSERT INTO applications (
         ARRAY['racing', 'games', 'sports'],
         ARRAY['race1.jpg', 'race2.jpg', 'race3.jpg'],
         'https://img.icons8.com/?size=500&id=QgXbz7yVpYCJ&format=png&color=000000',
+        "https://storage.example.com/racing-thunder.apk",
         4.6,
         150000
     ),
@@ -221,6 +235,7 @@ INSERT INTO applications (
         ARRAY['meditation', 'mindfulness', 'health'],
         ARRAY['med1.jpg', 'med2.jpg'],
         'https://img.icons8.com/?size=500&id=IhM8el2ItbTN&format=png&color=000000',
+        "https://storage.example.com/meditation.apk",
         4.8,
         42000
     ),
@@ -236,6 +251,7 @@ INSERT INTO applications (
         ARRAY['photo', 'editing', 'tools'],
         ARRAY['photo1.jpg', 'photo2.jpg'],
         'https://img.icons8.com/?size=500&id=2M65w2TgH5wd&format=png&color=000000',
+        "https://storage.example.com/photo-editor.apk",
         4.4,
         95000
     ),
@@ -251,6 +267,7 @@ INSERT INTO applications (
         ARRAY['weather', 'forecast', 'tools'],
         ARRAY['weather1.jpg', 'weather2.jpg'],
         'https://img.icons8.com/?size=100&id=E8cqWFiPDYUV&format=png&color=000005',
+        "https://storage.example.com/weather-forecast.apk",
         4.3,
         120000
     ),
@@ -266,6 +283,7 @@ INSERT INTO applications (
         ARRAY['recipes', 'cooking', 'food'],
         ARRAY['recipe1.jpg', 'recipe2.jpg'],
         'https://img.icons8.com/?size=500&id=Dlxb3XVVBBA0&format=png&color=000000',
+        "https://storage.example.com/recipe-book.apk",
         4.5,
         65000
     ),
@@ -281,6 +299,7 @@ INSERT INTO applications (
         ARRAY['finance', 'budget', 'money'],
         ARRAY['budget1.jpg', 'budget2.jpg'],
         'https://img.icons8.com/?size=500&id=JIXIN0HjGUAX&format=png&color=000000',
+        "https://storage.example.com/budget-tracker.apk",
         4.2,
         38000
     ),
@@ -296,6 +315,7 @@ INSERT INTO applications (
         ARRAY['music', 'audio', 'player'],
         ARRAY['music1.jpg', 'music2.jpg'],
         'https://img.icons8.com/?size=500&id=LUhEeK6dAWhR&format=png&color=000000',
+        "https://storage.example.com/music-player.apk",
         4.6,
         82000
     ),
@@ -311,6 +331,7 @@ INSERT INTO applications (
         ARRAY['calendar', 'organizer', 'productivity'],
         ARRAY['cal1.jpg', 'cal2.jpg'],
         'https://img.icons8.com/?size=500&id=BvnFKAMECj6R&format=png&color=000000',
+        "https://storage.example.com/calendar-organizer.apk",
         4.4,
         55000
     );

@@ -78,6 +78,7 @@ func TestCreateAndGetApplication(t *testing.T) {
 		Tags:              []string{"game", "action"},
 		Screenshots:       []string{"screenshot1.jpg"},
 		ApkFile:           []byte("test apk file"),
+		IconURL:           "icon.png",
 	}
 
 	app, err := testHandler.CreateApplication(ctx, createReq)
@@ -117,6 +118,7 @@ func TestSearchApplications(t *testing.T) {
 		Tags:              []string{"game", "action"},
 		Screenshots:       []string{"screenshot1.jpg"},
 		ApkFile:           []byte("test apk file 1"),
+		IconURL:           "icon.png",
 	})
 	require.NoError(t, err)
 
@@ -132,6 +134,7 @@ func TestSearchApplications(t *testing.T) {
 		Tags:              []string{"game", "puzzle"},
 		Screenshots:       []string{"screenshot1.jpg"},
 		ApkFile:           []byte("test apk file 2"),
+		IconURL:           "icon.png",
 	})
 	require.NoError(t, err)
 
@@ -175,6 +178,7 @@ func TestDownloadApplication(t *testing.T) {
 		Tags:              []string{"game", "action"},
 		Screenshots:       []string{"screenshot1.jpg"},
 		ApkFile:           []byte("test apk file"),
+		IconURL:           "icon.png",
 	})
 	require.NoError(t, err)
 
