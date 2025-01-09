@@ -8,6 +8,7 @@
     "test": "bun run test:stripe"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@types/bun": "latest"
   },
   "peerDependencies": {
@@ -18,5 +19,8 @@
     "amqplib": "^0.10.5",
     "dotenv": "^16.4.7",
     "stripe": "^17.5.0"
-  }
+  },
+  "trustedDependencies": [
+    "@biomejs/biome"
+  ]
 }
