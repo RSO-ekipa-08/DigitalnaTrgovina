@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - '.github/workflows/api-docs.yaml'
+      - 'api-gateway/docs/**'
       - 'app-service/gen/app/v1/**'
       # - 'payment/gen/payment/v1/**'
       - 'payment_v2/docs/**'
@@ -45,6 +46,7 @@ jobs:
           cp authentication/docs/index.html out/auth.html
           cp reviews/docs/index.html out/reviews.html
           cp payment_v2/docs/index.html out/payment.html
+          cp api-gateway/docs/index.html out/api-gateway.html
         # bunx @redocly/cli build-docs payment/gen/payment/v1/payment.openapi.yaml -o out/payment.html
           
       - name: Generate Index
@@ -99,6 +101,7 @@ jobs:
               <div class="container">
                   <h1>DigitalnaTrgovina (RSO) API Dokumentacija</h1>
                   <div class="links">
+                      <a href="api-gateway.html">API Gateway</a>
                       <a href="app.html">Aplikacijska storitev</a>
                       <a href="payment.html">Plačilna storitev</a>
                       <a href="auth.html">Avtentikacijska storitev</a>
