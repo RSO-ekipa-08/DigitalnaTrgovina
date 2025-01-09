@@ -12,3 +12,7 @@ auth_AUTH0_CALLBACK_URL   = "change-me-in-production"
 app_DATABASE_URL          = "change-me-in-production"
 app_STORAGE_ENDPOINT      = "change-me-in-production"
 app_STORAGE_SECRET_KEY    = "change-me-in-production"
+
+stripe_secret_key  = "change-me-in-production"
+payment_success_url = "https://example.com/success"
+payment_cancel_url  = "https://example.com/cancel"
