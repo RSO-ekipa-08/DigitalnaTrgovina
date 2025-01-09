@@ -154,6 +154,15 @@ message ListCategoriesResponse {
   PaginationResponse pagination = 2;
 }
 
+message BuyApplicationRequest {
+  string application_id = 1;
+  string user_id = 2;
+}
+
+message BuyApplicationResponse {
+  string checkout_url = 1;
+}
+
 // Application service definition
 service ApplicationService {
   // Application management
@@ -168,4 +177,7 @@ service ApplicationService {
   
   // Download management
   rpc DownloadApplication(DownloadApplicationRequest) returns (DownloadApplicationResponse) {}
+
+  // Payment management
+  rpc BuyApplication(BuyApplicationRequest) returns (BuyApplicationResponse) {}
 } 

@@ -250,6 +250,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/app.v1.DownloadApplicationResponse'
+  /app.v1.ApplicationService/BuyApplication:
+    post:
+      tags:
+        - app.v1.ApplicationService
+      summary: BuyApplication
+      description: Payment management
+      operationId: app.v1.ApplicationService.BuyApplication
+      parameters:
+        - name: Connect-Protocol-Version
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/connect-protocol-version'
+        - name: Connect-Timeout-Ms
+          in: header
+          schema:
+            $ref: '#/components/schemas/connect-timeout-header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/app.v1.BuyApplicationRequest'
+        required: true
+      responses:
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/connect.error'
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/app.v1.BuyApplicationResponse'
 components:
   schemas:
     app.v1.Application:
@@ -318,6 +354,25 @@ components:
       title: Application
       additionalProperties: false
       description: Application related models
+    app.v1.BuyApplicationRequest:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          title: application_id
+        userId:
+          type: string
+          title: user_id
+      title: BuyApplicationRequest
+      additionalProperties: false
+    app.v1.BuyApplicationResponse:
+      type: object
+      properties:
+        checkoutUrl:
+          type: string
+          title: checkout_url
+      title: BuyApplicationResponse
+      additionalProperties: false
     app.v1.Category:
       type: object
       properties:

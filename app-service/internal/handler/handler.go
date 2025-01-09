@@ -308,3 +308,12 @@ func convertApplicationToProto(app *application) *appv1.Application {
 		StorageUrl:        app.StorageUrl,
 	}
 }
+
+// BuyApplication handles the purchase of an application
+func (h *Handler) BuyApplication(ctx context.Context, req *connect.Request[appv1.BuyApplicationRequest]) (*connect.Response[appv1.BuyApplicationResponse], error) {
+	// Implement the logic for buying an application
+	// This is a placeholder implementation
+	return connect.NewResponse(&appv1.BuyApplicationResponse{
+		CheckoutUrl: "https://example.com/checkout",
+	}), nil
+}

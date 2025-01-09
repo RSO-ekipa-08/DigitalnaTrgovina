@@ -54,6 +54,9 @@ const (
 	// ApplicationServiceDownloadApplicationProcedure is the fully-qualified name of the
 	// ApplicationService's DownloadApplication RPC.
 	ApplicationServiceDownloadApplicationProcedure = "/app.v1.ApplicationService/DownloadApplication"
+	// ApplicationServiceBuyApplicationProcedure is the fully-qualified name of the ApplicationService's
+	// BuyApplication RPC.
+	ApplicationServiceBuyApplicationProcedure = "/app.v1.ApplicationService/BuyApplication"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
@@ -66,6 +69,7 @@ var (
 	applicationServiceSearchApplicationsMethodDescriptor  = applicationServiceServiceDescriptor.Methods().ByName("SearchApplications")
 	applicationServiceListCategoriesMethodDescriptor      = applicationServiceServiceDescriptor.Methods().ByName("ListCategories")
 	applicationServiceDownloadApplicationMethodDescriptor = applicationServiceServiceDescriptor.Methods().ByName("DownloadApplication")
+	applicationServiceBuyApplicationMethodDescriptor      = applicationServiceServiceDescriptor.Methods().ByName("BuyApplication")
 )
 
 // ApplicationServiceClient is a client for the app.v1.ApplicationService service.
@@ -80,6 +84,8 @@ type ApplicationServiceClient interface {
 	ListCategories(context.Context, *connect.Request[v1.ListCategoriesRequest]) (*connect.Response[v1.ListCategoriesResponse], error)
 	// Download management
 	DownloadApplication(context.Context, *connect.Request[v1.DownloadApplicationRequest]) (*connect.Response[v1.DownloadApplicationResponse], error)
+	// Payment management
+	BuyApplication(context.Context, *connect.Request[v1.BuyApplicationRequest]) (*connect.Response[v1.BuyApplicationResponse], error)
 }
 
 // NewApplicationServiceClient constructs a client for the app.v1.ApplicationService service. By
@@ -134,6 +140,12 @@ func NewApplicationServiceClient(httpClient connect.HTTPClient, baseURL string, 
 			connect.WithSchema(applicationServiceDownloadApplicationMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
+		buyApplication: connect.NewClient[v1.BuyApplicationRequest, v1.BuyApplicationResponse](
+			httpClient,
+			baseURL+ApplicationServiceBuyApplicationProcedure,
+			connect.WithSchema(applicationServiceBuyApplicationMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -146,6 +158,7 @@ type applicationServiceClient struct {
 	searchApplications  *connect.Client[v1.SearchApplicationsRequest, v1.SearchApplicationsResponse]
 	listCategories      *connect.Client[v1.ListCategoriesRequest, v1.ListCategoriesResponse]
 	downloadApplication *connect.Client[v1.DownloadApplicationRequest, v1.DownloadApplicationResponse]
+	buyApplication      *connect.Client[v1.BuyApplicationRequest, v1.BuyApplicationResponse]
 }
 
 // CreateApplication calls app.v1.ApplicationService.CreateApplication.
@@ -183,6 +196,11 @@ func (c *applicationServiceClient) DownloadApplication(ctx context.Context, req 
 	return c.downloadApplication.CallUnary(ctx, req)
 }
 
+// BuyApplication calls app.v1.ApplicationService.BuyApplication.
+func (c *applicationServiceClient) BuyApplication(ctx context.Context, req *connect.Request[v1.BuyApplicationRequest]) (*connect.Response[v1.BuyApplicationResponse], error) {
+	return c.buyApplication.CallUnary(ctx, req)
+}
+
 // ApplicationServiceHandler is an implementation of the app.v1.ApplicationService service.
 type ApplicationServiceHandler interface {
 	// Application management
@@ -195,6 +213,8 @@ type ApplicationServiceHandler interface {
 	ListCategories(context.Context, *connect.Request[v1.ListCategoriesRequest]) (*connect.Response[v1.ListCategoriesResponse], error)
 	// Download management
 	DownloadApplication(context.Context, *connect.Request[v1.DownloadApplicationRequest]) (*connect.Response[v1.DownloadApplicationResponse], error)
+	// Payment management
+	BuyApplication(context.Context, *connect.Request[v1.BuyApplicationRequest]) (*connect.Response[v1.BuyApplicationResponse], error)
 }
 
 // NewApplicationServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -245,6 +265,12 @@ func NewApplicationServiceHandler(svc ApplicationServiceHandler, opts ...connect
 		connect.WithSchema(applicationServiceDownloadApplicationMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
+	applicationServiceBuyApplicationHandler := connect.NewUnaryHandler(
+		ApplicationServiceBuyApplicationProcedure,
+		svc.BuyApplication,
+		connect.WithSchema(applicationServiceBuyApplicationMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/app.v1.ApplicationService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ApplicationServiceCreateApplicationProcedure:
@@ -261,6 +287,8 @@ func NewApplicationServiceHandler(svc ApplicationServiceHandler, opts ...connect
 			applicationServiceListCategoriesHandler.ServeHTTP(w, r)
 		case ApplicationServiceDownloadApplicationProcedure:
 			applicationServiceDownloadApplicationHandler.ServeHTTP(w, r)
+		case ApplicationServiceBuyApplicationProcedure:
+			applicationServiceBuyApplicationHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -296,4 +324,8 @@ func (UnimplementedApplicationServiceHandler) ListCategories(context.Context, *c
 
 func (UnimplementedApplicationServiceHandler) DownloadApplication(context.Context, *connect.Request[v1.DownloadApplicationRequest]) (*connect.Response[v1.DownloadApplicationResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("app.v1.ApplicationService.DownloadApplication is not implemented"))
+}
+
+func (UnimplementedApplicationServiceHandler) BuyApplication(context.Context, *connect.Request[v1.BuyApplicationRequest]) (*connect.Response[v1.BuyApplicationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("app.v1.ApplicationService.BuyApplication is not implemented"))
 }
