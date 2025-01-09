@@ -290,6 +290,10 @@ resource "kubernetes_deployment" "payment_v2" {
           name  = "payment-service-v2"
           image = "ghcr.io/rso-ekipa-08/payment_v2:latest"
 
+          port {
+            container_port = 3000
+          }
+
           env {
             name = "STRIPE_SECRET_KEY"
             value_from {
@@ -336,17 +340,10 @@ resource "kubernetes_deployment" "payment_v2" {
             }
           }
 
-          liveness_probe {
-            exec {
-              command = ["pgrep", "-f", "bun run"]
-            }
-            initial_delay_seconds = 5
-            period_seconds        = 10
-          }
-
           readiness_probe {
-            exec {
-              command = ["pgrep", "-f", "bun run"]
+            http_get {
+              path = "/health"
+              port = 3000
             }
             initial_delay_seconds = 5
             period_seconds        = 10
@@ -544,6 +541,11 @@ resource "kubernetes_deployment" "app" {
           env {
             name  = "STORAGE_SECRET_KEY"
             value = var.app_STORAGE_SECRET_KEY
+          }
+
+          env {
+            name  = "RABBITMQ_URL"
+            value = "amqp://rabbitmq:5672"
           }
 
           resources {

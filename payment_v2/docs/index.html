@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Service v2 API Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .endpoint {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #e9ecef;
+        }
+        .code {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Consolas, Menlo, 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .code .key {
+            color: #9cdcfe;
+        }
+        .code .type {
+            color: #4ec9b0;
+        }
+        .code .comment {
+            color: #6a9955;
+            font-style: italic;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Consolas, Menlo, 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Payment Service v2 API Documentation</h1>
+    
+    <h2>Pregled</h2>
+    <p><code>Payment Service v2</code> je mikroservis za procesiranje plačil, ki uporablja <code>RabbitMQ</code> za asinhrono komunikacijo in <code>Stripe</code> za procesiranje plačil. Storitev izpostavlja REST endpoint za preverjanje zdravja (health check) in sprejema sporočila preko <code>RabbitMQ</code>.</p>
+
+    <h2>Endpoints</h2>
+    
+    <div class="endpoint">
+        <h3>Health Check</h3>
+        <p><strong>GET</strong> <code>/health</code></p>
+        <p>Endpoint za preverjanje zdravja storitve.</p>
+        <p><strong>Odgovor:</strong> <code>"Healthy!"</code> če je storitev aktivna</p>
+    </div>
+
+    <h2>RabbitMQ Komunikacija</h2>
+
+    <h3>Vrste (Queues)</h3>
+    <table>
+        <tr>
+            <th>Ime vrste</th>
+            <th>Namen</th>
+        </tr>
+        <tr>
+            <td><code>payment_requests</code></td>
+            <td>Vrsta za sprejemanje zahtev za plačilo</td>
+        </tr>
+        <tr>
+            <td><code>payment_responses</code></td>
+            <td>Vrsta za pošiljanje odgovorov o plačilu</td>
+        </tr>
+    </table>
+
+    <h3>Format sporočil</h3>
+    
+    <h4>Zahteva za plačilo (<code>Payment Request</code>)</h4>
+    <div class="code">
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"amount"</span>: <span class="type">number</span>,      <span class="comment">// Znesek v najmanjši enoti valute (npr. centi)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"currency"</span>: <span class="type">string</span>,    <span class="comment">// Valuta (npr. "eur")</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"productName"</span>: <span class="type">string</span>, <span class="comment">// Ime produkta</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"quantity"</span>: <span class="type">number</span>     <span class="comment">// Količina</span><br>
+}</div>
+
+    <h4>Odgovor na plačilo (<code>Payment Response</code>)</h4>
+    <div class="code">
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"checkoutUrl"</span>: <span class="type">string</span>  <span class="comment">// URL za Stripe Checkout sejo</span><br>
+}</div>
+
+    <h2>Konfiguracija</h2>
+    <p>Storitev uporablja naslednje okoljske spremenljivke:</p>
+    <table>
+        <tr>
+            <th>Spremenljivka</th>
+            <th>Opis</th>
+            <th>Privzeta vrednost</th>
+        </tr>
+        <tr>
+            <td><code>STRIPE_SECRET_KEY</code></td>
+            <td><code>Stripe Secret Key</code> za avtentikacijo</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td><code>SUCCESS_URL</code></td>
+            <td>URL za preusmeritev po uspešnem plačilu</td>
+            <td><code>http://localhost:3000/success</code></td>
+        </tr>
+        <tr>
+            <td><code>CANCEL_URL</code></td>
+            <td>URL za preusmeritev po preklicu plačila</td>
+            <td><code>http://localhost:3000/cancel</code></td>
+        </tr>
+        <tr>
+            <td><code>RABBITMQ_URL</code></td>
+            <td>URL za povezavo z <code>RabbitMQ</code></td>
+            <td><code>amqp://localhost:5672</code></td>
+        </tr>
+    </table>
+
+    <h2>Primer uporabe</h2>
+    <p>1. Pošljite sporočilo v vrsto <code>payment_requests</code> s sledečo vsebino:</p>
+    <div class="code">
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"amount"</span>: 1500,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"currency"</span>: "eur",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"productName"</span>: "Premium Subscription",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"quantity"</span>: 1<br>
+}</div>
+
+    <p>2. Prejmite odgovor iz vrste <code>payment_responses</code>:</p>
+    <div class="code">
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"checkoutUrl"</span>: "https://checkout.stripe.com/..."<br>
+}</div>
+
+    <p>3. Preusmerite uporabnika na prejeti <code>checkoutUrl</code> za dokončanje plačila.</p>
+
+</body>
+</html> 

@@ -9,6 +9,17 @@ async function main() {
         
         console.log('Payment service is running and listening for messages...');
 
+        // Zaženi HTTP strežnik za health check
+        Bun.serve({
+            static: { "/health": new Response("Healthy!") },
+
+            fetch(_) {
+              return new Response("404!");
+            },
+          });
+
+        console.log('Health endpoint is available at http://localhost:3000/health');
+
         // Graceful shutdown
         process.on('SIGINT', async () => {
             console.log('Shutting down...');

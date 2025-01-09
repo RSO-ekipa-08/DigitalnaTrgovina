@@ -75,7 +75,7 @@ func (m *MockService) ListCategories(ctx context.Context, params types.ListCateg
 // TestCreateApplication testira ustvarjanje nove aplikacije
 func TestCreateApplication(t *testing.T) {
 	mockSvc := new(MockService)
-	h := New(mockSvc)
+	h := New(mockSvc, nil)
 	ctx := context.Background()
 
 	// Pripravimo testne podatke
@@ -142,7 +142,7 @@ func TestCreateApplication(t *testing.T) {
 // TestSearchApplications testira iskanje aplikacij
 func TestSearchApplications(t *testing.T) {
 	mockSvc := new(MockService)
-	h := New(mockSvc)
+	h := New(mockSvc, nil)
 	ctx := context.Background()
 
 	// Pripravimo testne podatke
@@ -190,7 +190,7 @@ func TestSearchApplications(t *testing.T) {
 // TestListCategories testira pridobivanje seznama kategorij
 func TestListCategories(t *testing.T) {
 	mockSvc := new(MockService)
-	h := New(mockSvc)
+	h := New(mockSvc, nil)
 	ctx := context.Background()
 
 	// Pripravimo testne podatke
@@ -237,7 +237,7 @@ func TestListCategories(t *testing.T) {
 // TestGetApplication testira pridobivanje aplikacije po ID-ju
 func TestGetApplication(t *testing.T) {
 	mockSvc := new(MockService)
-	h := New(mockSvc)
+	h := New(mockSvc, nil)
 	ctx := context.Background()
 
 	// Pripravimo testne podatke
@@ -269,7 +269,7 @@ func TestGetApplication(t *testing.T) {
 // TestUpdateApplication testira posodabljanje aplikacije
 func TestUpdateApplication(t *testing.T) {
 	mockSvc := new(MockService)
-	h := New(mockSvc)
+	h := New(mockSvc, nil)
 	ctx := context.Background()
 
 	// Pripravimo testne podatke
@@ -305,7 +305,7 @@ func TestUpdateApplication(t *testing.T) {
 // TestDeleteApplication testira brisanje aplikacije
 func TestDeleteApplication(t *testing.T) {
 	mockSvc := new(MockService)
-	h := New(mockSvc)
+	h := New(mockSvc, nil)
 	ctx := context.Background()
 
 	// Pripravimo testne podatke
@@ -336,7 +336,7 @@ func TestDeleteApplication(t *testing.T) {
 // TestDownloadApplication testira generiranje URL-ja za prenos
 func TestDownloadApplication(t *testing.T) {
 	mockSvc := new(MockService)
-	h := New(mockSvc)
+	h := New(mockSvc, nil)
 	ctx := context.Background()
 
 	// Pripravimo testne podatke
