@@ -6,7 +6,23 @@ body .navbar {
     background: #16214d;
     color: white;
 }
+.user-profile-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: white;
+}
 
+.user-profile-link:hover {
+    opacity: 0.9;
+}
+
+#user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 .nav-brand a {
     color: white;
     text-decoration: none;

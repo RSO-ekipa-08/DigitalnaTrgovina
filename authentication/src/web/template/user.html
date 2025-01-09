@@ -2,44 +2,191 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link
-            href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-            rel="stylesheet"
-        />
         <link href="/public/css/app.css" rel="stylesheet" />
     </head>
-    <body class="home">
-        <div class="container">
-            <div class="logged-in-box auth0-box logged-in">
-                <img id="user-picture" class="avatar" alt="Profile picture" />
-                <h2>Dobrodošli, <span id="user-name"></span></h2>
-                <button
-                    onclick="logout()"
-                    class="btn btn-primary btn-lg btn-logout"
-                >
-                    Logout
-                </button>
+    <body>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <a href="/">Digitalna trgovina</a>
             </div>
-        </div>
+            <div class="nav-items">
+                <div id="user-info">
+                    <img
+                        id="user-avatar"
+                        class="avatar"
+                        alt="Profile picture"
+                    />
+                    <span id="user-name"></span>
+                    <button onclick="auth.logout()" class="btn">Odjava</button>
+                </div>
+            </div>
+        </nav>
+
+        <main>
+            <div class="user-profile">
+                <div class="profile-header">
+                    <img
+                        id="profile-picture"
+                        class="large-avatar"
+                        alt="Profile picture"
+                    />
+                    <div class="profile-info">
+                        <h1>Dobrodošli, <span id="profile-name"></span></h1>
+                        <p id="profile-email"></p>
+                    </div>
+                </div>
+
+                <div class="recommended-apps">
+                    <h2>Morda vas zanima</h2>
+                    <div id="apps-grid" class="apps-grid">
+                        <!-- Latest apps will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
     </body>
+
+    <script src="/public/js/auth.js"></script>
     <script>
-        // Get profile from localStorage
-        const profileStr = localStorage.getItem("user_profile");
-        if (!profileStr) {
-            window.location.href = "/";
-        } else {
-            console.log(profileStr);
-            const profile = JSON.parse(profileStr);
-            console.log(profile);
-            document.getElementById("user-name").textContent = profile.name;
-            document.getElementById("user-picture").src = profile.picture;
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get profile from localStorage
+            const profileStr = localStorage.getItem("user_profile");
+            if (!profileStr) {
+                window.location.href = "/";
+            } else {
+                const profile = JSON.parse(profileStr);
+                // Update all profile elements
+                document.getElementById("user-name").textContent = profile.name;
+                document.getElementById("user-avatar").src = profile.picture;
+                document.getElementById("profile-name").textContent =
+                    profile.name;
+                document.getElementById("profile-picture").src =
+                    profile.picture;
+                document.getElementById("profile-email").textContent =
+                    profile.email;
+
+                // Load latest apps
+                loadLatestApps();
+            }
+        });
+
+        async function loadLatestApps() {
+            try {
+                const response = await fetch(
+                    `${window.APP_SERVICE_URL}/app.v1.ApplicationService/SearchApplications`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Connect-Protocol-Version": "1",
+                        },
+                        body: JSON.stringify({
+                            pagination: {
+                                page: 1,
+                                page_size: 4,
+                            },
+                            include_moderated_only: true,
+                        }),
+                    },
+                );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const appsGrid = document.getElementById("apps-grid");
+
+                if (
+                    !data ||
+                    !data.applications ||
+                    data.applications.length === 0
+                ) {
+                    appsGrid.innerHTML =
+                        "<p>Trenutno ni aplikacij na voljo.</p>";
+                    return;
+                }
+
+                appsGrid.innerHTML = data.applications
+                    .map(
+                        (app) => `
+                            <div class="app-card" onclick="location.href='/app/${app.id}'">
+                                <img src="${app.screenshots?.[0] || "/public/images/default-app-icon.png"}"
+                                     alt="${app.name}"
+                                     onerror="this.src='/public/images/default-app-icon.png'">
+                                <div class="app-card-content">
+                                    <h3>${app.name || "Unnamed App"}</h3>
+                                    <div class="app-meta">
+                                        <div>${app.category || "Uncategorized"}</div>
+                                        <div>${app.price > 0 ? app.price + " €" : "Brezplačno"}</div>
+                                        <div>⭐ ${(app.rating || 0).toFixed(1)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `,
+                    )
+                    .join("");
+            } catch (error) {
+                console.error("Error loading apps:", error);
+                document.getElementById("apps-grid").innerHTML =
+                    '<p class="error-message">Napaka pri nalaganju aplikacij. Prosimo, poskusite kasneje.</p>';
+            }
         }
 
         function logout() {
+            // Clear localStorage
             localStorage.removeItem("access_token");
             localStorage.removeItem("id_token");
             localStorage.removeItem("user_profile");
-            window.location.href = "/logout";
+
+            // Redirect to home page
+            window.location.href = "/";
         }
     </script>
+
+    <style>
+        .user-profile {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .large-avatar {
+            width: 128px;
+            height: 128px;
+            border-radius: 50%;
+        }
+
+        .profile-info h1 {
+            margin: 0;
+            color: #16214d;
+        }
+
+        .profile-info p {
+            margin: 0.5rem 0;
+            color: #666;
+        }
+
+        .recommended-apps {
+            margin-top: 3rem;
+        }
+
+        .recommended-apps h2 {
+            color: #16214d;
+            margin-bottom: 1.5rem;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+    </style>
 </html>

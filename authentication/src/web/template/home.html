@@ -6,20 +6,18 @@
     <body class="home">
         <nav class="navbar">
             <div class="nav-brand">Digitalna trgovina</div>
-            <div class="nav-items"></div>
+            <div class="nav-items">
                 <div id="user-section">
                     <a href="/login" id="login-btn" class="btn">Sign In</a>
                     <div id="user-info" style="display: none">
-                        <img
-                            id="user-avatar"
-                            class="avatar"
-                            alt="Profile picture"
-                        />
-                        <span id="user-name"></span>
-                        <button onclick="logout()" class="btn">Logout</button>
+                        <a href="/user" class="user-profile-link">
+                            <img id="user-avatar" class="avatar" alt="Profile picture" />
+                            <span id="user-name"></span>
+                        </a>
+                        <button onclick="logout()" class="btn">Odjava</button>
                     </div>
                 </div>
-            </nav>div>
+            </div>
         </nav>
 
         <main>

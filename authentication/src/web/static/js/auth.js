@@ -18,5 +18,7 @@ const auth = {
     localStorage.removeItem("access_token");
     localStorage.removeItem("id_token");
     localStorage.removeItem("user_profile");
+    // Reload page
+    window.location.href = "/";
   },
 };
