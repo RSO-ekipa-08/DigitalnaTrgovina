@@ -171,19 +171,23 @@ async function loadReviews() {
       if (reviews && reviews.length > 0) {
         console.log(reviews);
         reviewsList.innerHTML = reviews
-          .map(
-            (review) => `
-                            <div class="review">
-                                <div class="review-header">
-                                    <div class="star-rating">
-                                        ${"⭐".repeat(review.score)}
-                                    </div>
-                                    <div>${new Date(review.createdAt).toLocaleDateString("sl-SI")}</div>
-                                </div>
-                                <div>${review.comment}</div>
-                            </div>
-                        `,
-          )
+          .map((review) => {
+            const date = new Date(review.createdAt.split(" ")[0]);
+            return `
+                      <div class="review">
+                          <div class="review-header">
+                              <div class="star-rating">
+                                  ${"⭐".repeat(review.score)}
+                              </div>
+                              <div>${date.toLocaleDateString("sl-SI")}</div>
+                          </div>
+                          <div class="review-comment">${review.comment}</div>
+                          <div class="review-author">
+                              - ${review.userId}
+                          </div>
+                      </div>
+                  `;
+          })
           .join("");
       } else {
         reviewsList.innerHTML =
