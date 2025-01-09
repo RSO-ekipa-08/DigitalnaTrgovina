@@ -47,8 +47,7 @@ async function loadAppDetails() {
 
     // Update elements if they exist
     if (elements.icon)
-      elements.icon.src =
-        app.screenshots?.[0] || "/public/images/default-app-icon.png";
+      elements.icon.src = app.storage_url || "/public/images/default-app-icon.png";
     if (elements.name) elements.name.textContent = app.name || "Unknown App";
     if (elements.developer)
       elements.developer.textContent = app.developerId || "Unknown Developer";

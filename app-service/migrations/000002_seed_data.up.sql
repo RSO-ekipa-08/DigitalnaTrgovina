@@ -25,7 +25,7 @@ INSERT INTO applications (
         '2.1.0',
         ARRAY['fitness', 'health', 'workout', 'diet'],
         ARRAY['ft_screen1.jpg', 'ft_screen2.jpg', 'ft_screen3.jpg'],
-        'https://storage.example.com/fitness-tracker-pro',
+        'https://img.icons8.com/?size=500&id=1TYhSQlrSHKX&format=png&color=000000',
         4.5,
         25000
     ),
@@ -40,7 +40,7 @@ INSERT INTO applications (
         '3.2.1',
         ARRAY['puzzle', 'game', 'brain', 'casual'],
         ARRAY['puzzle1.jpg', 'puzzle2.jpg'],
-        'https://storage.example.com/super-puzzle-quest',
+        'https://img.icons8.com/?size=500&id=lrcr6RgJFygK&format=png&color=000000',
         4.8,
         100000
     ),
@@ -55,7 +55,7 @@ INSERT INTO applications (
         '1.5.0',
         ARRAY['productivity', 'tasks', 'project-management'],
         ARRAY['task1.jpg', 'task2.jpg', 'task3.jpg'],
-        'https://storage.example.com/taskmaster',
+        'https://img.icons8.com/?size=500&id=1DoC8ZWabDoA&format=png&color=000000',
         4.2,
         15000
     ),
@@ -70,7 +70,7 @@ INSERT INTO applications (
         '4.0.2',
         ARRAY['education', 'languages', 'learning'],
         ARRAY['lang1.jpg', 'lang2.jpg', 'lang3.jpg'],
-        'https://storage.example.com/language-master',
+        'https://img.icons8.com/?size=500&id=3ktafmETowPZ&format=png&color=000000',
         4.7,
         50000
     ),
@@ -85,7 +85,7 @@ INSERT INTO applications (
         '5.1.3',
         ARRAY['social', 'chat', 'friends'],
         ARRAY['social1.jpg', 'social2.jpg'],
-        'https://storage.example.com/social-connect',
+        'https://img.icons8.com/?size=500&id=5xQqhKiYkFYW&format=png&color=000000',
         4.1,
         200000
     ),
@@ -100,7 +100,7 @@ INSERT INTO applications (
         '2.3.0',
         ARRAY['movies', 'streaming', 'entertainment'],
         ARRAY['movie1.jpg', 'movie2.jpg'],
-        'https://storage.example.com/movie-stream',
+        'https://img.icons8.com/?size=500&id=Le0qUPuuDDP1&format=png&color=000000',
         4.4,
         75000
     ),
@@ -115,7 +115,7 @@ INSERT INTO applications (
         '1.2.1',
         ARRAY['diet', 'health', 'nutrition'],
         ARRAY['diet1.jpg', 'diet2.jpg'],
-        'https://storage.example.com/diet-planner',
+        'https://img.icons8.com/?size=500&id=Ap0MKNQz4Iei&format=png&color=000000',
         4.3,
         30000
     ),
@@ -130,7 +130,7 @@ INSERT INTO applications (
         '3.0.0',
         ARRAY['business', 'invoice', 'finance'],
         ARRAY['invoice1.jpg', 'invoice2.jpg'],
-        'https://storage.example.com/invoice-pro',
+        'https://img.icons8.com/?size=500&id=7Lzyzew2TiXU&format=png&color=000000',
         4.6,
         12000
     ),
@@ -145,7 +145,7 @@ INSERT INTO applications (
         '2.4.1',
         ARRAY['files', 'utility', 'tools'],
         ARRAY['files1.jpg', 'files2.jpg'],
-        'https://storage.example.com/file-manager',
+        'https://img.icons8.com/?size=500&id=YOxhEQdv8BdW&format=png&color=000000',
         4.2,
         45000
     ),
@@ -160,7 +160,7 @@ INSERT INTO applications (
         '3.1.2',
         ARRAY['travel', 'guide', 'maps'],
         ARRAY['travel1.jpg', 'travel2.jpg'],
-        'https://storage.example.com/travel-guide',
+        'https://img.icons8.com/?size=500&id=NF4m2BlHV7hx&format=png&color=000000',
         4.5,
         35000
     ),
@@ -175,7 +175,7 @@ INSERT INTO applications (
         '1.1.0',
         ARRAY['shopping', 'lists', 'grocery'],
         ARRAY['shop1.jpg', 'shop2.jpg'],
-        'https://storage.example.com/shopping-list',
+        'https://img.icons8.com/?size=500&id=USKr9gHZFT60&format=png&color=000000',
         4.0,
         85000
     ),
@@ -190,7 +190,7 @@ INSERT INTO applications (
         '2.2.0',
         ARRAY['education', 'math', 'learning'],
         ARRAY['math1.jpg', 'math2.jpg'],
-        'https://storage.example.com/math-genius',
+        'https://img.icons8.com/?size=500&id=LeYo7kWA7lK5&format=png&color=000000',
         4.7,
         28000
     ),
@@ -205,7 +205,7 @@ INSERT INTO applications (
         '4.1.0',
         ARRAY['racing', 'games', 'sports'],
         ARRAY['race1.jpg', 'race2.jpg', 'race3.jpg'],
-        'https://storage.example.com/racing-thunder',
+        'https://img.icons8.com/?size=500&id=QgXbz7yVpYCJ&format=png&color=000000',
         4.6,
         150000
     ),
@@ -220,7 +220,7 @@ INSERT INTO applications (
         '2.0.1',
         ARRAY['meditation', 'mindfulness', 'health'],
         ARRAY['med1.jpg', 'med2.jpg'],
-        'https://storage.example.com/meditation',
+        'https://img.icons8.com/?size=500&id=IhM8el2ItbTN&format=png&color=000000',
         4.8,
         42000
     ),
@@ -235,7 +235,7 @@ INSERT INTO applications (
         '3.3.0',
         ARRAY['photo', 'editing', 'tools'],
         ARRAY['photo1.jpg', 'photo2.jpg'],
-        'https://storage.example.com/photo-editor',
+        'https://img.icons8.com/?size=500&id=2M65w2TgH5wd&format=png&color=000000',
         4.4,
         95000
     ),
@@ -250,7 +250,7 @@ INSERT INTO applications (
         '2.1.1',
         ARRAY['weather', 'forecast', 'tools'],
         ARRAY['weather1.jpg', 'weather2.jpg'],
-        'https://storage.example.com/weather',
+        'https://img.icons8.com/?size=100&id=E8cqWFiPDYUV&format=png&color=000005',
         4.3,
         120000
     ),
@@ -265,7 +265,7 @@ INSERT INTO applications (
         '2.4.0',
         ARRAY['recipes', 'cooking', 'food'],
         ARRAY['recipe1.jpg', 'recipe2.jpg'],
-        'https://storage.example.com/recipe-book',
+        'https://img.icons8.com/?size=500&id=Dlxb3XVVBBA0&format=png&color=000000',
         4.5,
         65000
     ),
@@ -280,7 +280,7 @@ INSERT INTO applications (
         '3.0.1',
         ARRAY['finance', 'budget', 'money'],
         ARRAY['budget1.jpg', 'budget2.jpg'],
-        'https://storage.example.com/budget',
+        'https://img.icons8.com/?size=500&id=JIXIN0HjGUAX&format=png&color=000000',
         4.2,
         38000
     ),
@@ -295,7 +295,7 @@ INSERT INTO applications (
         '2.2.1',
         ARRAY['music', 'audio', 'player'],
         ARRAY['music1.jpg', 'music2.jpg'],
-        'https://storage.example.com/music-player',
+        'https://img.icons8.com/?size=500&id=LUhEeK6dAWhR&format=png&color=000000',
         4.6,
         82000
     ),
@@ -310,7 +310,7 @@ INSERT INTO applications (
         '1.8.0',
         ARRAY['calendar', 'organizer', 'productivity'],
         ARRAY['cal1.jpg', 'cal2.jpg'],
-        'https://storage.example.com/calendar',
+        'https://img.icons8.com/?size=500&id=BvnFKAMECj6R&format=png&color=000000',
         4.4,
         55000
     );
