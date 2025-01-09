@@ -2,6 +2,7 @@ package router
 
 import (
 	"authentication/src/platform/auth"
+	"authentication/src/web/app/api"
 	"authentication/src/web/app/user"
 	"net/http"
 	"os"
@@ -54,15 +55,6 @@ func New(authClient *auth.AuthClient) *gin.Engine {
 		c.Redirect(http.StatusTemporaryRedirect, logoutURL)
 	})
 
-	router.GET("/user", user.Handler) // Move this out of API group
-
-	router.Use(func(c *gin.Context) {
-		c.Set("AppServiceURL", os.Getenv("APP_SERVICE_URL"))
-		c.Set("ReviewsServiceURL", os.Getenv("REVIEWS_SERVICE_URL"))
-		c.Next()
-	})
-
-	// Update handlers to pass service URLs
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "home.html", gin.H{
 			"AppServiceURL":     os.Getenv("APP_SERVICE_URL"),
@@ -77,12 +69,19 @@ func New(authClient *auth.AuthClient) *gin.Engine {
 		})
 	})
 
-	// Health check endpoint
-	router.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"status": "healthy",
-		})
-	})
+	router.GET("/user", user.Handler)
+
+	// API proxy routes
+	apiGroup := router.Group("/api")
+	{
+		// App service proxy
+		appGroup := apiGroup.Group("/app")
+		appGroup.Any("/*path", api.ProxyHandler("APP_SERVICE_URL"))
+
+		// Reviews service proxy
+		reviewsGroup := apiGroup.Group("/reviews")
+		reviewsGroup.Any("/*path", api.ProxyHandler("REVIEWS_SERVICE_URL"))
+	}
 
 	return router
 }
