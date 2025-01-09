@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  labels:
+    app: payment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+      - name: payment-service
+        image: payment-service:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: STRIPE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: payment-service-secrets
+              key: STRIPE_SECRET_KEY
+        - name: SUCCESS_URL
+          valueFrom:
+            secretKeyRef:
+              name: payment-service-secrets
+              key: SUCCESS_URL
+        - name: CANCEL_URL
+          valueFrom:
+            secretKeyRef:
+              name: payment-service-secrets
+              key: CANCEL_URL
+        - name: RABBITMQ_URL
+          valueFrom:
+            secretKeyRef:
+              name: payment-service-secrets
+              key: RABBITMQ_URL
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          exec:
+            command:
+            - pgrep
+            - -f
+            - "bun run"
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - pgrep
+            - -f
+            - "bun run"
+          initialDelaySeconds: 5
+          periodSeconds: 10 
