@@ -69,6 +69,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let grpc_addr = "0.0.0.0:50051".parse()?;
     let http_addr = "0.0.0.0:8080";
 
+    let pool_data = web::Data::new(pool.clone());
+
     println!("gRPC server listening on {}", grpc_addr);
     println!("GraphQL endpoint: http://{}/graphql", http_addr);
     println!("GraphQL interface: http://{}/graphiql", http_addr);
@@ -88,6 +90,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         App::new()
             .service(health_check) // Health check endpoint
             .service(ready_check) // Readiness probe endpoint
+            .app_data(pool_data.clone()) // Add database pool to app data
             .app_data(schema.clone())
             .app_data(context.clone())
             .wrap(
