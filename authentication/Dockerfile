@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine
+FROM golang:1.23-alpine AS builder
 
 RUN apk add --no-cache make protoc protobuf-dev
 
@@ -20,13 +20,25 @@ COPY . .
 # Generate proto files
 RUN make proto
 
-RUN go build -o out/auth-service ./src
+RUN CGO_ENABLED=0 GOOS=linux go build -o out/auth-service ./src
 
+# Final stage
+FROM alpine:latest
+
+RUN adduser -D -g '' appuser
+
+RUN apk add --no-cache ca-certificates tzdata
+
+WORKDIR /app
+
+COPY --from=builder /authentication/out/auth-service /app/auth-service
+
+USER appuser
 
 # Expose port 50051 for grpc
 EXPOSE 50051
 
-# Expose 3000 for http
+# Expose 3000 for http (health check)
 EXPOSE 3000
 
-CMD ["/authentication/out/auth-service"]
+CMD ["/app/auth-service"]
