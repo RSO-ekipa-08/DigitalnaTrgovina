@@ -199,7 +199,7 @@ resource "kubernetes_deployment" "api-gateway" {
 
           env {
             name  = "MINIAUTH_ADDRESS"
-            value = "${kubernetes_deployment.auth.metadata[0].name}:50051" # Points to the gRPC auth service
+            value = "auth-service.rso.svc.cluster.local:50051" # Points to the gRPC auth service
           }
 
           env {
