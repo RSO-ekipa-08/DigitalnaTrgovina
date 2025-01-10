@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -19,8 +20,21 @@ func ProxyHandler(targetService string) gin.HandlerFunc {
 			return
 		}
 
-		// Ustvari novo zahtevo na ciljno storitev
-		targetURL := os.Getenv(targetService) + c.Param("path")
+		// Uporabi url.Parse za pravilno rokovanje z URL-ji
+		baseURL, err := url.Parse(os.Getenv(targetService))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Napaka pri razčlenjevanju URL-ja"})
+			return
+		}
+
+		relPath, err := url.Parse(c.Param("path"))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Napaka pri razčlenjevanju poti"})
+			return
+		}
+
+		targetURL := baseURL.ResolveReference(relPath).String()
+
 		req, err := http.NewRequest(c.Request.Method, targetURL, bytes.NewBuffer(body))
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Napaka pri ustvarjanju zahteve"})
