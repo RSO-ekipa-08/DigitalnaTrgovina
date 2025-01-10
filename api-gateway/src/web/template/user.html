@@ -1,207 +1,172 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="sl">
     <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Uporabniški profil - Digitalna trgovina</title>
+        <script src="https://cdn.tailwindcss.com"></script>
         <link href="/public/css/app.css" rel="stylesheet" />
     </head>
-    <body>
-        <nav class="navbar">
-            <div class="nav-brand">
-                <a href="/">Digitalna trgovina</a>
-            </div>
-            <div class="nav-items">
-                <div id="user-info">
-                    <img
-                        id="user-avatar"
-                        class="avatar"
-                        alt="Profile picture"
-                    />
-                    <span id="user-name"></span>
-                    <button onclick="auth.logout()" class="btn">Odjava</button>
+    <body class="bg-gray-50">
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="/" class="text-xl font-bold text-indigo-600">Digitalna trgovina</a>
+                    </div>
+                    <div class="flex items-center">
+                        <div id="user-info" class="flex items-center space-x-4">
+                            <img id="user-avatar" class="h-8 w-8 rounded-full" alt="Profile picture" />
+                            <span id="user-name" class="text-gray-700"></span>
+                            <button onclick="auth.logout()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 border-indigo-600">
+                                Odjava
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
 
-        <main>
-            <div class="user-profile">
-                <div class="profile-header">
-                    <img
-                        id="profile-picture"
-                        class="large-avatar"
-                        alt="Profile picture"
-                    />
-                    <div class="profile-info">
-                        <h1>Dobrodošli, <span id="profile-name"></span></h1>
-                        <p id="profile-email"></p>
-                    </div>
-                </div>
-
-                <div class="recommended-apps">
-                    <h2>Morda vas zanima</h2>
-                    <div id="apps-grid" class="apps-grid">
-                        <!-- Latest apps will be loaded here -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8">
+                    <img id="profile-picture" class="w-32 h-32 rounded-full" alt="Profile picture" />
+                    <div class="text-center md:text-left">
+                        <h1 class="text-2xl font-bold text-gray-900">Dobrodošli, <span id="profile-name"></span></h1>
+                        <p id="profile-email" class="text-gray-600 mt-2"></p>
                     </div>
                 </div>
             </div>
-        </main>
-    </body>
 
-    <script src="/public/js/auth.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Get profile from localStorage
-            const profileStr = localStorage.getItem("user_profile");
-            if (!profileStr) {
-                window.location.href = "/";
-            } else {
-                const profile = JSON.parse(profileStr);
-                // Update all profile elements
-                document.getElementById("user-name").textContent = profile.name;
-                document.getElementById("user-avatar").src = profile.picture;
-                document.getElementById("profile-name").textContent =
-                    profile.name;
-                document.getElementById("profile-picture").src =
-                    profile.picture;
-                document.getElementById("profile-email").textContent =
-                    profile.email;
-
-                // Load latest apps
-                loadLatestApps();
-            }
-        });
-
-        async function loadLatestApps() {
-            try {
-                const requestBody = {
-                    query: "",
-                    category: "",
-                    minPrice: 0,
-                    maxPrice: 100,
-                    minAndroidVersion: "",
-                    pagination: {
-                        page: 1,
-                        pageSize: 4,
-                    },
-                    sort: [
-                        {
-                            field: "created_at",
-                            ascending: false,
-                        },
-                    ],
-                };
-
-                const response = await fetch(
-                    `${window.APP_SERVICE_URL}/app.v1.ApplicationService/SearchApplications`,
-                    {
-                        method: "POST",
-                        headers: {
-                            Accept: "application/json",
-                            "Content-Type": "application/json",
-                            "Connect-Protocol-Version": "1",
-                        },
-                        body: JSON.stringify(requestBody),
-                        mode: "cors",
-                        signal: AbortSignal.timeout(5000),
-                    },
-                );
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                const appsGrid = document.getElementById("apps-grid");
-
-                if (
-                    !data ||
-                    !data.applications ||
-                    data.applications.length === 0
-                ) {
-                    appsGrid.innerHTML =
-                        "<p>Trenutno ni aplikacij na voljo.</p>";
-                    return;
-                }
-
-                appsGrid.innerHTML = data.applications
-                    .map(
-                        (app) => `
-                <div class="app-card" onclick="location.href='/app/${app.id}'">
-                  <img src="${app.screenshots?.[0] || "https://developer.android.com/static/images/logos/android.svg"}"
-                       alt="${app.name}"
-                       onerror="this.src='https://developer.android.com/static/images/logos/android.svg'">
-                  <div class="app-card-content">
-                    <h3>${app.name || "Unnamed App"}</h3>
-                    <div class="app-meta">
-                      <div>${app.category || "Uncategorized"}</div>
-                      <div>${app.price > 0 ? app.price + " €" : "Brezplačno"}</div>
-                      <div>⭐ ${(app.rating || 0).toFixed(1)}</div>
-                    </div>
-                  </div>
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-xl font-bold text-gray-900 mb-6">Morda vas zanima</h2>
+                <div id="apps-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Latest apps will be loaded here -->
                 </div>
-              `,
-                    )
-                    .join("");
-            } catch (error) {
-                console.error("Error loading apps:", error);
-                document.getElementById("apps-grid").innerHTML =
-                    '<p class="error-message">Napaka pri nalaganju aplikacij. Prosimo, poskusite kasneje.</p>';
+            </div>
+        </main>
+
+        <script src="/public/js/auth.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Get profile from localStorage
+                const profileStr = localStorage.getItem("user_profile");
+                if (!profileStr) {
+                    window.location.href = "/";
+                } else {
+                    const profile = JSON.parse(profileStr);
+                    // Update all profile elements
+                    document.getElementById("user-name").textContent = profile.name;
+                    document.getElementById("user-avatar").src = profile.picture;
+                    document.getElementById("profile-name").textContent =
+                        profile.name;
+                    document.getElementById("profile-picture").src =
+                        profile.picture;
+                    document.getElementById("profile-email").textContent =
+                        profile.email;
+
+                    // Load latest apps
+                    loadLatestApps();
+                }
+            });
+
+            async function loadLatestApps() {
+                try {
+                    const requestBody = {
+                        query: "",
+                        category: "",
+                        minPrice: 0,
+                        maxPrice: 100,
+                        minAndroidVersion: "",
+                        pagination: {
+                            page: 1,
+                            pageSize: 4,
+                        },
+                        sort: [
+                            {
+                                field: "created_at",
+                                ascending: false,
+                            },
+                        ],
+                    };
+
+                    const response = await fetch(
+                        `${window.APP_SERVICE_URL}/app.v1.ApplicationService/SearchApplications`,
+                        {
+                            method: "POST",
+                            headers: {
+                                Accept: "application/json",
+                                "Content-Type": "application/json",
+                                "Connect-Protocol-Version": "1",
+                            },
+                            body: JSON.stringify(requestBody),
+                            mode: "cors",
+                            signal: AbortSignal.timeout(5000),
+                        },
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    const appsGrid = document.getElementById("apps-grid");
+
+                    if (
+                        !data ||
+                        !data.applications ||
+                        data.applications.length === 0
+                    ) {
+                        appsGrid.innerHTML =
+                            "<p>Trenutno ni aplikacij na voljo.</p>";
+                        return;
+                    }
+
+                    appsGrid.innerHTML = data.applications
+                        .map(
+                            (app) => `
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer" onclick="location.href='/app/${app.id}'">
+                        <div class="aspect-w-16 aspect-h-9">
+                            <img src="${app.screenshots?.[0] || "/public/images/default-app-icon.png"}"
+                                 alt="${app.name}"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.src='/public/images/default-app-icon.png'">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">${app.name || "Unnamed App"}</h3>
+                            <div class="space-y-2">
+                                <div class="text-sm text-gray-600">${app.category || "Uncategorized"}</div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-medium ${app.price > 0 ? 'text-indigo-600' : 'text-green-600'}">${app.price > 0 ? app.price + " €" : "Brezplačno"}</span>
+                                    <span class="flex items-center text-sm text-yellow-500">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                        ${(app.rating || 0).toFixed(1)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  `,
+                        )
+                        .join("");
+                } catch (error) {
+                    console.error("Error loading apps:", error);
+                    document.getElementById("apps-grid").innerHTML =
+                        '<p class="text-center text-gray-500 py-8">Napaka pri nalaganju aplikacij. Prosimo, poskusite kasneje.</p>';
+                }
             }
-        }
 
-        function logout() {
-            // Clear localStorage
-            localStorage.removeItem("access_token");
-            localStorage.removeItem("id_token");
-            localStorage.removeItem("user_profile");
+            function logout() {
+                // Clear localStorage
+                localStorage.removeItem("access_token");
+                localStorage.removeItem("id_token");
+                localStorage.removeItem("user_profile");
 
-            // Redirect to home page
-            window.location.href = "/";
-        }
-    </script>
-
-    <style>
-        .user-profile {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .large-avatar {
-            width: 128px;
-            height: 128px;
-            border-radius: 50%;
-        }
-
-        .profile-info h1 {
-            margin: 0;
-            color: #16214d;
-        }
-
-        .profile-info p {
-            margin: 0.5rem 0;
-            color: #666;
-        }
-
-        .recommended-apps {
-            margin-top: 3rem;
-        }
-
-        .recommended-apps h2 {
-            color: #16214d;
-            margin-bottom: 1.5rem;
-        }
-
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-    </style>
+                // Redirect to home page
+                window.location.href = "/";
+            }
+        </script>
+    </body>
 </html>
