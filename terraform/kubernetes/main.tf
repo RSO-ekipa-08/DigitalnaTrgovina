@@ -542,6 +542,29 @@ resource "kubernetes_deployment" "reviews" {
   }
 }
 
+resource "kubernetes_service" "reviews" {
+  metadata {
+    name      = "reviews-service"
+    namespace = kubernetes_namespace.rso.metadata[0].name
+  }
+  spec {
+    selector = {
+      app = kubernetes_deployment.reviews.spec[0].template[0].metadata[0].labels.app
+    }
+    port {
+      name        = "grpc"
+      port        = 50051
+      target_port = 50051
+    }
+    port {
+      name        = "graphql"
+      port        = 8080
+      target_port = 8080
+    }
+    type = "ClusterIP"
+  }
+}
+
 # App Service
 resource "kubernetes_deployment" "app" {
   metadata {
