@@ -92,7 +92,7 @@ INSERT INTO reviews (
     ),
     (
         '8dd0ab0b-41b4-4e88-9e9a-40646bfbffaa',
-        'f78a6f0c-b0d3-4ec4-91f6-df5e3162704e',
+        '0400e28f-d314-4b0c-a136-5714a7854125',
         'tone.makarone',
         4,
         'Super recepti, všeč mi je načrtovalnik tedenskih obrokov.',
