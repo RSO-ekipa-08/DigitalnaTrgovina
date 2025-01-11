@@ -140,8 +140,11 @@ resource "kubernetes_deployment" "auth" {
 
 resource "kubernetes_service" "auth" {
   metadata {
-    name      = "auth-service"
+    name      = "auth-internal"
     namespace = kubernetes_namespace.rso.metadata[0].name
+    annotations = {
+      "service.beta.kubernetes.io/azure-load-balancer-internal" = "true"
+    }
   }
 
   spec {
@@ -544,8 +547,11 @@ resource "kubernetes_deployment" "reviews" {
 
 resource "kubernetes_service" "reviews" {
   metadata {
-    name      = "reviews-service"
+    name      = "reviews-internal"
     namespace = kubernetes_namespace.rso.metadata[0].name
+    annotations = {
+      "service.beta.kubernetes.io/azure-load-balancer-internal" = "true"
+    }
   }
   spec {
     selector = {
@@ -558,10 +564,10 @@ resource "kubernetes_service" "reviews" {
     }
     port {
       name        = "graphql"
-      port        = 8080
+      port        = 80
       target_port = 8080
     }
-    type = "ClusterIP"
+    type = "LoadBalancer"
   }
 }
 
@@ -660,8 +666,11 @@ resource "kubernetes_deployment" "app" {
 
 resource "kubernetes_service" "app" {
   metadata {
-    name      = "app-service"
+    name      = "app-internal"
     namespace = kubernetes_namespace.rso.metadata[0].name
+    annotations = {
+      "service.beta.kubernetes.io/azure-load-balancer-internal" = "true"
+    }
   }
 
   spec {
@@ -670,10 +679,22 @@ resource "kubernetes_service" "app" {
     }
 
     port {
-      port        = 8080
+      port        = 80
       target_port = 8080
     }
 
     type = "LoadBalancer"
   }
+}
+
+output "app_internal_ip" {
+  value = kubernetes_service.app.status[0].load_balancer[0].ingress[0].ip
+}
+
+output "reviews_internal_ip" {
+  value = kubernetes_service.reviews.status[0].load_balancer[0].ingress[0].ip
+}
+
+output "auth_internal_ip" {
+  value = kubernetes_service.auth.status[0].load_balancer[0].ingress[0].ip
 }
