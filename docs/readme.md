@@ -115,7 +115,7 @@ Vstopna točka za vse zunanje zahteve.
 
 **API:**
 - REST API za zunanje odjemalce
-- Swagger/OpenAPI dokumentacija
+- https://rso-ekipa-08.github.io/DigitalnaTrgovina/
 
 ## Namestitev in zagon
 
@@ -184,7 +184,7 @@ go run .
 2. Generiranje novih stub-ov
 3. Implementacija sprememb
 4. Testi
-5. PR
+5. Uveljavitev sprememb
 
 ### Dodajanje nove storitve
 
