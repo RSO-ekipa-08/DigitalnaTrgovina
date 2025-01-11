@@ -2,7 +2,7 @@ const appId = window.location.pathname.split("/").pop();
 
 if (!appId) {
   console.error("No app ID found in URL");
-  document.body.innerHTML = '<p class="error-message">Invalid app ID</p>';
+  document.body.innerHTML = '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Neveljaven ID aplikacije.</p></div>';
 }
 
 async function loadAppDetails() {
@@ -31,7 +31,7 @@ async function loadAppDetails() {
     const app = data.application;
 
     if (!app) {
-      throw new Error("No app data received");
+      throw new Error("Aplikacija ni bila najdena");
     }
 
     // Check if elements exist before updating them
@@ -66,16 +66,16 @@ async function loadAppDetails() {
       elements.screenshots.innerHTML =
         screenshots.length > 0
           ? screenshots
-              .map((url) => `<img src="${url}" alt="Screenshot">`)
+              .map((url) => `<img src="${url}" alt="Zaslonska slika" class="rounded-lg shadow-lg">`)
               .join("")
-          : "<p>No screenshots available</p>";
+          : '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Ni razpoložljivih zaslonskih slik.</p></div>';
     }
   } catch (error) {
     console.error("Error loading app details:", error);
     const appContent = document.getElementById("app-content");
     if (appContent) {
       appContent.innerHTML =
-        '<p class="error-message">Failed to load app details. Please try again later.</p>';
+        '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Napaka pri nalaganju podrobnosti aplikacije. Prosimo, poskusite kasneje.</p></div>';
     }
   }
 }
@@ -197,7 +197,7 @@ async function loadReviews() {
           .join("");
       } else {
         reviewsList.innerHTML =
-          "<p>Še ni ocen. Bodite prvi, ki bo ocenil aplikacijo!</p>";
+          '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Še ni ocen. Bodite prvi, ki bo ocenil aplikacijo!</p></div>';
       }
     }
   } catch (error) {
@@ -205,7 +205,7 @@ async function loadReviews() {
     const reviewsList = document.getElementById("reviews-list");
     if (reviewsList) {
       reviewsList.innerHTML =
-        '<p class="error-message">Napaka pri nalaganju ocen. Prosimo, poskusite kasneje.</p>';
+        '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Napaka pri nalaganju ocen. Prosimo, poskusite kasneje.</p></div>';
     }
   }
 }
@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     console.error("Service URLs not configured");
     document.body.innerHTML =
-      '<p class="error-message">Application configuration error. Please contact support.</p>';
+      '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Napaka pri konfiguraciji aplikacije. Prosimo, kontaktirajte podporo.</p></div>';
   }
 });
 
@@ -242,12 +242,12 @@ async function submitReview() {
   const profile = auth.getProfile();
   console.log(profile);
   if (!profile) {
-    alert("Prosim, prijavite se za oddajo ocene");
+    alert("Prosimo, prijavite se za oddajo ocene.");
     return;
   }
 
   if (!comment) {
-    alert("Prosim, vnesite komentar");
+    alert("Prosimo, vnesite komentar.");
     return;
   }
 
@@ -298,7 +298,7 @@ async function submitReview() {
     }
 
     if (!result.data?.createReview) {
-      throw new Error("Napaka pri oddaji ocene");
+      throw new Error("Napaka pri oddaji ocene. Prosimo, poskusite ponovno.");
     }
 
     // Clear the form
@@ -308,9 +308,9 @@ async function submitReview() {
     // Reload reviews to show the new one
     await loadReviews();
 
-    alert("Ocena je bila uspešno oddana");
+    alert("Ocena je bila uspešno oddana. Hvala za vaš komentar!");
   } catch (error) {
     console.error("Error submitting review:", error);
-    alert("Napaka pri oddaji ocene: " + error.message);
+    alert("Napaka pri oddaji ocene. Prosimo, poskusite kasneje: " + error.message);
   }
 }

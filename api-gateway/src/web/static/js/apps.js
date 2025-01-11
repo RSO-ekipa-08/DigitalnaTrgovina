@@ -66,7 +66,7 @@ async function loadApps() {
 
     if (!data || !data.applications) {
       document.getElementById("apps-grid").innerHTML =
-        '<p class="error-message">No applications available.</p>';
+        '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Trenutno ni na voljo nobenih aplikacij.</p></div>';
       return;
     }
 
@@ -103,7 +103,7 @@ async function loadApps() {
   } catch (error) {
     console.error("Error loading apps:", error);
     document.getElementById("apps-grid").innerHTML =
-      '<p class="error-message">Failed to load applications. Please try again later.</p>';
+      '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Napaka pri nalaganju aplikacij. Prosimo, poskusite kasneje.</p></div>';
   }
 }
 
@@ -156,7 +156,7 @@ async function applyFilters() {
 
     if (!data || !data.applications || data.applications.length === 0) {
       appsGrid.innerHTML =
-        '<p class="error-message">No applications found matching your criteria.</p>';
+        '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Ni najdenih aplikacij za izbrane filtre.</p></div>';
       return;
     }
 
@@ -192,7 +192,7 @@ async function applyFilters() {
   } catch (error) {
     console.error("Error applying filters:", error);
     document.getElementById("apps-grid").innerHTML =
-      '<p class="error-message">Failed to apply filters. Please try again later.</p>';
+      '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Napaka pri filtriranju aplikacij. Prosimo, poskusite kasneje.</p></div>';
   }
 }
 
@@ -260,6 +260,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else {
     console.error("Service URLs not configured");
     document.body.innerHTML =
-      '<p class="error-message">Application configuration error. Please contact support.</p>';
+      '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Napaka pri konfiguraciji aplikacije. Prosimo, kontaktirajte podporo.</p></div>';
   }
 });
