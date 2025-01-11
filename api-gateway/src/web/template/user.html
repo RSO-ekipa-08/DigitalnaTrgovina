@@ -13,12 +13,12 @@
         </script>
         <link href="/public/css/app.css" rel="stylesheet" />
     </head>
-    <body class="bg-gray-50">
-        <nav class="bg-white shadow-lg">
+    <body class="h-full bg-gray-50 dark:bg-gray-900">
+        <nav class="bg-white dark:bg-gray-800 shadow-lg">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="/" class="text-xl font-bold text-indigo-600"
+                        <a href="/" class="text-xl font-bold text-indigo-600 dark:text-indigo-400"
                             >Digitalna trgovina</a
                         >
                     </div>
@@ -29,10 +29,10 @@
                                 class="h-8 w-8 rounded-full"
                                 alt="Profile picture"
                             />
-                            <span id="user-name" class="text-gray-700"></span>
+                            <span id="user-name" class="text-gray-700 dark:text-gray-300"></span>
                             <button
                                 onclick="auth.logout()"
-                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 border-indigo-600"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 dark:text-indigo-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border-indigo-600 dark:border-indigo-400"
                             >
                                 Odjava
                             </button>
@@ -43,7 +43,7 @@
         </nav>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
                 <div
                     class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-8"
                 >
@@ -53,16 +53,16 @@
                         alt="Profile picture"
                     />
                     <div class="text-center md:text-left">
-                        <h1 class="text-2xl font-bold text-gray-900">
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
                             Dobrodošli, <span id="profile-name"></span>
                         </h1>
-                        <p id="profile-email" class="text-gray-600 mt-2"></p>
+                        <p id="profile-email" class="text-gray-600 dark:text-gray-400 mt-2"></p>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg shadow-lg p-8">
-                <h2 class="text-xl font-bold text-gray-900 mb-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">
                     Morda vas zanima
                 </h2>
                 <div
@@ -152,26 +152,26 @@
                         data.applications.length === 0
                     ) {
                         appsGrid.innerHTML =
-                            "<p>Trenutno ni aplikacij na voljo.</p>";
+                            '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Trenutno ni aplikacij na voljo.</p></div>';
                         return;
                     }
 
                     appsGrid.innerHTML = data.applications
                         .map(
                             (app) => `
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer" onclick="location.href='/app/${app.id}'">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer" onclick="location.href='/app/${app.id}'">
                         <div class="aspect-w-16 aspect-h-9">
                             <img src="${app.iconUrl || "/public/images/default-app-icon.png"}"
                                  alt="${app.name}"
                                  class="w-full h-full object-cover">
                         </div>
                         <div class="p-4">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">${app.name || "Unnamed App"}</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">${app.name || "Unnamed App"}</h3>
                             <div class="space-y-2">
-                                <div class="text-sm text-gray-600">${app.category || "Uncategorized"}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">${app.category || "Uncategorized"}</div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium ${app.price > 0 ? "text-indigo-600" : "text-green-600"}">${app.price > 0 ? app.price + " €" : "Brezplačno"}</span>
-                                    <span class="flex items-center text-sm text-yellow-500">
+                                    <span class="text-sm font-medium ${app.price > 0 ? "text-indigo-600 dark:text-indigo-400" : "text-green-600 dark:text-green-400"}">${app.price > 0 ? app.price + " €" : "Brezplačno"}</span>
+                                    <span class="flex items-center text-sm text-yellow-500 dark:text-yellow-400">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                         </svg>
@@ -187,7 +187,7 @@
                 } catch (error) {
                     console.error("Error loading apps:", error);
                     document.getElementById("apps-grid").innerHTML =
-                        '<p class="text-center text-gray-500 py-8">Napaka pri nalaganju aplikacij. Prosimo, poskusite kasneje.</p>';
+                        '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Napaka pri nalaganju aplikacij. Prosimo, poskusite kasneje.</p></div>';
                 }
             }
 
