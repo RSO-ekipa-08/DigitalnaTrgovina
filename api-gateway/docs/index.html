@@ -1,729 +1,253 @@
 <!DOCTYPE html>
-
-<html>
-  <head>
-    <title>Protocol Documentation</title>
+<html lang="sl">
+<head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Gateway Documentation</title>
     <style>
-      body {
-        width: 60em;
-        margin: 1em auto;
-        color: #222;
-        font-family: "Ubuntu", sans-serif;
-        padding-bottom: 4em;
-      }
-
-      h1 {
-        font-weight: normal;
-        border-bottom: 1px solid #aaa;
-        padding-bottom: 0.5ex;
-      }
-
-      h2 {
-        border-bottom: 1px solid #aaa;
-        padding-bottom: 0.5ex;
-        margin: 1.5em 0;
-      }
-
-      h3 {
-        font-weight: normal;
-        border-bottom: 1px solid #aaa;
-        padding-bottom: 0.5ex;
-      }
-
-      a {
-        text-decoration: none;
-        color: #567e25;
-      }
-
-      table {
-        width: 100%;
-        font-size: 80%;
-        border-collapse: collapse;
-      }
-
-      thead {
-        font-weight: 700;
-        background-color: #dcdcdc;
-      }
-
-      tbody tr:nth-child(even) {
-        background-color: #fbfbfb;
-      }
-
-      td {
-        border: 1px solid #ccc;
-        padding: 0.5ex 2ex;
-      }
-
-      td p {
-        text-indent: 1em;
-        margin: 0;
-      }
-
-      td p:nth-child(1) {
-        text-indent: 0;  
-      }
-
-       
-      .field-table td:nth-child(1) {  
-        width: 10em;
-      }
-      .field-table td:nth-child(2) {  
-        width: 10em;
-      }
-      .field-table td:nth-child(3) {  
-        width: 6em;
-      }
-      .field-table td:nth-child(4) {  
-        width: auto;
-      }
-
-       
-      .extension-table td:nth-child(1) {  
-        width: 10em;
-      }
-      .extension-table td:nth-child(2) {  
-        width: 10em;
-      }
-      .extension-table td:nth-child(3) {  
-        width: 10em;
-      }
-      .extension-table td:nth-child(4) {  
-        width: 5em;
-      }
-      .extension-table td:nth-child(5) {  
-        width: auto;
-      }
-
-       
-      .enum-table td:nth-child(1) {  
-        width: 10em;
-      }
-      .enum-table td:nth-child(2) {  
-        width: 10em;
-      }
-      .enum-table td:nth-child(3) {  
-        width: auto;
-      }
-
-       
-      .scalar-value-types-table tr {
-        height: 3em;
-      }
-
-       
-      #toc-container ul {
-        list-style-type: none;
-        padding-left: 1em;
-        line-height: 180%;
-        margin: 0;
-      }
-      #toc > li > a {
-        font-weight: bold;
-      }
-
-       
-      .file-heading {
-        width: 100%;
-        display: table;
-        border-bottom: 1px solid #aaa;
-        margin: 4em 0 1.5em 0;
-      }
-      .file-heading h2 {
-        border: none;
-        display: table-cell;
-      }
-      .file-heading a {
-        text-align: right;
-        display: table-cell;
-      }
-
-       
-      .badge {
-        width: 1.6em;
-        height: 1.6em;
-        display: inline-block;
-
-        line-height: 1.6em;
-        text-align: center;
-        font-weight: bold;
-        font-size: 60%;
-
-        color: #89ba48;
-        background-color: #dff0c8;
-
-        margin: 0.5ex 1em 0.5ex -1em;
-        border: 1px solid #fbfbfb;
-        border-radius: 1ex;
-      }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .endpoint {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #e9ecef;
+        }
+        .code {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Consolas, Menlo, 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .code .key {
+            color: #9cdcfe;
+        }
+        .code .type {
+            color: #4ec9b0;
+        }
+        .code .comment {
+            color: #6a9955;
+            font-style: italic;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Consolas, Menlo, 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
     </style>
-
+</head>
+<body>
+    <h1>API Gateway Documentation</h1>
     
-    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
-  </head>
+    <h2>Pregled</h2>
+    <p><code>API Gateway</code> je centralna vstopna točka za vse mikrostoritve v sistemu. Skrbi za usmerjanje zahtev, avtentikacijo uporabnikov in proxy komunikacijo z ostalimi storitvami.</p>
 
-  <body>
-
-    <h1 id="title">Protocol Documentation</h1>
-
-    <h2>Table of Contents</h2>
-
-    <div id="toc-container">
-      <ul id="toc">
-        
-          
-          <li>
-            <a href="#auth.proto">auth.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#auth.LoginRequest"><span class="badge">M</span>LoginRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#auth.LoginResponse"><span class="badge">M</span>LoginResponse</a>
-                </li>
-              
-                <li>
-                  <a href="#auth.LogoutRequest"><span class="badge">M</span>LogoutRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#auth.LogoutResponse"><span class="badge">M</span>LogoutResponse</a>
-                </li>
-              
-                <li>
-                  <a href="#auth.VerifyRequest"><span class="badge">M</span>VerifyRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#auth.VerifyResponse"><span class="badge">M</span>VerifyResponse</a>
-                </li>
-              
-                <li>
-                  <a href="#auth.VerifyTokenRequest"><span class="badge">M</span>VerifyTokenRequest</a>
-                </li>
-              
-                <li>
-                  <a href="#auth.VerifyTokenResponse"><span class="badge">M</span>VerifyTokenResponse</a>
-                </li>
-              
-                <li>
-                  <a href="#auth.VerifyTokenResponse.ClaimsEntry"><span class="badge">M</span>VerifyTokenResponse.ClaimsEntry</a>
-                </li>
-              
-              
-              
-              
-                <li>
-                  <a href="#auth.AuthService"><span class="badge">S</span>AuthService</a>
-                </li>
-              
-            </ul>
-          </li>
-        
-        <li><a href="#scalar-value-types">Scalar Value Types</a></li>
-      </ul>
+    <h2>Javni Endpointi</h2>
+    
+    <div class="endpoint">
+        <h3>Health Check</h3>
+        <p><strong>GET</strong> <code>/health</code></p>
+        <p>Endpoint za preverjanje zdravja storitve.</p>
+        <p><strong>Odgovor:</strong></p>
+        <pre class="code">
+{
+    <span class="key">"status"</span>: <span class="type">"healthy"</span>
+}</pre>
     </div>
 
-    
-      
-      <div class="file-heading">
-        <h2 id="auth.proto">auth.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="auth.LoginRequest">LoginRequest</h3>
-        <p>Request to initiate the login process</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>redirect_url</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>URL where the user should be redirected after successful authentication </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="auth.LoginResponse">LoginResponse</h3>
-        <p>Response containing the authentication URL</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>auth_url</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>URL where the user should be directed to perform authentication </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="auth.LogoutRequest">LogoutRequest</h3>
-        <p>Request to initiate the logout process</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>return_url</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>URL where the user should be redirected after successful logout </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="auth.LogoutResponse">LogoutResponse</h3>
-        <p>Response containing the logout URL</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>logout_url</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>URL where the user should be directed to complete the logout process </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="auth.VerifyRequest">VerifyRequest</h3>
-        <p>Request to verify the authentication code</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>code</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Authentication code received from the identity provider </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="auth.VerifyResponse">VerifyResponse</h3>
-        <p>Response containing authentication tokens and user information</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>access_token</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Token used for accessing protected resources </p></td>
-                </tr>
-              
-                <tr>
-                  <td>id_token</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Token containing user identity information </p></td>
-                </tr>
-              
-                <tr>
-                  <td>profile</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>JSON string containing user profile information </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="auth.VerifyTokenRequest">VerifyTokenRequest</h3>
-        <p>Request to verify the validity of an authentication token</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>token</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>JWT token to be verified </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="auth.VerifyTokenResponse">VerifyTokenResponse</h3>
-        <p>Response containing token verification results</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>is_valid</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p>Indicates if the token is valid and not expired </p></td>
-                </tr>
-              
-                <tr>
-                  <td>user_id</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p>Identifier of the user associated with the token </p></td>
-                </tr>
-              
-                <tr>
-                  <td>claims</td>
-                  <td><a href="#auth.VerifyTokenResponse.ClaimsEntry">VerifyTokenResponse.ClaimsEntry</a></td>
-                  <td>repeated</td>
-                  <td><p>Additional token claims containing user information and permissions </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-        <h3 id="auth.VerifyTokenResponse.ClaimsEntry">VerifyTokenResponse.ClaimsEntry</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>key</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>value</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-
-      
-
-      
-
-      
-        <h3 id="auth.AuthService">AuthService</h3>
-        <p>Authentication service for managing user sessions and verification</p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>Login</td>
-                <td><a href="#auth.LoginRequest">LoginRequest</a></td>
-                <td><a href="#auth.LoginResponse">LoginResponse</a></td>
-                <td><p>Handle the login process for the user</p></td>
-              </tr>
-            
-              <tr>
-                <td>Verify</td>
-                <td><a href="#auth.VerifyRequest">VerifyRequest</a></td>
-                <td><a href="#auth.VerifyResponse">VerifyResponse</a></td>
-                <td><p>Verify the validity of an authentication request</p></td>
-              </tr>
-            
-              <tr>
-                <td>Logout</td>
-                <td><a href="#auth.LogoutRequest">LogoutRequest</a></td>
-                <td><a href="#auth.LogoutResponse">LogoutResponse</a></td>
-                <td><p>Handle the logout process for the user</p></td>
-              </tr>
-            
-              <tr>
-                <td>VerifyToken</td>
-                <td><a href="#auth.VerifyTokenRequest">VerifyTokenRequest</a></td>
-                <td><a href="#auth.VerifyTokenResponse">VerifyTokenResponse</a></td>
-                <td><p>Verify the validity of an authentication token</p></td>
-              </tr>
-            
-          </tbody>
+    <div class="endpoint">
+        <h3>Prijava</h3>
+        <p><strong>GET</strong> <code>/login</code></p>
+        <p>Endpoint za prijavo uporabnika. Preusmeri na Auth0 prijavno stran.</p>
+        <p><strong>Query parametri:</strong></p>
+        <table>
+            <tr>
+                <th>Parameter</th>
+                <th>Opis</th>
+                <th>Obvezen</th>
+            </tr>
+            <tr>
+                <td><code>redirect_url</code></td>
+                <td>URL za preusmeritev po uspešni prijavi</td>
+                <td>Ne</td>
+            </tr>
         </table>
+    </div>
 
-        
-    
+    <div class="endpoint">
+        <h3>Callback</h3>
+        <p><strong>GET</strong> <code>/callback</code></p>
+        <p>Callback endpoint za Auth0 avtentikacijo.</p>
+        <p><strong>Query parametri:</strong></p>
+        <table>
+            <tr>
+                <th>Parameter</th>
+                <th>Opis</th>
+                <th>Obvezen</th>
+            </tr>
+            <tr>
+                <td><code>code</code></td>
+                <td>Avtorizacijska koda od Auth0</td>
+                <td>Da</td>
+            </tr>
+        </table>
+        <p><strong>Odgovor:</strong> HTML stran z JWT žetoni in profilom uporabnika</p>
+    </div>
 
-    <h2 id="scalar-value-types">Scalar Value Types</h2>
-    <table class="scalar-value-types-table">
-      <thead>
-        <tr><td>.proto Type</td><td>Notes</td><td>C++</td><td>Java</td><td>Python</td><td>Go</td><td>C#</td><td>PHP</td><td>Ruby</td></tr>
-      </thead>
-      <tbody>
-        
-          <tr id="double">
-            <td>double</td>
-            <td></td>
-            <td>double</td>
-            <td>double</td>
-            <td>float</td>
-            <td>float64</td>
-            <td>double</td>
-            <td>float</td>
-            <td>Float</td>
-          </tr>
-        
-          <tr id="float">
-            <td>float</td>
-            <td></td>
-            <td>float</td>
-            <td>float</td>
-            <td>float</td>
-            <td>float32</td>
-            <td>float</td>
-            <td>float</td>
-            <td>Float</td>
-          </tr>
-        
-          <tr id="int32">
-            <td>int32</td>
-            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</td>
-            <td>int32</td>
-            <td>int</td>
-            <td>int</td>
-            <td>int32</td>
-            <td>int</td>
-            <td>integer</td>
-            <td>Bignum or Fixnum (as required)</td>
-          </tr>
-        
-          <tr id="int64">
-            <td>int64</td>
-            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</td>
-            <td>int64</td>
-            <td>long</td>
-            <td>int/long</td>
-            <td>int64</td>
-            <td>long</td>
-            <td>integer/string</td>
-            <td>Bignum</td>
-          </tr>
-        
-          <tr id="uint32">
-            <td>uint32</td>
-            <td>Uses variable-length encoding.</td>
-            <td>uint32</td>
-            <td>int</td>
-            <td>int/long</td>
-            <td>uint32</td>
-            <td>uint</td>
-            <td>integer</td>
-            <td>Bignum or Fixnum (as required)</td>
-          </tr>
-        
-          <tr id="uint64">
-            <td>uint64</td>
-            <td>Uses variable-length encoding.</td>
-            <td>uint64</td>
-            <td>long</td>
-            <td>int/long</td>
-            <td>uint64</td>
-            <td>ulong</td>
-            <td>integer/string</td>
-            <td>Bignum or Fixnum (as required)</td>
-          </tr>
-        
-          <tr id="sint32">
-            <td>sint32</td>
-            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</td>
-            <td>int32</td>
-            <td>int</td>
-            <td>int</td>
-            <td>int32</td>
-            <td>int</td>
-            <td>integer</td>
-            <td>Bignum or Fixnum (as required)</td>
-          </tr>
-        
-          <tr id="sint64">
-            <td>sint64</td>
-            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</td>
-            <td>int64</td>
-            <td>long</td>
-            <td>int/long</td>
-            <td>int64</td>
-            <td>long</td>
-            <td>integer/string</td>
-            <td>Bignum</td>
-          </tr>
-        
-          <tr id="fixed32">
-            <td>fixed32</td>
-            <td>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</td>
-            <td>uint32</td>
-            <td>int</td>
-            <td>int</td>
-            <td>uint32</td>
-            <td>uint</td>
-            <td>integer</td>
-            <td>Bignum or Fixnum (as required)</td>
-          </tr>
-        
-          <tr id="fixed64">
-            <td>fixed64</td>
-            <td>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</td>
-            <td>uint64</td>
-            <td>long</td>
-            <td>int/long</td>
-            <td>uint64</td>
-            <td>ulong</td>
-            <td>integer/string</td>
-            <td>Bignum</td>
-          </tr>
-        
-          <tr id="sfixed32">
-            <td>sfixed32</td>
-            <td>Always four bytes.</td>
-            <td>int32</td>
-            <td>int</td>
-            <td>int</td>
-            <td>int32</td>
-            <td>int</td>
-            <td>integer</td>
-            <td>Bignum or Fixnum (as required)</td>
-          </tr>
-        
-          <tr id="sfixed64">
-            <td>sfixed64</td>
-            <td>Always eight bytes.</td>
-            <td>int64</td>
-            <td>long</td>
-            <td>int/long</td>
-            <td>int64</td>
-            <td>long</td>
-            <td>integer/string</td>
-            <td>Bignum</td>
-          </tr>
-        
-          <tr id="bool">
-            <td>bool</td>
-            <td></td>
-            <td>bool</td>
-            <td>boolean</td>
-            <td>boolean</td>
-            <td>bool</td>
-            <td>bool</td>
-            <td>boolean</td>
-            <td>TrueClass/FalseClass</td>
-          </tr>
-        
-          <tr id="string">
-            <td>string</td>
-            <td>A string must always contain UTF-8 encoded or 7-bit ASCII text.</td>
-            <td>string</td>
-            <td>String</td>
-            <td>str/unicode</td>
-            <td>string</td>
-            <td>string</td>
-            <td>string</td>
-            <td>String (UTF-8)</td>
-          </tr>
-        
-          <tr id="bytes">
-            <td>bytes</td>
-            <td>May contain any arbitrary sequence of bytes.</td>
-            <td>string</td>
-            <td>ByteString</td>
-            <td>str</td>
-            <td>[]byte</td>
-            <td>ByteString</td>
-            <td>string</td>
-            <td>String (ASCII-8BIT)</td>
-          </tr>
-        
-      </tbody>
+    <div class="endpoint">
+        <h3>Odjava</h3>
+        <p><strong>GET</strong> <code>/logout</code></p>
+        <p>Endpoint za odjavo uporabnika.</p>
+    </div>
+
+    <div class="endpoint">
+        <h3>Uporabniški profil</h3>
+        <p><strong>GET</strong> <code>/user</code></p>
+        <p>Endpoint za prikaz uporabniškega profila.</p>
+        <p><strong>Zahteva avtentikacijo:</strong> Da</p>
+    </div>
+
+    <h2>API Proxy Endpointi</h2>
+
+    <div class="endpoint">
+        <h3>App Service API</h3>
+        <p><strong>ANY</strong> <code>/api/app/*</code></p>
+        <p>Proxy za App Service API. Podpira naslednje operacije:</p>
+        <ul>
+            <li><code>SearchApplications</code> - iskanje aplikacij</li>
+            <li><code>ListCategories</code> - seznam kategorij</li>
+        </ul>
+        <p><strong>Primer zahteve za iskanje aplikacij:</strong></p>
+        <pre class="code">
+POST /api/app/app.v1.ApplicationService/SearchApplications
+{
+    <span class="key">"query"</span>: <span class="type">string</span>,
+    <span class="key">"category"</span>: <span class="type">string</span>,
+    <span class="key">"minPrice"</span>: <span class="type">number</span>,
+    <span class="key">"maxPrice"</span>: <span class="type">number</span>,
+    <span class="key">"minAndroidVersion"</span>: <span class="type">string</span>,
+    <span class="key">"pagination"</span>: {
+        <span class="key">"page"</span>: <span class="type">number</span>,
+        <span class="key">"pageSize"</span>: <span class="type">number</span>
+    },
+    <span class="key">"sort"</span>: [
+        {
+            <span class="key">"field"</span>: <span class="type">string</span>,
+            <span class="key">"ascending"</span>: <span class="type">boolean</span>
+        }
+    ]
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3>Reviews Service API</h3>
+        <p><strong>POST</strong> <code>/api/reviews/graphql</code></p>
+        <p>Proxy za Reviews Service GraphQL API. Omogoča poizvedbe in mutacije za upravljanje z ocenami aplikacij.</p>
+        <p><strong>Primer GraphQL poizvedbe:</strong></p>
+        <pre class="code">
+POST /api/reviews/graphql
+{
+    <span class="key">"query"</span>: <span class="type">"""
+    query GetReviews($appId: ID!) {
+        reviews(appId: $appId) {
+            id
+            rating
+            comment
+            userId
+            createdAt
+        }
+    }
+    """</span>,
+    <span class="key">"variables"</span>: {
+        <span class="key">"appId"</span>: <span class="type">"123"</span>
+    }
+}</pre>
+        <p><strong>Headers:</strong></p>
+        <table>
+            <tr>
+                <th>Header</th>
+                <th>Opis</th>
+                <th>Obvezen</th>
+            </tr>
+            <tr>
+                <td><code>Content-Type</code></td>
+                <td>application/json</td>
+                <td>Da</td>
+            </tr>
+            <tr>
+                <td><code>Authorization</code></td>
+                <td>Bearer {jwt_token}</td>
+                <td>Da (za mutacije)</td>
+            </tr>
+        </table>
+    </div>
+
+    <h2>Konfiguracija</h2>
+    <p>Storitev uporablja naslednje okoljske spremenljivke:</p>
+    <table>
+        <tr>
+            <th>Spremenljivka</th>
+            <th>Opis</th>
+            <th>Privzeta vrednost</th>
+        </tr>
+        <tr>
+            <td><code>MINIAUTH_ADDRESS</code></td>
+            <td>Naslov Auth mikroservisa</td>
+            <td><code>localhost:50051</code></td>
+        </tr>
+        <tr>
+            <td><code>APP_SERVICE_URL</code></td>
+            <td>URL za App Service</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td><code>REVIEWS_SERVICE_URL</code></td>
+            <td>URL za Reviews Service</td>
+            <td>-</td>
+        </tr>
     </table>
-  </body>
-</html>
 
+    <h2>Avtentikacija</h2>
+    <p>API Gateway uporablja Auth0 za avtentikacijo uporabnikov. Proces avtentikacije:</p>
+    <ol>
+        <li>Uporabnik je preusmerjen na <code>/login</code> endpoint</li>
+        <li>Uporabnik je preusmerjen na Auth0 prijavno stran</li>
+        <li>Po uspešni prijavi je uporabnik preusmerjen nazaj na <code>/callback</code> endpoint</li>
+        <li>API Gateway preveri avtentikacijsko kodo in pridobi JWT žetone</li>
+        <li>Uporabnik je preusmerjen nazaj na aplikacijo z veljavnimi žetoni</li>
+    </ol>
+
+</body>
+</html> 
