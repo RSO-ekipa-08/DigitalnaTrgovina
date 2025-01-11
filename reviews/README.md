@@ -1,4 +1,3 @@
-# Mikrostoritev za ocene in komentarj
 # Mikrostoritev za ocene in komentarje
 
 Mikrostoritev, implementirana v programskem jeziku Rust, ki omogoča upravljanje z ocenami in komentarji aplikacij v trgovini.
@@ -73,7 +72,7 @@ docker run -p 50051:50051 \
 ## API dokumentacija
 
 gRPC vmesnik je definiran v `proto/reviews.proto`
-HHTML dokumentacija je na voljo v `docs/index.html`.
+HTML dokumentacija je na voljo v `docs/index.html`.
 
 ## Razvoj
 

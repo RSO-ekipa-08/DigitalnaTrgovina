@@ -1,4 +1,4 @@
-# Dokumentacija Mikroservisov
+# Dokumentacija mikrostoritev
 
 ## Pregled arhitekture
 
@@ -24,7 +24,6 @@ Sistem je sestavljen iz naslednjih mikrostoritev:
 - JWT žetoni za avtentikacijo
 - CORS zaščita
 - Rate limiting
-- TLS za produkcijo
 
 ## Mikrostoritve
 
