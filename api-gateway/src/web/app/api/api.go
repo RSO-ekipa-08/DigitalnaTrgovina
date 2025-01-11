@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -34,6 +35,8 @@ func ProxyHandler(targetService string) gin.HandlerFunc {
 		}
 
 		targetURL := baseURL.ResolveReference(relPath).String()
+
+		log.Printf("Making '%s' request to '%s'", c.Request.Method, targetURL)
 
 		req, err := http.NewRequest(c.Request.Method, targetURL, bytes.NewBuffer(body))
 		if err != nil {
