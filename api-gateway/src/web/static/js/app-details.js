@@ -1,4 +1,5 @@
 const appId = window.location.pathname.split("/").pop();
+let appPrice = 0;
 
 if (!appId) {
   console.error("No app ID found in URL");
@@ -55,6 +56,7 @@ async function loadAppDetails() {
     if (elements.category)
       elements.category.textContent = app.category || "Uncategorized";
     if (elements.price) {
+      appPrice = app.price; // Store the price
       elements.price.textContent =
         app.price > 0 ? `${app.price} €` : "Brezplačno";
       updateButtonText(app.price);
@@ -239,34 +241,117 @@ async function handleDownload() {
   }
   console.log(profile);
 
-  try {
-    const response = await fetch(
-      `${window.APP_SERVICE_URL}/app.v1.ApplicationService/BuyApplication`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          applicationId: appId,
-          userId: crypto.randomUUID(), //profile.aud.toString(),
-        }),
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  const stringToUUID = (str) => {
+    // Create a hash from the string
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32-bit integer
     }
 
-    const data = await response.json();
+    // Convert hash to hex string and pad with zeros
+    let hex = Math.abs(hash).toString(16).padStart(32, "0");
 
-    if (data.checkoutUrl) {
-      window.location.href = data.checkoutUrl;
+    // Insert UUID dashes at correct positions
+    return (
+      hex.substring(0, 8) +
+      "-" +
+      hex.substring(8, 12) +
+      "-4" +
+      hex.substring(13, 16) +
+      "-a" +
+      hex.substring(17, 20) +
+      "-" +
+      hex.substring(20, 32)
+    );
+  };
+
+  const userId = stringToUUID(profile.aud);
+  console.log("Generated userId:", userId);
+  try {
+    if (appPrice > 0) {
+      // Handle paid app - purchase flow
+      const response = await fetch(
+        `${window.APP_SERVICE_URL}/app.v1.ApplicationService/BuyApplication`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Connect-Protocol-Version": "1",
+          },
+          body: JSON.stringify({
+            applicationId: appId,
+            userId: userId,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
+    } else {
+      console.log("Sending download request for:", {
+        applicationId: appId,
+        userId: userId,
+      });
+
+      const response = await fetch(
+        `${window.APP_SERVICE_URL}/app.v1.ApplicationService/DownloadApplication`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Connect-Protocol-Version": "1",
+          },
+          body: JSON.stringify({
+            applicationId: appId,
+            userId: userId,
+          }),
+        },
+      );
+
+      console.log("Response status:", response.status);
+      const responseText = await response.text();
+      console.log("Response text:", responseText);
+
+      if (!response.ok) {
+        throw new Error(
+          `HTTP error! status: ${response.status} response: ${responseText}`,
+        );
+      }
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error("Error parsing response:", e);
+        throw new Error("Invalid response format");
+      }
+
+      if (data.downloadUrl) {
+        console.log("Download URL received:", data.downloadUrl);
+        const link = document.createElement("a");
+        link.href = data.downloadUrl;
+        link.setAttribute("download", "");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        throw new Error("No download URL received");
+      }
     }
   } catch (error) {
-    console.error("Error during purchase:", error);
-    alert("Napaka pri nakupu aplikacije. Prosimo, poskusite kasneje.");
+    console.error("Error during download/purchase:", error);
+    alert("Napaka pri prenosu/nakupu aplikacije. Prosimo, poskusite kasneje.");
   }
 }
 
