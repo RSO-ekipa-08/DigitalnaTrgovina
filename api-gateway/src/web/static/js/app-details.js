@@ -54,9 +54,11 @@ async function loadAppDetails() {
       elements.developer.textContent = app.developerId || "Unknown Developer";
     if (elements.category)
       elements.category.textContent = app.category || "Uncategorized";
-    if (elements.price)
+    if (elements.price) {
       elements.price.textContent =
         app.price > 0 ? `${app.price} €` : "Brezplačno";
+      updateButtonText(app.price);
+    }
     if (elements.description)
       elements.description.textContent =
         app.description || "No description available";
@@ -223,6 +225,51 @@ async function loadReviews() {
     }
   }
 }
+
+function updateButtonText(price) {
+  const button = document.getElementById("download-btn");
+  button.textContent = price > 0 ? "Kupi" : "Prenesi";
+}
+
+async function handleDownload() {
+  const profile = auth.getProfile();
+  if (!profile) {
+    window.location.href = "/login";
+    return;
+  }
+  console.log(profile);
+
+  try {
+    const response = await fetch(
+      `${window.APP_SERVICE_URL}/app.v1.ApplicationService/BuyApplication`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          applicationId: appId,
+          userId: crypto.randomUUID(), //profile.aud.toString(),
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.checkoutUrl) {
+      window.location.href = data.checkoutUrl;
+    }
+  } catch (error) {
+    console.error("Error during purchase:", error);
+    alert("Napaka pri nakupu aplikacije. Prosimo, poskusite kasneje.");
+  }
+}
+
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
   if (window.APP_SERVICE_URL && window.REVIEWS_SERVICE_URL) {
@@ -297,7 +344,6 @@ async function submitReview() {
       },
       body: JSON.stringify({
         query: mutation,
-        // Remove variables since we're using inline values
       }),
     });
 
