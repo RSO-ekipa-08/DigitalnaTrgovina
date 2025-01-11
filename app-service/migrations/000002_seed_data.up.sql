@@ -1,5 +1,6 @@
 -- Vstavljanje vzorčnih aplikacij
 INSERT INTO applications (
+    id,
     name,
     description,
     developer_id,
@@ -16,6 +17,7 @@ INSERT INTO applications (
     downloads
 ) VALUES
     (
+        'ec9d81fd-551b-4fdc-b220-3712b241a49a',
         'Fitness Tracker Pro',
         'Celovita aplikacija za sledenje vaši telesni vadbi in prehrani',
         '5aa63296-37d7-46bf-adcb-fcfa0623df84',
@@ -32,6 +34,7 @@ INSERT INTO applications (
         25000
     ),
     (
+        '9d73b8fc-7876-4d26-89a0-ca10d1a93457',
         'Super Puzzle Quest',
         'Zabavna miselna igra s številnimi nivoji',
         '0992a209-1c7c-43e4-a8be-0a03df469d47',
@@ -48,6 +51,7 @@ INSERT INTO applications (
         100000
     ),
     (
+        '4d6a2283-4b76-4359-bba1-f7dc88b6f2b1',
         'TaskMaster',
         'Profesionalno orodje za upravljanje s projekti',
         'dd2245ec-2cf7-4d9b-8ac6-cb6e5f29cae6',
@@ -64,6 +68,7 @@ INSERT INTO applications (
         15000
     ),
     (
+        '8960306c-3588-450f-abdc-11bedf81dfe8',
         'Language Master',
         'Učite se jezikov na zabaven in interaktiven način',
         '7f9b8be1-ad01-4b9c-b48c-748a3e87d9d6',
@@ -80,6 +85,7 @@ INSERT INTO applications (
         50000
     ),
     (
+        'c23a3d46-8ffd-4183-a5f8-10bd8d54b6c3',
         'Social Connect',
         'Ostanite povezani s prijatelji in družino',
         '437c3da1-73dd-4721-80d7-4b89bc28ac88',
@@ -96,6 +102,7 @@ INSERT INTO applications (
         200000
     ),
     (
+        '1e68d972-5318-402c-a3e8-c8e45d9e5eb9',
         'Movie Stream Plus',
         'Pretakanje filmov in TV serij',
         '895c6945-42da-433e-9203-dd86a54a9961',
@@ -112,6 +119,7 @@ INSERT INTO applications (
         75000
     ),
     (
+        '8d79c9a6-512a-460a-b43c-90244b615d5d',
         'Diet Planner',
         'Načrtujte svoje obroke in sledite kalorijam',
         'a930d780-5f57-4014-8cd1-4402dd470d4d',
@@ -128,6 +136,7 @@ INSERT INTO applications (
         30000
     ),
     (
+        '665d41a1-cd27-4473-a56a-80de5f6ef6e4',
         'Invoice Generator Pro',
         'Profesionalno ustvarjanje računov za podjetja',
         '41fe2542-eb30-438d-8fa5-8332105fd300',
@@ -144,6 +153,7 @@ INSERT INTO applications (
         12000
     ),
     (
+        'f78a6f0c-b0d3-4ec4-91f6-df5e3162704e',
         'File Manager Plus',
         'Napredno upravljanje datotek',
         '7fe0c32b-3219-4c29-9e8a-cc6918240c3a',
@@ -160,6 +170,7 @@ INSERT INTO applications (
         45000
     ),
     (
+        'f951d41d-dec1-40df-8c45-ce517f054d1e',
         'Travel Guide Pro',
         'Vodič po svetovnih destinacijah',
         'e081d209-57df-4ffe-97ec-57512fa66348',
@@ -176,6 +187,7 @@ INSERT INTO applications (
         35000
     ),
     (
+        'bceee33e-32e2-4f0d-930b-90e5daf8be24',
         'Shopping List Master',
         'Pametno upravljanje nakupovalnih seznamov',
         'd726e0b3-a188-4b84-987b-44ee2df5739c',
@@ -192,6 +204,7 @@ INSERT INTO applications (
         85000
     ),
     (
+        'bab4443a-49f0-4cd9-a90f-fd72e0e7f1ef',
         'Math Genius',
         'Interaktivno učenje matematike',
         'de05b383-3abe-4928-ba82-462453b7723c',
@@ -208,6 +221,7 @@ INSERT INTO applications (
         28000
     ),
     (
+        '1ddaebd7-548d-4976-a201-e2a8154ddfd4',
         'Racing Thunder',
         'Vznemirljiva dirkaška igra',
         '5e8f482b-f365-420e-b4c5-dd79487ba977',
@@ -224,6 +238,7 @@ INSERT INTO applications (
         150000
     ),
     (
+        '5fb9fc55-1ec6-42f9-a75c-291419122e74',
         'Meditation Guide',
         'Vodena meditacija in sproščanje',
         '40aaff3c-dba1-4627-9fa4-0194f20cad47',
@@ -240,6 +255,7 @@ INSERT INTO applications (
         42000
     ),
     (
+        'c206536d-a8ac-4e10-8f0e-4eafc063dab9',
         'Photo Editor Pro',
         'Profesionalno urejanje fotografij',
         'd811dc0a-c9af-4966-bc19-710a5efbd9d6',
@@ -256,6 +272,7 @@ INSERT INTO applications (
         95000
     ),
     (
+        'd6c1734f-f451-4833-99c7-1a8dda2c4305',
         'Weather Forecast Plus',
         'Natančna vremenska napoved',
         'f6a9a81c-90fb-48b5-b200-63f135d08bb1',
@@ -272,6 +289,7 @@ INSERT INTO applications (
         120000
     ),
     (
+        '0400e28f-d314-4b0c-a136-5714a7854125',
         'Recipe Book Pro',
         'Zbirka receptov in načrtovanje obrokov',
         '39ce06ce-106b-4879-82fb-d76f62056e15',
@@ -288,6 +306,7 @@ INSERT INTO applications (
         65000
     ),
     (
+        '62efb487-922c-40d6-bec1-2ab265b9c488',
         'Budget Tracker',
         'Osebno finančno načrtovanje',
         'cc12f99c-f023-451b-a677-96aa6dc6cb96',
@@ -304,6 +323,7 @@ INSERT INTO applications (
         38000
     ),
     (
+        'a140970c-8ca7-4102-be63-324c2ce0a49d',
         'Music Player Pro',
         'Napredni predvajalnik glasbe',
         '9b7010c4-ac88-4267-9398-27c5be031010',
@@ -320,6 +340,7 @@ INSERT INTO applications (
         82000
     ),
     (
+        '2f0c4159-55f0-4009-a309-7011423de22d',
         'Calendar Organizer',
         'Pametno upravljanje časa',
         'c90492d0-57c2-44b2-bb3c-4f949d096e8a',
