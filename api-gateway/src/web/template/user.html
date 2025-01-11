@@ -155,7 +155,7 @@
                             (app) => `
                     <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer" onclick="location.href='/app/${app.id}'">
                         <div class="aspect-w-16 aspect-h-9">
-                            <img src="${app.screenshots?.[0] || "/public/images/default-app-icon.png"}"
+                            <img src="${app.iconUrl || "/public/images/default-app-icon.png"}"
                                  alt="${app.name}"
                                  class="w-full h-full object-cover">
                         </div>
