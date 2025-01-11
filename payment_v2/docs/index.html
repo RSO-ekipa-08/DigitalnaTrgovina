@@ -104,19 +104,19 @@
     <h3>Format sporočil</h3>
     
     <h4>Zahteva za plačilo (<code>Payment Request</code>)</h4>
-    <div class="code">
-{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"amount"</span>: <span class="type">number</span>,      <span class="comment">// Znesek v najmanjši enoti valute (npr. centi)</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"currency"</span>: <span class="type">string</span>,    <span class="comment">// Valuta (npr. "eur")</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"productName"</span>: <span class="type">string</span>, <span class="comment">// Ime produkta</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"quantity"</span>: <span class="type">number</span>     <span class="comment">// Količina</span><br>
-}</div>
+    <pre class="code">
+{
+    <span class="key">"amount"</span>: <span class="type">number</span>,      <span class="comment">// Znesek v najmanjši enoti valute (npr. centi)</span>
+    <span class="key">"currency"</span>: <span class="type">string</span>,    <span class="comment">// Valuta (npr. "eur")</span>
+    <span class="key">"productName"</span>: <span class="type">string</span>, <span class="comment">// Ime produkta</span>
+    <span class="key">"quantity"</span>: <span class="type">number</span>     <span class="comment">// Količina</span>
+}</pre>
 
     <h4>Odgovor na plačilo (<code>Payment Response</code>)</h4>
-    <div class="code">
-{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"checkoutUrl"</span>: <span class="type">string</span>  <span class="comment">// URL za Stripe Checkout sejo</span><br>
-}</div>
+    <pre class="code">
+{
+    <span class="key">"checkoutUrl"</span>: <span class="type">string</span>  <span class="comment">// URL za Stripe Checkout sejo</span>
+}</pre>
 
     <h2>Konfiguracija</h2>
     <p>Storitev uporablja naslednje okoljske spremenljivke:</p>
@@ -150,19 +150,19 @@
 
     <h2>Primer uporabe</h2>
     <p>1. Pošljite sporočilo v vrsto <code>payment_requests</code> s sledečo vsebino:</p>
-    <div class="code">
-{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"amount"</span>: 1500,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"currency"</span>: "eur",<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"productName"</span>: "Premium Subscription",<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"quantity"</span>: 1<br>
-}</div>
+    <pre class="code">
+{
+    <span class="key">"amount"</span>: 1500,
+    <span class="key">"currency"</span>: "eur",
+    <span class="key">"productName"</span>: "Premium Subscription",
+    <span class="key">"quantity"</span>: 1
+}</pre>
 
     <p>2. Prejmite odgovor iz vrste <code>payment_responses</code>:</p>
-    <div class="code">
-{<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"checkoutUrl"</span>: "https://checkout.stripe.com/..."<br>
-}</div>
+    <pre class="code">
+{
+    <span class="key">"checkoutUrl"</span>: "https://checkout.stripe.com/..."
+}</pre>
 
     <p>3. Preusmerite uporabnika na prejeti <code>checkoutUrl</code> za dokončanje plačila.</p>
 
