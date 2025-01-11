@@ -95,6 +95,28 @@ jobs:
                   .links a:hover {
                       background: #0052a3;
                   }
+
+                  /* Dark mode styles */
+                  @media (prefers-color-scheme: dark) {
+                      body {
+                          background: #1a1a1a;
+                          color: #e0e0e0;
+                      }
+                      .container {
+                          background: #2d2d2d;
+                          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                      }
+                      h1 {
+                          color: #8ab4f8;
+                      }
+                      .links a {
+                          background: #1a73e8;
+                          color: #ffffff;
+                      }
+                      .links a:hover {
+                          background: #1557b0;
+                      }
+                  }
               </style>
           </head>
           <body>

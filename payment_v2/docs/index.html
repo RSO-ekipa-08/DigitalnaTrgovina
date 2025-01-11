@@ -66,6 +66,54 @@
             font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Consolas, Menlo, 'Ubuntu Mono', monospace;
             font-size: 0.9em;
         }
+
+        /* Dark mode styles */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a1a1a;
+                color: #e0e0e0;
+            }
+            h1, h2, h3, h4 {
+                color: #8ab4f8;
+            }
+            .endpoint {
+                background-color: #2d2d2d;
+                border-color: #404040;
+            }
+            .code {
+                background-color: #000000;
+                color: #e0e0e0;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            }
+            .code .key {
+                color: #5ea6ea;
+            }
+            .code .type {
+                color: #4ec9b0;
+            }
+            .code .comment {
+                color: #6a9955;
+            }
+            table {
+                box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            }
+            th, td {
+                border-color: #404040;
+            }
+            th {
+                background-color: #2d2d2d;
+            }
+            code {
+                background-color: #2d2d2d;
+                color: #e0e0e0;
+            }
+            a {
+                color: #8ab4f8;
+            }
+            a:hover {
+                color: #adc8ff;
+            }
+        }
     </style>
 </head>
 <body>
