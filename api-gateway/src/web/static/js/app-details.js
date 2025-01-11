@@ -2,7 +2,8 @@ const appId = window.location.pathname.split("/").pop();
 
 if (!appId) {
   console.error("No app ID found in URL");
-  document.body.innerHTML = '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Neveljaven ID aplikacije.</p></div>';
+  document.body.innerHTML =
+    '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Neveljaven ID aplikacije.</p></div>';
 }
 
 async function loadAppDetails() {
@@ -66,7 +67,10 @@ async function loadAppDetails() {
       elements.screenshots.innerHTML =
         screenshots.length > 0
           ? screenshots
-              .map((url) => `<img src="${url}" alt="Zaslonska slika" class="rounded-lg shadow-lg">`)
+              .map(
+                (url) =>
+                  `<img src="${url}" alt="Zaslonska slika" class="rounded-lg shadow-lg">`,
+              )
               .join("")
           : '<div class="rounded-md bg-red-50 dark:bg-red-900/50 p-4 border border-red-200 dark:border-red-800"><p class="text-center text-red-600 dark:text-red-400">Ni razpoložljivih zaslonskih slik.</p></div>';
     }
@@ -169,13 +173,21 @@ async function loadReviews() {
     if (reviewsList) {
       if (reviews && reviews.length > 0) {
         console.log(reviews);
-        reviewsList.innerHTML = app.reviews
+        reviewsList.innerHTML = reviews
           .map(
             (review) => `
             <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
               <div class="flex items-center justify-between mb-2">
-                <div class="font-medium text-gray-900 dark:text-white">${review.user}</div>
-                <div class="text-sm text-gray-500 dark:text-gray-400">${review.date}</div>
+                <div class="font-medium text-gray-900 dark:text-white">${review.userId}</div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">${new Date(
+                  review.createdAt.split(" ")[0],
+                ).toLocaleString("sl-SI", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}</div>
               </div>
               <div class="flex items-center mb-2">
                 ${Array(5)
@@ -183,16 +195,18 @@ async function loadReviews() {
                   .map(
                     (_, i) =>
                       `<svg class="w-4 h-4 ${
-                        i < review.rating ? "text-yellow-500 dark:text-yellow-400" : "text-gray-300 dark:text-gray-600"
+                        i < review.score
+                          ? "text-yellow-500 dark:text-yellow-400"
+                          : "text-gray-300 dark:text-gray-600"
                       }" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                      </svg>`
+                      </svg>`,
                   )
                   .join("")}
               </div>
               <p class="text-gray-600 dark:text-gray-400">${review.comment}</p>
             </div>
-          `
+          `,
           )
           .join("");
       } else {
@@ -311,6 +325,8 @@ async function submitReview() {
     alert("Ocena je bila uspešno oddana. Hvala za vaš komentar!");
   } catch (error) {
     console.error("Error submitting review:", error);
-    alert("Napaka pri oddaji ocene. Prosimo, poskusite kasneje: " + error.message);
+    alert(
+      "Napaka pri oddaji ocene. Prosimo, poskusite kasneje: " + error.message,
+    );
   }
 }
