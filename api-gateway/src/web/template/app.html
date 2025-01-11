@@ -1,26 +1,31 @@
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="sl" class="h-full">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Digitalna trgovina</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'media'
+            }
+        </script>
         <link href="/public/css/app.css" rel="stylesheet" />
     </head>
-    <body class="bg-gray-50">
-        <nav class="bg-white shadow-lg">
+    <body class="h-full bg-gray-50 dark:bg-gray-900">
+        <nav class="bg-white dark:bg-gray-800 shadow-lg">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="/" class="text-xl font-bold text-indigo-600">Digitalna trgovina</a>
+                        <a href="/" class="text-xl font-bold text-indigo-600 dark:text-indigo-400">Digitalna trgovina</a>
                     </div>
                     <div class="flex items-center">
                         <div id="user-section">
-                            <a href="/login" id="login-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">Prijava</a>
+                            <a href="/login" id="login-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600">Prijava</a>
                             <div id="user-info" style="display: none" class="flex items-center space-x-4">
                                 <img id="user-avatar" class="h-8 w-8 rounded-full" alt="Profile picture" />
-                                <span id="user-name" class="text-gray-700"></span>
-                                <button onclick="auth.logout()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 border-indigo-600">
+                                <span id="user-name" class="text-gray-700 dark:text-gray-300"></span>
+                                <button onclick="auth.logout()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 dark:text-indigo-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border-indigo-600 dark:border-indigo-400">
                                     Odjava
                                 </button>
                             </div>
@@ -31,18 +36,18 @@
         </nav>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
                 <div class="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
                     <img id="app-icon" class="w-24 h-24 rounded-xl" alt="App icon" />
                     <div class="flex-grow">
-                        <h1 id="app-name" class="text-2xl font-bold text-gray-900"></h1>
-                        <div class="flex flex-wrap gap-4 mt-2 text-sm text-gray-600">
+                        <h1 id="app-name" class="text-2xl font-bold text-gray-900 dark:text-white"></h1>
+                        <div class="flex flex-wrap gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
                             <span id="app-developer"></span>
                             <span id="app-category"></span>
                             <span id="app-price" class="font-semibold"></span>
                         </div>
                     </div>
-                    <button id="download-btn" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button id="download-btn" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Prenesi
                     </button>
                 </div>
@@ -50,9 +55,9 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2">
-                    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-                        <h2 class="text-xl font-bold text-gray-900 mb-4">Opis</h2>
-                        <p id="app-description" class="text-gray-600 mb-6"></p>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Opis</h2>
+                        <p id="app-description" class="text-gray-600 dark:text-gray-400 mb-6"></p>
 
                         <div class="screenshots" id="app-screenshots" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <!-- Screenshots will be loaded here -->
@@ -61,24 +66,24 @@
                 </div>
 
                 <div class="lg:col-span-1">
-                    <div class="bg-white rounded-lg shadow-lg p-6">
-                        <h2 class="text-xl font-bold text-gray-900 mb-4">Ocene in komentarji</h2>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Ocene in komentarji</h2>
                         <div class="flex items-center space-x-4 mb-6">
-                            <div id="average-rating" class="text-2xl font-bold text-indigo-600"></div>
-                            <div id="total-reviews" class="text-sm text-gray-600"></div>
+                            <div id="average-rating" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400"></div>
+                            <div id="total-reviews" class="text-sm text-gray-600 dark:text-gray-400"></div>
                         </div>
 
-                        <div id="add-review-section" class="border-t pt-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Dodaj komentar</h3>
-                            <select id="rating-input" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mb-4">
+                        <div id="add-review-section" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Dodaj komentar</h3>
+                            <select id="rating-input" class="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mb-4">
                                 <option value="5">5 zvezdic</option>
                                 <option value="4">4 zvezdice</option>
                                 <option value="3">3 zvezdice</option>
                                 <option value="2">2 zvezdici</option>
                                 <option value="1">1 zvezdica</option>
                             </select>
-                            <textarea id="review-comment" placeholder="Vaš komentar..." class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mb-4"></textarea>
-                            <button onclick="submitReview()" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                            <textarea id="review-comment" placeholder="Vaš komentar..." class="block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mb-4"></textarea>
+                            <button onclick="submitReview()" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600">
                                 Objavi
                             </button>
                         </div>
