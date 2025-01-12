@@ -5,7 +5,7 @@ from diagrams.onprem.client import Client
 from diagrams.onprem.network import Internet
 from diagrams.onprem.queue import RabbitMQ
 
-with Diagram("Arhitektura DigitalnaTrgovina", show=False, direction="TB", outformat="pdf", filename="arhitektura", graph_attr={
+with Diagram(show=False, direction="LR", outformat="pdf", filename="arhitektura", graph_attr={
     "fontsize": "20",
     "bgcolor": "transparent"
 }, node_attr={"fontsize": "20"}) as d:
@@ -27,8 +27,7 @@ with Diagram("Arhitektura DigitalnaTrgovina", show=False, direction="TB", outfor
             app = Go("Aplikacijska\nStoritev")
             app_db = PostgreSQL("Aplikacijska\nPB")
 
-            with Cluster("Shramba Datotek"):
-                supabase = Client("Supabase\nStorage")
+            supabase = Client("Supabase\nStorage")
 
             app - app_db
             app - supabase
@@ -64,7 +63,7 @@ with Diagram("Arhitektura DigitalnaTrgovina", show=False, direction="TB", outfor
     gateway >> Edge(label="gRPC") >> auth
 
     # Payment Service Communication
-    gateway - Edge() - queue
+    app - Edge() - queue
     queue - Edge() - payment
 
     # Service Dependencies
