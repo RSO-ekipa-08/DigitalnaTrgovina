@@ -83,11 +83,11 @@ func New(authClient *auth.AuthClient) *gin.Engine {
 	{
 		// App service proxy
 		appGroup := apiGroup.Group("/app")
-		appGroup.Any("/*path", api.ProxyHandler("APP_SERVICE_URL"))
+		appGroup.Any("/*path", api.ProxyHandler("APP_SERVICE_URL", api.DefaultProxyConfig("app-service")))
 
 		// Reviews service proxy
 		reviewsGroup := apiGroup.Group("/reviews")
-		reviewsGroup.Any("/*path", api.ProxyHandler("REVIEWS_SERVICE_URL"))
+		reviewsGroup.Any("/*path", api.ProxyHandler("REVIEWS_SERVICE_URL", api.DefaultProxyConfig("reviews-service")))
 	}
 
 	return router
