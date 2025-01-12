@@ -4,7 +4,23 @@ from diagrams.onprem.database import PostgreSQL
 from diagrams.onprem.client import Client
 from diagrams.onprem.network import Internet
 from diagrams.onprem.queue import RabbitMQ
+from diagrams.custom import Custom
+from urllib.request import urlretrieve
 
+# Download icons for external services
+stripe_url = "https://cdn.prod.website-files.com/635637c5d13ee9bd2b5feb65/635a6521e448c975009bae34_6357d2186e13e5f26c16d622_stripe_logo_icon_167962.png"
+stripe_icon = "stripe.png"
+urlretrieve(stripe_url, stripe_icon)
+
+auth0_url = "https://play-lh.googleusercontent.com/So22eXt1Cc7-9ishK7DAoBaCUqnfuehrxyA_kezuhspg5gg526eMIQeppffxFgZsjAXn"
+auth0_icon = "auth0.png"
+urlretrieve(auth0_url, auth0_icon)
+
+supabase_url = "https://pipedream.com/s.v0/app_1dBhP3/logo/96"
+supabase_icon = "supabase.png"
+urlretrieve(supabase_url, supabase_icon)
+
+# Create diagram
 with Diagram(show=False, direction="LR", outformat="pdf", filename="arhitektura", graph_attr={
     "fontsize": "18",
     "bgcolor": "transparent"
@@ -27,7 +43,7 @@ with Diagram(show=False, direction="LR", outformat="pdf", filename="arhitektura"
             app = Go("Aplikacijska\nstoritev")
             app_db = PostgreSQL("Aplikacijska\nPB")
 
-            supabase = Client("Supabase\nStorage")
+            supabase = Custom("Supabase\nStorage", supabase_icon)
 
             app - app_db
             app - supabase
@@ -47,12 +63,12 @@ with Diagram(show=False, direction="LR", outformat="pdf", filename="arhitektura"
         with Cluster("Avtentikacijska storitev"):
             auth = Go("Avtentikacijska\nstoritev")
 
-    # External APIs in separate clusters
+    # Replace external service nodes with custom icons
     with Cluster("Stripe"):
-        stripe_api = Internet("Stripe API")
+        stripe_api = Custom("Stripe API", stripe_icon)
 
     with Cluster("Auth0"):
-        auth0_api = Internet("Auth0 API")
+        auth0_api = Custom("Auth0 API", auth0_icon)
 
     # Client to Gateway
     client >> Edge(label="HTTP") >> gateway
