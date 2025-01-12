@@ -6,9 +6,9 @@ from diagrams.onprem.network import Internet
 from diagrams.onprem.queue import RabbitMQ
 
 with Diagram(show=False, direction="LR", outformat="pdf", filename="arhitektura", graph_attr={
-    "fontsize": "20",
+    "fontsize": "18",
     "bgcolor": "transparent"
-}, node_attr={"fontsize": "20"}) as d:
+}, node_attr={"fontsize": "18"}) as d:
 
     # Frontend
     client = Client("Uporabnik")
@@ -23,8 +23,8 @@ with Diagram(show=False, direction="LR", outformat="pdf", filename="arhitektura"
         queue = RabbitMQ("RabbitMQ")
 
         # App Service
-        with Cluster("Aplikacijska Storitev"):
-            app = Go("Aplikacijska\nStoritev")
+        with Cluster("Aplikacijska storitev"):
+            app = Go("Aplikacijska\nstoritev")
             app_db = PostgreSQL("Aplikacijska\nPB")
 
             supabase = Client("Supabase\nStorage")
@@ -33,19 +33,19 @@ with Diagram(show=False, direction="LR", outformat="pdf", filename="arhitektura"
             app - supabase
 
         # Reviews Service
-        with Cluster("Storitev za Ocene"):
-            reviews = Rust("Storitev za\nOcene")
+        with Cluster("Storitev za ocene"):
+            reviews = Rust("Storitev za\nocene")
             reviews_db = PostgreSQL("Ocene PB")
 
             reviews - reviews_db
 
         # Payment Service
-        with Cluster("Plačilna Storitev"):
-            payment = Go("Plačilna\nStoritev")
+        with Cluster("Plačilna storitev"):
+            payment = Go("Plačilna\nstoritev")
 
         # Auth Service
-        with Cluster("Avtentikacijska Storitev"):
-            auth = Go("Avtentikacijska\nStoritev")
+        with Cluster("Avtentikacijska storitev"):
+            auth = Go("Avtentikacijska\nstoritev")
 
     # External APIs in separate clusters
     with Cluster("Stripe"):
