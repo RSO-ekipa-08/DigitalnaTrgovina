@@ -105,7 +105,7 @@ resource "kubernetes_deployment" "auth" {
 
           env {
             name  = "APP_SERVICE_URL"
-            value = "http://${kubernetes_deployment.app.metadata[0].name}:8080"
+            value = "http://app-service-default:8080"
           }
 
           env {
@@ -204,7 +204,7 @@ resource "kubernetes_deployment" "api-gateway" {
 
           env {
             name  = "APP_SERVICE_URL"
-            value = "http://${kubernetes_deployment.app.metadata[0].name}:8080"
+            value = "http://app-service-default:8080"
           }
 
           env {
@@ -567,7 +567,7 @@ resource "kubernetes_service" "reviews" {
 
 # App Service Multi-tenant Deployment
 resource "kubernetes_deployment" "app_multitenancy" {
-  for_each = var.app_tenants
+  for_each = nonsensitive(toset(keys(var.app_tenants)))
 
   metadata {
     name      = "app-service-${each.key}"
@@ -575,7 +575,7 @@ resource "kubernetes_deployment" "app_multitenancy" {
   }
 
   spec {
-    replicas = each.value.replicas
+    replicas = var.app_tenants[each.key].replicas
 
     selector {
       match_labels = {
@@ -613,22 +613,22 @@ resource "kubernetes_deployment" "app_multitenancy" {
 
           env {
             name  = "DATABASE_URL"
-            value = each.value.database_url
+            value = var.app_tenants[each.key].database_url
           }
 
           env {
             name  = "STORAGE_ENDPOINT"
-            value = each.value.storage_endpoint
+            value = var.app_tenants[each.key].storage_endpoint
           }
 
           env {
             name  = "STORAGE_ACCESS_KEY"
-            value = each.value.storage_access_key
+            value = var.app_tenants[each.key].storage_access_key
           }
 
           env {
             name  = "STORAGE_SECRET_KEY"
-            value = each.value.storage_secret_key
+            value = var.app_tenants[each.key].storage_secret_key
           }
 
           env {
@@ -638,12 +638,12 @@ resource "kubernetes_deployment" "app_multitenancy" {
 
           resources {
             requests = {
-              cpu    = each.value.cpu_request
-              memory = each.value.memory_request
+              cpu    = var.app_tenants[each.key].cpu_request
+              memory = var.app_tenants[each.key].memory_request
             }
             limits = {
-              cpu    = each.value.cpu_limit
-              memory = each.value.memory_limit
+              cpu    = var.app_tenants[each.key].cpu_limit
+              memory = var.app_tenants[each.key].memory_limit
             }
           }
 
@@ -662,7 +662,7 @@ resource "kubernetes_deployment" "app_multitenancy" {
 
 # App Service Multi-tenant Service
 resource "kubernetes_service" "app_multitenancy" {
-  for_each = var.app_tenants
+  for_each = nonsensitive(toset(keys(var.app_tenants)))
 
   metadata {
     name      = "app-internal-${each.key}"
