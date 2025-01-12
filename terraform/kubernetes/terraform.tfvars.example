@@ -1,18 +1,24 @@
 # Občutljivi podatki - TO-DO: Spremenite te vrednosti!
-jwt_secret                = "change-me-in-production"
-# postgresql_password       = "change-me-in-production"
+jwt_secret = "change-me-in-production"
 
-reviews_DATABASE_URL      = "change-me-in-production"
+# Reviews configuration
+reviews_DATABASE_URL = "change-me-in-production"
 
-auth_AUTH0_CLIENT_ID      = "change-me-in-production"
-auth_AUTH0_DOMAIN         = "change-me-in-production"
-auth_AUTH0_CLIENT_SECRET  = "change-me-in-production"
-auth_AUTH0_CALLBACK_URL   = "change-me-in-production"
+# Auth configuration
+auth_AUTH0_CLIENT_ID     = "change-me-in-production"
+auth_AUTH0_DOMAIN        = "change-me-in-production"
+auth_AUTH0_CLIENT_SECRET = "change-me-in-production"
+auth_AUTH0_CALLBACK_URL  = "change-me-in-production"
 
-app_DATABASE_URL          = "change-me-in-production"
-app_STORAGE_ENDPOINT      = "change-me-in-production"
-app_STORAGE_SECRET_KEY    = "change-me-in-production"
-
-stripe_secret_key  = "change-me-in-production"
+stripe_secret_key   = "change-me-in-production"
 payment_success_url = "https://example.com/success"
 payment_cancel_url  = "https://example.com/cancel"
+
+# App Service (Multi-tenant) configuration
+app_tenants = {
+  default = {
+    database_url       = "change-me-in-production"
+    storage_endpoint   = "change-me-in-production"
+    storage_secret_key = "change-me-in-production"
+  }
+}

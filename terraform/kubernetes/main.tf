@@ -565,32 +565,34 @@ resource "kubernetes_service" "reviews" {
   }
 }
 
-# App Service
-resource "kubernetes_deployment" "app" {
+# App Service Multi-tenant Deployment
+resource "kubernetes_deployment" "app_multitenancy" {
+  for_each = var.app_tenants
+
   metadata {
-    name      = "app-service"
+    name      = "app-service-${each.key}"
     namespace = kubernetes_namespace.rso.metadata[0].name
   }
 
   spec {
-    replicas = 1
+    replicas = each.value.replicas
 
     selector {
       match_labels = {
-        app = "app-service"
+        app = "app-service-${each.key}"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "app-service"
+          app = "app-service-${each.key}"
         }
       }
 
       spec {
         container {
-          name  = "app-service"
+          name  = "app-service-${each.key}"
           image = "ghcr.io/rso-ekipa-08/app-service:latest"
 
           port {
@@ -611,22 +613,22 @@ resource "kubernetes_deployment" "app" {
 
           env {
             name  = "DATABASE_URL"
-            value = var.app_DATABASE_URL
+            value = each.value.database_url
           }
 
           env {
             name  = "STORAGE_ENDPOINT"
-            value = var.app_STORAGE_ENDPOINT
+            value = each.value.storage_endpoint
           }
 
           env {
             name  = "STORAGE_ACCESS_KEY"
-            value = var.app_STORAGE_ACCESS_KEY
+            value = each.value.storage_access_key
           }
 
           env {
             name  = "STORAGE_SECRET_KEY"
-            value = var.app_STORAGE_SECRET_KEY
+            value = each.value.storage_secret_key
           }
 
           env {
@@ -636,12 +638,12 @@ resource "kubernetes_deployment" "app" {
 
           resources {
             requests = {
-              cpu    = "100m"
-              memory = "128Mi"
+              cpu    = each.value.cpu_request
+              memory = each.value.memory_request
             }
             limits = {
-              cpu    = "200m"
-              memory = "256Mi"
+              cpu    = each.value.cpu_limit
+              memory = each.value.memory_limit
             }
           }
 
@@ -658,22 +660,43 @@ resource "kubernetes_deployment" "app" {
   }
 }
 
-resource "kubernetes_service" "app" {
+# App Service Multi-tenant Service
+resource "kubernetes_service" "app_multitenancy" {
+  for_each = var.app_tenants
+
   metadata {
-    name      = "app-service"
+    name      = "app-internal-${each.key}"
     namespace = kubernetes_namespace.rso.metadata[0].name
   }
 
   spec {
     selector = {
-      app = kubernetes_deployment.app.spec[0].template[0].metadata[0].labels.app
+      app = "app-service-${each.key}"
     }
 
     port {
-      port        = 8080
+      port        = 80
       target_port = 8080
     }
 
     type = "LoadBalancer"
+  }
+}
+
+# Reviews Service Output
+output "reviews_internal_ip" {
+  value = kubernetes_service.reviews.status[0].load_balancer[0].ingress[0].ip
+}
+
+# Auth Service Output
+output "auth_internal_ip" {
+  value = kubernetes_service.auth.status[0].load_balancer[0].ingress[0].ip
+}
+
+# Multi-tenant App Service Output
+output "app_tenant_ips" {
+  value = {
+    for tenant, service in kubernetes_service.app_multitenancy : 
+    tenant => service.status[0].load_balancer[0].ingress[0].ip
   }
 }

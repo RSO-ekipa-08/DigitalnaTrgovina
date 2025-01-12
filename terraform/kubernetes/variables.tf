@@ -40,31 +40,6 @@ variable "auth_AUTH0_CALLBACK_URL" {
   sensitive   = true
 }
 
-variable "app_DATABASE_URL" {
-  description = "URL za podatkovno bazo app-service"
-  type        = string
-  sensitive   = true
-}
-
-variable "app_STORAGE_ENDPOINT" {
-  description = "Končna točka za object storage"
-  type        = string
-  sensitive   = true
-}
-
-variable "app_STORAGE_ACCESS_KEY" {
-  description = "Dostopni ključ za object storage"
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-variable "app_STORAGE_SECRET_KEY" {
-  description = "Skrivni ključ za object storage"
-  type        = string
-  sensitive   = true
-}
-
 variable "stripe_secret_key" {
   description = "Stripe Secret Key"
   type        = string
@@ -79,4 +54,25 @@ variable "payment_success_url" {
 variable "payment_cancel_url" {
   description = "URL for cancelled payments"
   type        = string
+}
+
+variable "app_tenants" {
+  description = "Konfiguracija za različne najemnike app-service"
+  type = map(object({
+    database_url = string
+    storage_endpoint = string
+    storage_access_key = optional(string, "")
+    storage_secret_key = string
+    replicas = optional(number, 1)
+    cpu_request = optional(string, "100m")
+    memory_request = optional(string, "128Mi")
+    cpu_limit = optional(string, "200m")
+    memory_limit = optional(string, "256Mi")
+  }))
+  sensitive = true
+  validation {
+    # At least one tenant must be defined
+    condition     = length(var.app_tenants) > 0
+    error_message = "At least one tenant must be defined."
+  }
 }
