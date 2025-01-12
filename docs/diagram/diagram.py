@@ -1,9 +1,9 @@
-from diagrams import Diagram, Cluster
+from diagrams import Diagram, Cluster, Edge
 from diagrams.programming.language import Go, Rust
 from diagrams.onprem.database import PostgreSQL
 from diagrams.onprem.client import Client
 from diagrams.onprem.network import Internet
-from diagrams.azure.storage import BlobStorage
+from diagrams.onprem.queue import RabbitMQ
 
 with Diagram("Arhitektura DigitalnaTrgovina", show=False, direction="TB", outformat="pdf", filename="arhitektura", graph_attr={
     "fontsize": "20",
@@ -11,22 +11,27 @@ with Diagram("Arhitektura DigitalnaTrgovina", show=False, direction="TB", outfor
 }, node_attr={"fontsize": "20"}) as d:
 
     # Frontend
-    client = Client("Spletna Aplikacija")
+    client = Client("Uporabnik")
 
     # Microservices
     with Cluster("Mikrostoritve"):
+        # API Gateway
+        with Cluster("API Gateway"):
+            gateway = Go("API Gateway")
+
+        # Queue inside microservices cluster
+        queue = RabbitMQ("RabbitMQ")
+
         # App Service
         with Cluster("Aplikacijska Storitev"):
             app = Go("Aplikacijska\nStoritev")
             app_db = PostgreSQL("Aplikacijska\nPB")
 
             with Cluster("Shramba Datotek"):
-                minio = Client("MinIO")
-                azure = BlobStorage("Azure Blob\nStorage")
+                supabase = Client("Supabase\nStorage")
 
             app - app_db
-            app - minio
-            app - azure
+            app - supabase
 
         # Reviews Service
         with Cluster("Storitev za Ocene"):
@@ -38,35 +43,35 @@ with Diagram("Arhitektura DigitalnaTrgovina", show=False, direction="TB", outfor
         # Payment Service
         with Cluster("Plačilna Storitev"):
             payment = Go("Plačilna\nStoritev")
-            payment_db = PostgreSQL("Plačilna PB")
-
-            payment - payment_db
 
         # Auth Service
         with Cluster("Avtentikacijska Storitev"):
             auth = Go("Avtentikacijska\nStoritev")
-            auth_db = PostgreSQL("Avtentikacijska\nPB")
 
-            auth - auth_db
-
-    # External APIs
-    with Cluster("Zunanje Storitve"):
+    # External APIs in separate clusters
+    with Cluster("Stripe"):
         stripe_api = Internet("Stripe API")
+
+    with Cluster("Auth0"):
         auth0_api = Internet("Auth0 API")
 
-    # Service Connections
-    client >> app
-    client >> reviews
-    client >> payment
-    client >> auth
+    # Client to Gateway
+    client >> Edge(label="HTTP") >> gateway
 
-    # Cross-service communication
-    app << reviews
-    app << payment
-    auth << app
-    auth << payment
-    auth << reviews
+    # Gateway to Services
+    gateway >> Edge(label="REST") >> app
+    gateway >> Edge(label="GraphQL") >> reviews
+    gateway >> Edge(label="gRPC") >> auth
+
+    # Payment Service Communication
+    gateway - Edge() - queue
+    queue - Edge() - payment
+
+    # Service Dependencies
+    auth << Edge(label="gRPC") << app
+    auth << Edge(label="gRPC") << payment
+    auth << Edge(label="gRPC") << reviews
 
     # External API connections
-    payment - stripe_api
-    auth - auth0_api
+    payment - Edge(label="HTTP") - stripe_api
+    auth - Edge(label="HTTP") - auth0_api
